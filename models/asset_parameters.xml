@@ -1,0 +1,7 @@
+<model name="asset_parameters" version="1">
+	<fields>
+		<field name="asset_id" primaryKey="true" relatedModel="assets" />
+		<field name="parameter" type="varchar" length="30" primaryKey="true" />
+		<field name="value" type="text" />
+	</fields>
+</model>

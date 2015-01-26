@@ -1,0 +1,25 @@
+<model name="templates" version="1">
+	<fields>
+		<field name="created" />
+		<field name="created_by" />
+		<field name="file_contents" type="text" />
+		<field name="file_src" type="varchar" length="100" />
+		<field name="id" />
+		<field name="is_default" type="tinyint" required="true" default="0" />
+		<field name="name" type="varchar" length="20" />
+		<field name="sortorder" />
+		<!-- <field name="site_id" relatedModel="sites" /> -->
+		<field name="type" type="varchar" length="20" />
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>
+	<data>
+		<row>
+			<file_src>~/templates/default.tpl</file_src>
+			<is_default>1</is_default>
+			<name>Default Template</name>
+			<sortorder>1</sortorder>
+			<type>Page</type>
+		</row>
+	</data>
+</model>

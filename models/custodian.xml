@@ -1,0 +1,16 @@
+<model name="custodian" version="1.0">
+	<fields>
+		<field name="created" />
+		<field name="created_by" />
+		<field name="hostname" type="varchar" length="255" />
+		<field name="id" />
+		<field name="link" type="varchar" length="255" />
+		<field name="location" type="varchar" length="255" />
+		<field name="message" type="text" />
+		<field name="remote_ip" type="varchar" length="15" />
+		<field name="referrer" type="varchar" length="255" />
+		<field name="severity" type="tinyint" />
+		<field name="type" type="varchar" length="16" />
+		<field name="variables" type="text" />
+	</fields>
+</model>

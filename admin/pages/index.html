@@ -1,0 +1,144 @@
+<@Page templateId="admin-default">
+<cms:Content placeHolderId="ph_admin_main">
+
+	<script type="text/javascript">
+		function pageDetails() {
+			$('.modal').modal();
+		}
+	</script>
+				
+	<div class="modal fade">
+	<div class="modal-header">Page Details</div>
+	  <div class="modal-body">
+	    <form method="post" class="form-horizontal">
+	    	<div class="control-group">
+			<label class="control-label">Title:</label>
+			<div class="controls"><cms:Input type="text" /></div>
+		</div>
+		
+		<div class="control-group">
+			<label class="control-label">Meta:</label>
+			<div class="controls"><cms:Input type="textarea" /></div>
+		</div>
+		
+		<div class="control-group">
+			<label>Meta:</label>
+			<cms:Input type="textarea" />
+		</div>
+		<div class="control-group">
+			<label>Meta:</label>
+			<cms:Input type="textarea" />
+		</div>
+	    </form>
+	  </div>
+	 
+	  <div class="modal-footer">
+	  	<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
+		<a href="#" class="btn btn-primary" data-dismiss="modal">Save</a>
+	  </div>
+	
+	</div>
+
+	<?php /*
+	<div class="btn-toolbar">
+		<div class="btn-group">
+			<a href="index.html?layout=list" class="btn"><i class="glyphicon glyphicon-list"></i></a>
+			<a href="index.html?layout=grid" class="btn"><i class="glyphicon glyphicon-th"></i></a>
+		</div>
+	</div>
+	*/ ?>
+	<div class="cols-fs">
+		<div class="col-fs-hpanel col-fs-hpanel-2 col-fs-hpanel-nav">
+				
+				<cms:Content visible="false" class="section wrap">
+					<form method="get" action="index.html">
+						<div class="form-group">
+							<label for="q">Search title:</label>
+							<!-- Render: InputControl --><input type="text" id="q" size="15" class="form-control" name="q" value="admin">
+						</div>
+						<p>
+							<input type="submit" name="action" value="Search" class="btn btn-default">
+							<a href="/admin/pages/?action=Search" class="btn btn-link">Reset</a>
+						</p> 
+					</form>
+				</cms:Content>
+				
+				<cms:DataList id="dl_recent" wrapOutput="false">
+					<Template>
+						<HeaderTemplate><![CDATA[
+							<div class="section wrap"><h4>Recent Pages</h4><ul class="nav">
+						]]></HeaderTemplate>
+						<ItemTemplate><![CDATA[
+							<li><a href="<Data field="url" />"><Data field="name" /></a></li>
+						]]></ItemTemplate>
+						<FooterTemplate><![CDATA[
+							</ul></div>
+						]]></FooterTemplate>
+					</Template>
+				</cms:DataList>
+			
+			
+		</div>
+		<div class="col-fs col-fs-loffset-2">
+			<ul class="nav nav-page-actions">
+				<li><a href="<cms:ConfigValue name="DIR_WS_ADMIN" />pages/edit.html"><i class="glyphicon glyphicon-plus"></i> Add Page</a></li>
+			</ul>
+			
+				<div class="page-header">
+					<h1><i class="glyphicon glyphicon-file"></i> Pages</h1>
+				</div>
+				
+				<div class="wrap">
+					<?php echo build_page_list($pages); ?>
+				</div>
+				
+				<cms:DataGrid id="xdl_page_list" tableClass="table table-hover table-spacious">
+					<Columns rowClass="hover-show-invisible">
+						<Column headerText="Page Title" field="title_link" />
+						<Column headerText="Path" field="page_url" />
+						<!-- <Column headerText="Template"><![CDATA[
+							<div class="btn-group">
+								<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+									Test<Data field="template_name" /></a>
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu">
+									<li><a href="#">Test</a></li>
+								</ul>
+							</div>
+						]]></Column>
+						 -->
+						<!-- 
+						<Column headerText="Actions" headerClass="actions" width="1%" class="actions"><![CDATA[
+							<nobr>
+								<a href="#" onclick="pageDetails(<Data field="page_id" />);return false;" class="btn">Meta</a>
+								<a href="edit.html?pageid=<Data field="id" />" class="btn">Details</a>
+								<a href="pagecontrols.html?pageid=<Data field="id" />" class="action" title="Advanced Users: Add controls manually"><i class="glyphicon glyphicon-file"></i></a>
+							</nobr>
+						]]></Column>
+						 -->
+					</Columns>
+				</cms:DataGrid>
+				<cms:DataList id="dl_page_grid" class="clearfix">
+					<Template>
+						<ItemTemplate><![CDATA[
+									<div class="well" style="
+			width:100px;height:70px;margin:0 20px 20px 0;float:left;">
+										
+										<Data field="title_link" />
+										
+									</div>
+									
+								]]></ItemTemplate>
+					</Template>
+				</cms:DataList>
+			
+		</div>
+	</div>
+	<script type="text/javascript">
+		$('.toggle-children').click(function(ev) {
+			ev.preventDefault();
+			$(this).parent().parent().parent().parent().children('ul').slideToggle();
+		});
+	</script>
+</cms:Content>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model name="admin_recent" version="1">
+	<fields>
+		<field name="created" />
+		<field name="created_by" />
+		<field name="id" />
+		<field name="membership_id" />
+		<field name="name" type="varchar" length="255" />
+		<field name="type" type="varchar" length="50" />
+		<field name="updated" />
+		<field name="updated_by" />
+		<field name="url" type="varchar" length="255" required="true" />
+	</fields>
+</model>

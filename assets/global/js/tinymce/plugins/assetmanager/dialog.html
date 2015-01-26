@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Asset Manager</title>
+	<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+	<script type="text/javascript" src="js/dialog.js"></script>
+	<script type="text/javascript">
+	/*
+	var ed = tinyMCEPopup.editor;
+	tinyMCEPopup.restoreSelection();
+	if (tinymce.isWebKit) ed.getWin().focus();
+	el = ed.selection.getNode();
+	if (el && el.nodeName == 'IMG') {
+		alert('node');
+		//ed.dom.setAttribs(el, args);
+	} else {
+		alert('free text');
+		
+		//ed.execCommand('mceInsertContent', false, '<img id="__mce_tmp" />', {skip_undo : 1});
+		//ed.dom.setAttribs('__mce_tmp', args);
+		//ed.dom.setAttrib('__mce_tmp', 'id', '');
+		//ed.undoManager.add();
+		
+	}
+	
+	*/
+	</script>
+</head>
+<body bgcolor="#bfdff0">
+
+<form onsubmit="AssetManagerDialog.insert();return false;" action="#">
+	<p>Here is an example dialog.</p>
+	<p>Asset ID: <input id="assetid" name="assetid" type="text" class="text" size="5" /></p>
+	<p>Variation: <input id="assetvariation" name="assetvariation" type="text" class="text" size="5" /></p>
+	<p>Custom arg: <input id="somearg" name="somearg" type="text" class="text" /></p>
+	<p><a href="/assets/global/js/tinymce/plugins/assetmanager/dialog.html">Asset Page</a></p>
+	<div class="mceActionPanel">
+		<input type="button" id="insert" name="insert" value="{#insert}" onclick="AssetManagerDialog.insert();" />
+		<input type="button" id="cancel" name="cancel" value="{#cancel}" onclick="tinyMCEPopup.close();" />
+	</div>
+</form>
+
+</body>
+</html>

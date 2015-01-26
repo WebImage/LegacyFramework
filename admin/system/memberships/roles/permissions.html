@@ -1,0 +1,87 @@
+<@Page templateId="admin-default" title="Role Permissions">
+<cms:Content placeHolderId="ph_admin_main">
+
+	<ul class="nav nav-page-actions">
+		<li><a href="index.html"><i class="glyphicon glyphicon-chevron-left"></i> Back to Roles</a></li>
+	</ul>
+	
+	<form method="post">
+		
+		<div class="page-header">
+			<h1>Permissions for <?php echo $role->name; ?> <input type="submit" value="Save" class="btn btn-primary" /></h1>
+		</div>
+		<div class="wrap">
+			<cms:Input type="hidden" id="roleid" />
+			
+			<cms:DataGrid id="dg_permissions" tableClass="table table-condensed table-hover">
+				<Columns>
+					<Column headerText="Permission" field="permission" class="permission-click" />
+					<Column headerText="Create" field="can_create" width="100" align="center" />
+					<Column headerText="Read" field="can_read" width="100" align="center" />
+					<Column headerText="Update" field="can_update" width="100" align="center" />
+					<Column headerText="Delete" field="can_delete" width="100" align="center" />
+					<NoResults><![CDATA[
+						There are currently not any manageable permissions
+					]]></NoResults>
+				</Columns>
+			</cms:DataGrid>
+		</div>
+	</form>
+	<script type="text/javascript">
+		jQuery(document).ready(function() {
+			function styleCell($checkbox) {
+				if ($checkbox.attr('checked')) {
+					$checkbox.parent('td').addClass('checked');
+				} else {
+					$checkbox.parent('td').removeClass('checked');
+				}
+			}
+			var $rows = jQuery('#dg_permissions tr');
+			$rows.each(function() {
+				var $tr = $(this);
+				var $checkboxes = $tr.find('input[type=checkbox]');
+				var $tds = $tr.find('td');
+				var $tdPermission = $tds.filter('.permission-click');
+				$tr.css('cursor', 'pointer');
+				$checkboxes.on('change', function() { styleCell($(this)); });
+				$tds.click(function(ev) {
+					if (jQuery(ev.target).is('td')) {
+						$(this).find('input[type=checkbox]').each(function(){
+							$(this).attr('checked', !$(this).attr('checked'));
+							styleCell($(this));
+						});
+					}
+				});
+				$tds.hover(
+					function(){
+						if (!$(this).hasClass('success')) $(this).toggleClass('success');
+					},
+					function(){
+						if (!$(this).hasClass('checked')) $(this).removeClass('success');
+					}
+				);
+				$tdPermission.click(function() {
+					var nChecked = 0;
+					$checkboxes.each(function() { if ($(this).attr('checked')) nChecked++; });
+					
+					var shouldCheck = (nChecked < $checkboxes.length);
+					$checkboxes.each(function() {
+						$(this).attr('checked', shouldCheck);
+						styleCell($(this));
+					});
+				}).hover(
+					function() {
+						$tds.each(function() {
+							if (!$(this).hasClass('success')) $(this).addClass('success');
+						});
+					},
+					function() {
+						$tds.each(function() {
+							if (!$(this).hasClass('checked')) $(this).removeClass('success');
+						});
+					}
+				);
+			});
+		});
+	</script>
+</cms:Content>

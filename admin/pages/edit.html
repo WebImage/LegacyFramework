@@ -1,0 +1,204 @@
+<@Page templateId="admin-default" title="Edit Page">
+
+<cms:Content id="content1" placeHolderId="ph_admin_main">
+
+	<ul class="nav nav-page-actions">
+		<li><a href="<?php echo ConfigurationManager::get('DIR_WS_ADMIN') ?>pages/"><i class="glyphicon glyphicon-chevron-left"></i> Back to Pages</a></li>
+	</ul>
+
+	<div class="wrap">
+	
+		<form method="post" action="edit.html">
+		
+			<div class="page-header">
+				<h1 id="page_title"><cms:Literal id="page_title" /> <input type="submit" value="Save" class="btn btn-primary" /></h1>
+				<p class="text-muted">Edit the meta data associated with this page.</p>
+			</div>
+		
+			<cms:Input type="hidden" id="id" struct="page" />
+			
+			<div class="row">
+			
+				<div class="col-md-9">
+					
+					<ul class="nav nav-tabs m-b">
+						<li class="active"><a href="#general" data-toggle="tab">General</a></li>
+						<li><a href="#meta" data-toggle="tab">Meta Data</a></li>
+					
+						<?php if (!$is_new_page): ?>
+							<li><a href="#parameters" data-toggle="tab">Parameters</a></li>
+							<?php if (!empty($page->page_url)): /* Only display link if page already exists */ ?>
+								<li><a href="<?php echo ConfigurationManager::get('DIR_WS_ADMIN') ?>pages/pagecontrols.html?pageid=<?php echo $page->id ?>">Advanced Controls</a></li>
+								<li class="pull-right"><a href="<?php echo ConfigurationManager::get('DIR_WS_ADMIN') ?>content<?php echo $page->page_url ?>"><i class="glyphicon glyphicon-eye-open"></i> Go to Page</a></li>
+							<?php endif; ?> 
+						<?php endif; ?>
+					</ul>
+					
+					<div class="tab-content">
+						<div class="tab-pane active" id="general">
+					
+							<fieldset class="form-horizontal">
+									
+								<div class="form-group">
+									<label class="control-label col-md-2">Page Title: </label>
+									
+									<div class="col-md-10">
+										<cms:Input id="title" type="text" struct="page" size="40" onkeyup="updateSeoTag();updateTitle(this)" maxlength="100" class="form-control" />
+										<span class="help-text">The text that appears in the browser title.</span>
+									</div>
+									
+								</div>
+																
+								<div class="form-group">
+									<label class="control-label col-md-2">Template:</label> 
+									<div class="col-md-10">
+										<cms:Select id="template_id" struct="page" defaultKey="0" defaultText="-- None Selected --" class="form-control" />
+									</div>									
+								</div>	
+									
+								<div class="form-group">
+									<label class="control-label col-md-2">File Name: </label>
+									<div class="col-md-10">
+										<cms:Input type="text" id="page_key" size="30" class="form-control" />
+										<span class="help-text">The filename that appears as part of the URL.</span>
+									</div>
+								</div>							
+							
+								<cms:Content id="show_parent_info" wrapOutput="">
+									<div class="form-group">
+										<label class="control-label col-md-2">Belongs to Section: </label>
+										<div class="col-md-10">
+											<cms:Select id="parent_id" struct="page" defaultKey="" defaultText="-- Select Section --" textField="title" class="" />
+										</div>										
+									</div>
+									
+									<div class="form-group">
+										<div class="col-md-10 col-md-push-2">
+											<cms:Input type="checkbox" struct="page" structKey="is_section" id="is_section" value="1" onclick="updateSeoTag()" /> <label for="is_section">Can this page contain sub-pages?</label>
+										</div>
+										
+									</div>
+									
+								</cms:Content>				
+			
+							</fieldset>
+						</div>
+						<div class="tab-pane" id="meta">
+							<fieldset class="form-horizontal">
+								
+								<div class="form-group">
+									<label class="control-label col-md-2">Meta Keywords:</label>
+									<div class="col-md-10">
+										<cms:Input type="textarea" id="meta_key" struct="page" rows="3" class="form-control" />
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="control-label col-md-2">Meta Description:</label>
+									<div class="col-md-10">
+										<cms:Input type="textarea" id="meta_desc" struct="page" rows="5" class="form-control" />
+									</div>
+								</div>
+							</fieldset>
+						</div>
+						<?php if (!$is_new_page): ?>
+						<div class="tab-pane" id="parameters">
+						
+							<fieldset>
+								<table cellspacing="0" cellpadding="0" border="0" class="table">
+								<tr>
+									<th>&nbsp;</th>
+									<th width="25%">Parameter</th>
+									<th width="75%">Value</th>
+								</tr>
+								<cms:DataList id="dl_page_params" wrapOutput="">
+									<Template>
+										<ItemTemplate><![CDATA[
+										<input type="hidden" name="parameters[]" value="<Data field="id" />" />
+										<input type="hidden" name="parameter_name_<Data field="id" />" value="<Data field="parameter" />" />
+										<tr>
+											<td><a href="edit.html?action=deleteparam&paramid=<Data field="id" />&pageid=<?php echo $page->id; ?>">Delete</a></td>
+											<td><Data field="parameter" /></td>
+											<td><input type="text" name="parameter_value_<Data field="id" />" value="<Data field="value" />" /></td>
+										</tr>
+										]]></ItemTemplate>
+									</Template>
+								</cms:DataList>
+								<tr>
+									<td>&nbsp;</td>
+									<td><input type="text" name="newparam" /></td>
+									<td>
+										<input type="text" name="newparamvalue" />
+										<input type="submit" value="Add" class="btn" />
+									</td>
+								</tr>
+								</table>
+							</fieldset>
+							
+						</div>
+						<?php endif; ?>
+						
+						<div class="row">
+							<div class="col-md-push-2 col-md-10"><cms:Input type="submit" value="Save" class="btn btn-primary" /></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="col-md-3">
+					<div class="well">
+						<h3>SEO Tips</h3>
+						<p><strong>DOs</strong></p>
+						<ul>
+							<li>Describe what the pages is about</li>
+							<li>Use a keyphrase with at least 4 keywords</li>
+							<li>Keep important keywords closer to the beginning</li>
+							<li>Make title unique</li>
+						</ul>
+						<p><strong>DON'Ts</strong></p>
+						<ul>
+							<li>Use a keyword more than once in the title</li>
+							<li>Use punctuation (i.e. exclamation points or question marks)</li>
+							<li>Use extremely long titles</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			
+		</form>
+		
+		<script type="text/javascript">
+			var allow_filename_change = false;
+			var file_already_set = <?php echo ($page->_file_already_set) ? 'true':'false'; ?>;
+			
+			function updateTitle(inpt_obj) {
+				var defaultTitle = file_already_set ? 'No Title' : 'New Page';
+				var title = '';
+				if (inpt_obj.length == 0) title = defaultTitle;
+				else title = inpt_obj.value;
+				document.getElementById('page_title').innerHTML = title;
+			}
+			
+			function updateSeoTag() {
+				var is_section = document.getElementById('is_section');
+				if (!file_already_set || allow_filename_change) {
+					var title = document.getElementById('title');
+					var page_key = document.getElementById('page_key');
+					if (is_section.checked) {
+						page_key.value = strToSeoTag(title.value) + '/index.html';
+					} else {
+						page_key_value = strToSeoTag(title.value);
+						extension = '.html';
+						// Max database storage is 100 characters, make sure the full key conforms to this.
+						max_length = 100;
+						if (page_key_value.length > (max_length-extension.length)) page_key_value = page_key_value.substr(0, (max_length-extension.length-1));
+						
+						page_key.value = page_key_value + extension;
+					}
+				}
+			}
+			
+			
+			</script>
+	</div>		
+</cms:Content>

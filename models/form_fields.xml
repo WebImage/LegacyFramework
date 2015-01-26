@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model name="form_fields" version="1">
+	<fields>
+		<field name="choices" type="text" />
+		<field name="config" type="text" />
+		<field name="created" />
+		<field name="created_by" />
+		<field name="enable" type="tinyint" required="true" default="1" />
+		<field name="field_id" primaryKey="true" />
+		<field name="form_id" primaryKey="true" />
+		<field name="key" type="varchar" length="30" />
+		<field name="label" type="varchar" length="255" />
+		<field name="sortorder" />
+		<field name="type_id" type="varchar" length="255" />
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>		
+</model>

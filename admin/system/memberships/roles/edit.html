@@ -1,0 +1,33 @@
+<@Page templateId="admin-default" title="Edit Role">
+
+<cms:Content placeHolderId="ph_page_actions" wrapClassId="page-actionbar">
+	<cms:WrapOutput wrapClassId="page-actionbar-action"><a href="index.html"><img src="<?php echo ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_IMG') ?>icons/i_back.gif" align="absmiddle" /> Back </a></cms:WrapOutput>
+</cms:Content>
+
+<cms:Content placeHolderId="ph_admin_main">
+	<div class="wrap">
+		<div class="page-header">
+			<h1>Role Details</h1>
+		</div>
+		<form method="post">
+			<cms:Input type="hidden" struct="role" structKey="id" />
+			
+			<div class="form-group label-inline">
+				<label class="control-label">Role Name:</label> 
+				<div class="form-controls"><cms:Input type="text" struct="role" structKey="name" class="form-control" /></div>
+			</div>
+			<div class="form-group label-inline">
+				<label class="control-label">Description:</label> 
+				<div class="form-controls"><cms:Input type="textarea" struct="role" structKey="description" class="form-control" /></div>
+			</div>
+			<div class="form-group label-inline">
+				<label class="control-label">Start URL:</label> 
+				<div class="form-controls"><cms:Input type="text" struct="role" structKey="start_page" class="form-control" /></div>
+			</div>
+			<div class="form-group label-inline">
+				<div class="form-controls"><input type="submit" value="Save" class="btn btn-primary" /></div>
+			</div>
+			
+		</form>
+	</div>
+</cms:Content>

@@ -1,0 +1,25 @@
+<@Page templateId="admin-default" title="Menus">
+
+<cms:Content placeHolderId="ph_admin_main">
+	
+	<ul class="nav nav-page-actions">
+		<li><a href="edit.html"><i class="glyphicon glyphicon-plus"></i> Add Menu</a></li> 
+	</ul>
+	
+	<div class="wrap">
+		<div class="page-header"><h1>Menus</h1></div>
+		
+		<cms:DataGrid id="dg_menus" tableClass="table" emptyTemplateWrapClassId="panel-content">
+			<Columns rowClass="hover-show-invisible">
+				<Column headerText="Name"><![CDATA[
+					<a href="items.html?menuid=<Data field="id" />"><Data field="name" /></a>
+					<a href="edit.html?id=<Data field="id" />" class="invisible"><i class="glyphicon glyphicon-pencil"></i></a>
+				]]></Column>
+				<NoResults><![CDATA[
+					There are not currently any menus.  <a href="edit.html">Add one now</a>
+				]]></NoResults>
+			</Columns>
+		</cms:DataGrid>
+	</div>
+		
+</cms:Content>

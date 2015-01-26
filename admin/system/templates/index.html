@@ -1,0 +1,32 @@
+<@Page templateId="admin-default" title="Templates">
+<cms:Content placeHolderId="ph_admin_main">
+	
+	<ul class="nav nav-page-actions">
+		<li><a href="edit.html"><i class="glyphicon glyphicon-plus"></i> Add Template</a></li>
+	</ul>
+	
+	<div class="wrap">
+		<div class="page-header"><h1>Templates</h1></div>
+	
+		<cms:DataList id="dl_templates">
+			<Template>
+				<HeaderTemplate><![CDATA[
+					<table class="table table-striped">
+						<tr>
+							<th>Name</th>
+							<th>File</th>
+							<th>Type</th>
+						</tr>
+				]]></HeaderTemplate>
+				<ItemTemplate><![CDATA[
+					<tr>
+						<td><a href="edit.html?tplid=<Data field="id" />"><Data field="name" /></a></td>
+						<td><Data field="file_src" /></td>
+						<td><Data field="type" /></td>
+					</tr>
+				]]></ItemTemplate>
+				<FooterTemplate><![CDATA[</table>]]></FooterTemplate>
+			</Template>
+		</cms:DataList>
+	</div>
+</cms:Content>

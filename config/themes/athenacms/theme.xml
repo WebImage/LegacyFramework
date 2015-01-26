@@ -1,0 +1,155 @@
+<theme-config name="AthenaCMS Default">
+	<templates baseDir="~/templates/themes/athenacms/">
+		<template id="admin-default" file="admin/default.tpl">
+			<stylesheets>
+				<add file="%DIR_WS_GASSETS_CSS%bootstrap.min.css" />
+				<add file="%DIR_WS_GASSETS_CSS%bootstrap-theme.min.css" />
+				<add file="%DIR_WS_ADMIN_ASSETS_CSS%default.css" />
+				<!--
+				<add file="%DIR_WS_ADMIN_ASSETS_CSS%themes/athenacms/template.css" />
+				<add file="%DIR_WS_ADMIN_ASSETS_CSS%themes/athenacms/controls.css" />
+				<add file="%DIR_WS_ADMIN_ASSETS_CSS%themes/athenacms/jquery-ui-1.8.17.custom.css" />
+				-->
+			</stylesheets>
+			<controls>
+				<control classPath="~/controls/literalcontrol/literalcontrol.php" className="LiteralControl" placeHolderId="ph_main">
+					<callFunction function="setText">
+						<parameters>
+							<parameter name="text">The text to add to the page!</parameter>
+						</parameters>
+					</callFunction>
+				</control>
+			</controls>
+		</template>
+		<template id="admin-assetmanager" file="admin/assetmanager.tpl">
+			<stylesheets>
+				<add file="%DIR_WS_ADMIN_ASSETS_CSS%themes/athenacms/assetmanager.css" />
+				<!--<add file="%DIR_WS_ADMIN_ASSETS_CSS%themes/athenacms/controls.css" />-->
+			</stylesheets>
+		</template>
+	</templates>
+	
+	<!-- Admin mode of content management -->
+	<adminContent>
+		<stylesheets>
+			<!--<add file="%DIR_WS_ADMIN_ASSETS_CSS%themes/athenacms/controls.css" />-->
+			<add file="%DIR_WS_ADMIN_ASSETS_CSS%themes/blue/admincontrols.css" />
+		</stylesheets>
+		<!--<images baseDir="%DIR_WS_ADMIN_ASSETS_IMG%themes/blue/editablecontrols/" />-->
+	</adminContent>
+	
+	<charts>
+		<colors>
+			<add color="000000" />
+			<add color="333333" />
+			<add color="666666" />
+			<add color="999999" />
+			<add color="aaaaaa" />
+			<add color="cccccc" />
+			<add color="e1e1e1" />
+		</colors>
+	</charts>
+	<!--
+	<stylesheets>
+		<add file="%DIR_WS_ADMIN_ASSETS_CSS%default.css" />
+	</stylesheets>
+	-->
+	<wrapClassIds>
+		<!-- Template -->
+		<wrapClass id="page-title-container" class="page-title-l&gt;page-title-r&gt;page-title-bar" />
+		<wrapClass id="page-title" class="page-title" />
+		
+		<!--<wrapClass id="page-actionbar" class="mypage-actionbar" />
+		<wrapClass id="page-actionbar-action" class="mypage-actionbar-action" />-->
+		<wrapClass id="page-actionbar" class="mypage-actionbar" />
+		<wrapClass id="page-actionbar-action" class="mypage-actionbar-action" />
+		
+		<!-- Controls -->
+		<wrapClass id="panel" class="panel panel-default" />
+		<wrapClass id="panel-header" class="panel-heading" />
+		<wrapClass id="panel-header2" class="" />
+		<wrapClass id="panel-title" class="mypanel-title" />
+		<wrapClass id="panel-description" class="mypanel-description" />
+		<wrapClass id="panel-body" class="mypanel-body-outer&gt;mypanel-body-inner&gt;mypanel-body-inner2" />
+		<wrapClass id="panel-body-content" class="mypanel-body-outer&gt;mypanel-body-inner&gt;mypanel-body-inner2&gt;mypanel-body-content" />
+		<wrapClass id="panel-body-options" class="mypanel-body-options" />
+		<wrapClass id="panel-content" class="mypanel-body-content" />
+		<wrapClass id="panel-actionbar-bottom" class="mypanel-actionbar-bottom&gt;mypanel-actionbar-bottom-inner" />
+		
+		<wrapClass id="actionbar" class="myactionbar-container&gt;myactionbar" />
+		<wrapClass id="actionbar-action" class="myaction" />
+		
+		<wrapClass id="datagrid-noresults" class="datagrid-noresults" />
+		
+		<!-- Editable Regions -->
+		<wrapClass id="editable-region" class="editable-region&gt;editable-region-inner" />
+		<!--
+		<wrapClass id="editable-control-toolbar" class="editable-control-toolbar" />
+		-->
+			<!--
+			<buildClasses>
+				<class key="header" value="true" default="true" />
+			</buildClasses>
+			wrapClassId="panel[header=true,footer=true]
+			-->
+
+		<!-- // Panels // -->
+		
+		<!--
+		Referencing another wrapClassId
+		<wrapClass id="page-title-2" refWrapClassId="page-title" />
+		-->
+		<!--
+		<@Page masterPageFile="..." />
+		<@Page themeTemplateKey="default" />
+		<@Page themeTemplateFile="admin/default.tpl" />
+		
+		<@Page templateFile="admin/defaul.tpl" />
+		<@Page templateKey="admin_default" />
+		
+		<templates>
+			<template id="admin_default" file="admin/default.tpl" preProcessor="" postProcessor="" />
+		</templates>
+		
+		Classes / Functions
+		- - - - - - - - - - -
+		ClassWrapHelper::wrapContainerUsingId('page-title-container');
+		ClassWrapHelper::wrapInsideContainerUsingId('page-title-container');
+		
+		<wrapOutput
+		
+		outsideOfContainer -> For example, on links <a href="#">Test</a>  we would want wrapWithClassesOutsideOfContainer('mylink', '<a href="#">Test</a>') to output '<div class="mylink-outer"><a href="#">Test</a></div>
+		insideOfContainer -> For example, on a div container <div id="test">Test</div> we would want wrapWithClassesInsideContainer('mylink', '<div id="test">Test</div> to output <div id="test" class="mylink"><div class="mylink-inner">Test</div></div>
+		
+		
+		Possible IDS
+		- - - - - - - - - - - 
+		ErrorControl
+		NotificationControl
+		Breadcrumb
+		
+		
+		panel
+			panel-header
+				panel-title
+			panel-body
+			panel-body-content
+			panel-footer
+		panel-no-header
+		
+		tabbed-panel
+				
+		panel-stack (not used yet)
+		
+		panel-stack-bottom
+		
+			PanelTitleBar
+		DataGridPanel
+		CollabsiblePanel
+		TabbedPanel
+			TabSection
+			TabBody
+			
+		-->
+	</wrapClassIds>
+</theme-config>

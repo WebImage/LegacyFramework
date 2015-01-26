@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config version="1.0" friendlyName="Content">
+	<configurables>
+		<configurable var="class" type="Input" label="CSS Class" helpText="The CSS class that will wrap this content module" />
+		<!--
+		<configurable var="headerFormat" type="Select" label="Header Format">
+			<option key="none" text="Do Not Display" />
+			<option key="h1" text="Heading 1" />
+			<option key="h2" text="Heading 2" />
+			<option key="h3" text="Heading 3" />
+			<option key="h4" text="Heading 4" />
+			<option key="h5" text="Heading 5" />
+			<option key="h6" text="Heading 6" />
+		</configurable>
+		-->
+	</configurables>
+</config>

@@ -1,0 +1,24 @@
+<model name="page_controls" version="1">
+	<fields>
+		<field name="config" type="text" />
+		<field name="control_id" relatedModel="controls" />
+		<field name="created" />
+		<field name="created_by" />
+		<field name="favorite_title" type="varchar" length="100" />
+		<field name="id" />
+		<field name="is_draft" type="tinyint" required="true" default="0" /> <!-- Deprecatd -->
+		<field name="is_favorite" type="tinyint" required="true" default="0" />
+		<field name="mirror_id" relatedModel="page_controls" required="true" default="0" />
+		<field name="page_id" relatedModel="pages" required="true" />
+		<field name="placeholder" type="varchar" length="50" />
+		<field name="published_end" type="datetime" />
+		<field name="published_start" type="datetime" />
+		<field name="sortorder" />
+		<!--<field name="template_placeholder_id" />-->
+		<field name="status" type="varchar" length="20" default="published" /> <!-- See /data/pagecontrol/pagecontrol_struct.php for options -->
+		<field name="template_id" />
+		<field name="title" type="varchar" length="100" />
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>
+</model>

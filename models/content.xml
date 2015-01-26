@@ -1,0 +1,23 @@
+<model name="content" i18n="optional" version="1">
+	<fields>
+		<!--<field name="abstract" type="text" i18n="true" />
+		<field name="category_id" />
+		<field name="checked_out" type="tinyint" />
+		<field name="checked_out_time" type="datetime" />-->
+		<field name="created" />
+		<field name="created_by" />
+		<field name="description" type="text" i18n="true" />
+		<field name="id" />
+		<!--<field name="meta_desc" type="text" i18n="true" />
+		<field name="meta_key" type="text" i18n="true" />
+		<field name="publish_end" type="datetime" />
+		<field name="publish_start" type="datetime" />
+		<field name="published" type="tinyint" />
+		<field name="section_id" />-->
+		<!-- <field name="site_id" relatedModel="sites" /> -->
+		<!--<field name="sort_order" />-->
+		<field name="title" type="varchar" length="100" i18n="true" />
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>
+</model>

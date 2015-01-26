@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<!-- config/fileTypes/fileType[@mimeType] is optional at this point -->
+	<fileTypes>
+		<fileType id="img" name="Image" classFile="~/libraries/assets/assettypes/image.php" className="CWI_ASSETS_ImageAsset" admin="%DIR_WS_ADMIN%assetmanager/">
+			<extensions>
+				<extension fileExt="jpeg" mimeType="image/jpeg" />
+				<extension fileExt="jpg" mimeType="image/jpeg" />
+				<extension fileExt="gif" mimeType="image/gif" />
+				<extension fileExt="png" mimeType="image/png" />
+			</extensions>
+			<variations>
+				<variation name="am-thumbnail" />
+			</variations>
+		</fileType>
+		<fileType id="pdf" name="PDF" classFile="~/libraries/assets/assettypes/linked.php" className="CWI_ASSETS_LinkedAsset" mimeType="application/pdf">
+			<extensions>
+				<extension fileExt="pdf" />
+			</extensions>
+		</fileType>
+		<fileType id="doc" name="Word" classFile="~/libraries/assets/assettypes/linked.php" className="CWI_ASSETS_LinkedAsset" mimeType="application/msword">
+			<extensions>
+				<extension fileExt="doc" />
+				<extension fileExt="docx" mimeType="application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+			</extensions>
+		</fileType>
+		<fileType id="xls" name="Excel" classFile="~/libraries/assets/assettypes/linked.php" className="CWI_ASSETS_LinkedAsset">
+			<extensions>
+				<extension fileExt="xls" />
+				<extension fileExt="xlsx" />
+			</extensions>
+		</fileType>
+		<fileType id="fla" name="Flash" classFile="~/libraries/assets/assettypes/flash.php" className="CWI_ASSETS_FlashAsset">
+			<extensions>
+				<extension fileExt="swf" />
+				<extension fileExt="fla" />
+			</extensions>
+		</fileType>
+		<!--
+		<fileType id="css" name="Cascading Style Sheet" classFile="~/libraries/assets/assettypes/css.php" className="CWI_ASSETS_CssAsset">
+			<extensions>
+				<extension fileExt="css" mimeType="text/css" />
+			</extensions>
+		</fileType>
+		<fileType id="js" name="Javascript" classFile="~/libraries/assets/assettypes/javascript.php" className="CWI_ASSETS_Javascript">
+			<extensions>
+				<extension fileExt="js" mimeType="text/javascript" />
+			</extension>
+		</fileType>
+		-->
+	</fileTypes>
+	<variations>
+		<!-- Example options:
+		<variation key="test" auto="false">
+			<step method="crop">
+				<parameter name="left" value="50" />
+				<parameter name="top" value="50" />
+				<parameter name="width" value="200" />
+				<parameter name="height" value="200" />
+			</step>
+			<step method="resize">
+				<parameter name="width" value="100" />
+				<parameter name="height" value="100" />
+			</step>
+			<step method="scaleAndCrop">
+				<parameter name="width" value="100" />
+				<parameter name="height" value="100" />
+			</step>
+		</variation>
+		-->
+		<!--
+			Variation Paramters:
+			@param key (string, required) - Unique name used to look up variation
+			@param auto (boolean, default=false) - Whether the variation should automatically be applied
+		-->
+		<variation name="am-thumbnail">
+			<!--
+				Step Parameters:
+				@param method (string, required) - The method to call on /libraries/files.php:ImageResource			
+			-->
+			<step method="scaleAndCrop">
+				<!--
+					Parameters: must be passed in order
+					@param name (string, optional) - A name used for readability only within this XML file
+					@param value (string, required) - The value to pass to the above method
+				-->
+				<parameter name="width" value="100" />
+				<parameter name="height" value="100" />
+			</step>
+		</variation>
+	</variations>
+</config>

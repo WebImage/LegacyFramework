@@ -1,0 +1,11 @@
+<model name="page_control_assets" version="1">
+	<fields>
+		<field name="asset_id" relatedModel="assets" required="true" default="0" />
+		<field name="created" />
+		<field name="created_by" />
+		<field name="id" />
+		<field name="page_control_id" relatedModel="page_controls" required="true" default="0" />
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>
+</model>

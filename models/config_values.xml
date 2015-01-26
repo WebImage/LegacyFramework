@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model name="config_values" version="1">
+	<fields>
+		<field name="field" type="varchar" length="255" primaryKey="true" />
+		<field name="group_key" type="varchar" length="255" primaryKey="true" />
+		<field name="locked" type="tinyint" required="true" default="0" />
+		<field name="plugin_id" required="true" default="0" relatedModel="plugins" primaryKey="true" />
+		<field name="value" type="text" />
+	</fields>
+</model>

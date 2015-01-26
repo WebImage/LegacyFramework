@@ -1,0 +1,41 @@
+<model name="pages" i18n="optional" version="1">
+	<fields>
+		<field name="created" />
+		<field name="created_by" />
+		<field name="enable" type="tinyint" required="true" default="1" />
+		<field name="id" />
+		<field name="is_section" type="tinyint" required="true" default="0" />
+		<field name="is_secure" type="tinyint" required="true" default="0" />
+		<field name="meta_desc" type="text" i18n="true" />
+		<field name="meta_key" type="text" i18n="true" />
+		<field name="page_key" type="varchar" length="100" />
+		<field name="page_left" />
+		<field name="page_right" />
+		<field name="page_url" type="varchar" length="255" required="true" default="" />
+		<field name="parent_id" relatedModel="pages" required="true" default="0" />
+		<!--<field name="service_handler_id" required="true" default="0" />-->
+		<field name="service_handler_class" type="varchar" length="100" />
+		<field name="short_title" type="varchar" length="255" required="true" default="" i18n="true" />
+		<!-- <field name="site_id" relatedModel="sites" /> -->
+		<field name="sortorder" required="true" default="1" />
+		<field name="status" type="varchar" length="20" default="published" />
+		<field name="template_id" relatedModel="templates" />
+		<field name="title" type="varchar" length="100" i18n="true" />
+		<field name="type" type="char" length="1" required="true" default="S" /> <!-- See /data/page/page_struct.php for options -->
+		<field name="updated" />
+		<field name="updated_by" />
+ 	</fields>
+	<data>
+		<enable>1</enable>
+		<is_section>1</is_section>
+		<page_key>index.html</page_key>
+		<page_url>/index.html</page_url>
+		<template_id>1</template_id>
+		<title>Default Site Loaded</title>
+	</data>
+	<indexes>
+		<index name="page_page_url">
+			<field name="page_url" length="100" />
+		</index>
+	</indexes>
+</model>

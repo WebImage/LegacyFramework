@@ -1,0 +1,19 @@
+<@Page templateId="admin-default">
+<cms:Content placeHolderId="ph_page_actions" wrapClassId="page-actionbar">
+	<cms:WrapOutput wrapClassId="page-actionbar-action"><a href="index.html"><img src="<?php echo ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_IMG') ?>icons/i_back.gif" align="absmiddle" /> Back to Plugins</a></cms:WrapOutput>
+</cms:Content>
+<cms:Content placeHolderId="ph_admin_main">
+	<cms:WrapOutput wrapClassId="panel">
+		<cms:WrapOutput wrapClassId="panel-header">
+			<cms:WrapOutput wrapClassId="panel-title">Required Plugins</cms:WrapOutput>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-body">
+			<cms:DataGrid id="dg_requirements" tableClass="table table-striped">
+				<Columns>
+					<Column headerText="Name" field="display_name" />
+					<Column headerText="Status" field="status" width="100" />
+				</Columns>
+			</cms:DataGrid>
+		</cms:WrapOutput>
+	</cms:WrapOutput>
+</cms:Content>

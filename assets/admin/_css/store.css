@@ -1,0 +1,150 @@
+div.shipment-panel {
+	border:1px solid #000;
+	}
+table.shipment-panel {
+	background-color:#fff;
+	}
+div.shipment-panel-header {
+	background-color:#3f2a05;
+	border:1px solid #261902;
+	border-bottom:0;
+	color:#ffcc00;
+	font-size:1.2em;
+	font-weight:bold;
+	padding:7px;
+	}
+.shipping-information {
+	background-color:#ffeece;
+	border:1px solid #261902;
+	}
+.shipping-information h1, .shipping-information h2 {
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	margin:0;
+	}
+.shipping-information h1 {
+	background:url(/assets/admin/img/store/bg_shipment-information.gif) left top repeat-x #d6b883;
+	font-size:1.2em;
+	padding:10px;
+	}
+.shipping-information h2 {
+	background-color:#745c31;
+	border:1px solid #261902;
+	color:#fff;
+	font-size:1em;
+	padding:7px 10px;
+	}
+.shipping-information-body {
+	color:#261902;
+	padding:14px 7px;
+	}
+.shipping-information-body table.shipping-order-details { 
+	border-collapse:collapse;
+	margin:5px 0;
+	}
+.shipping-information-body table.shipping-order-details td { 
+	border-bottom:1px solid #aa7922;
+	border-top:1px solid #aa7922;
+	padding:5px 0;
+	}
+table.ship-to td {
+	font-size:1.2em;
+	padding-right:5px;
+	}
+.order-details h1 {
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:1.5em;
+	margin:0;
+	margin-left:10px;
+	padding:20px 0 6px 0;
+	}
+
+/*
+	div.module {
+		margin-bottom:20px;
+		}
+	div.order-snapshot { 
+		padding:2px;
+		}
+	div.module h2 { 
+		border-bottom:1px solid #000;
+		margin:8px 0;
+		padding:0 8px;
+		padding-bottom:3px;
+		}
+	td.field {
+		background-color:#ccffcc;
+		padding:5px;
+		padding-right:20px;
+		}
+	td.value {
+		padding:5px;
+		}
+	span.field {
+		color:#339933;
+		font-weight:bold;
+		}
+	.sideview td.field {
+		background-color:#e1e1e1;
+		color:#339933;
+		font-weight:bold;
+		}
+	.sideview td.value {
+		padding:10px 2px;
+		}
+	*/
+	table.order-summary {
+		border:1px solid #787878;
+		border-collapse:collapse;
+		}
+	table.order-summary td {
+		padding:8px;
+		}
+	table.order-summary .label {
+		font-size:.8em;
+		color:#000;
+		}
+	table.order-summary .value, table.order-summary .value a {
+		font-size:1.2em;
+		line-height:1.4em;
+		font-weight:bold;
+		color:#000;
+		}
+	table.order-summary .desc {
+		color:#777;
+		font-size:.8em;
+		font-style:italic;
+		}
+/*
+	.order-section-header {
+		background-color:#b3d9ff;
+		border:1px solid #21638c;
+		border-top-width:0;border-bottom-width:0;
+		color:#21638c;
+		font-weight:bold;
+		padding:5px;
+	}
+*/
+	.order-summary-cell, .order-summary-cell-alt {
+		background-color:#f0f0f0;
+		border-right:1px solid #ddd;
+		padding:0;
+		}
+	.order-summary-cell-alt {
+		background-color:#efefef;
+		}
+	.order-summary-status {
+		background-color:#d6f8a6;
+		}
+	.order-summary-select { font-size:1.2em; }
+	
+	.datagrid td.sku-status-none {
+		background-color:#ffdddd;
+		}
+	.datagrid td.sku-status-partial {
+		background-color:#ffff99;
+		}
+	.datagrid td.sku-status-allshipped {
+		background-color:#d6f8a6;
+		}
+	
+		$order_sku_shipment->shipped_status_class = 'sku-status-full';

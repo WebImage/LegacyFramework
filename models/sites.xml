@@ -1,0 +1,18 @@
+<model name="sites" version="1">
+	<fields>
+		<field name="company_id" relatedModel="companies" />
+		<field name="config" type="text" />
+		<field name="created" />
+		<field name="created_by" />
+		<field name="domain" type="varchar" length="255" />
+		<field name="enable" type="tinyint" required="true" default="1" />
+		<field name="environment" type="varchar" length="15" />
+		<field name="id" />
+		<field name="is_remote" type="tinyint" required="true" default="0" />
+		<field name="key" type="varchar" length="20" /> <!-- Deprecate -->
+		<field name="name" type="varchar" length="255" />
+		<field name="parent_id" required="true" default="0" />
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>
+</model>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<theme-config name="Blue Theme">
+	<stylesheets>
+		<add file="%DIR_WS_ADMIN_ASSETS_CSS%themes/athenacms/default.css" />
+		<add file="%DIR_WS_GASSETS_CSS%themes/global/systemwide.css" />
+	</stylesheets>
+	<wrapClassIds>
+		<wrapClass id="mypanel" class="blue1&gt;blue2&gt;blue3&gt;blue4" />
+	</wrapClassIds>
+</theme-config>

@@ -1,0 +1,18 @@
+<model name="membership_parameters" version="1">
+	<fields>
+		<field name="created" />
+		<field name="created_by" />
+		<field name="id" />
+		<field name="membership_id" relatedModel="memberships" />
+		<field name="parameter" type="varchar" length="50" />
+		<field name="updated" />
+		<field name="updated_by" />
+		<field name="value" type="text" />
+	</fields>
+	<indexes>
+		<index name="membership">
+			<field name="membership_id" />
+			<field name="parameter" />
+		</index>
+	</indexes>
+</model>

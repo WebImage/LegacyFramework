@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<theme-config name="Blue Theme">
+	<!--
+	<stylesheets>
+		<add file="%DIR_WS_ADMIN_ASSETS_CSS%themes/athenacms/default.css" />
+		<add file="%DIR_WS_GASSETS_CSS%themes/global/systemwide.css" />
+	</stylesheets>
+	<wrapClassIds>
+		<wrapClass id="mypanel" class="blue1&gt;blue2&gt;blue3&gt;blue4" />
+	</wrapClassIds>
+	-->
+	
+	<templates baseDir="~/templates/themes/athenacms/">
+		<template id="admin-default" file="admin/default.tpl">
+			<stylesheets>
+				<add file="%DIR_WS_ADMIN_ASSETS_CSS%themes/athenacms/template.css" />
+				<add file="%DIR_WS_ADMIN_ASSETS_CSS%themes/athenacms/controls.css" />
+			</stylesheets>
+		</template>
+		<template id="admin-assetmanager" file="admin/assetmanager.tpl">
+			<stylesheets>
+				<add file="%DIR_WS_ADMIN_ASSETS_CSS%themes/athenacms/assetmanager.css" />
+			</stylesheets>
+		</template>
+	</templates>
+	
+	<charts>
+		<colors>
+			<add color="000000" />
+			<add color="333333" />
+			<add color="666666" />
+			<add color="999999" />
+			<add color="aaaaaa" />
+			<add color="cccccc" />
+			<add color="e1e1e1" />
+		</colors>
+	</charts>
+	
+	<!-- Admin mode of content management -->
+	<adminContent>
+		<stylesheets>
+			<!--<add file="%DIR_WS_ADMIN_ASSETS_CSS%themes/athenacms/controls.css" />-->
+			<add file="%DIR_WS_ADMIN_ASSETS_CSS%themes/blue/admincontrols.css" />
+		</stylesheets>
+		<!--<images baseDir="%DIR_WS_ADMIN_ASSETS_IMG%themes/blue/editablecontrols/" />-->
+	</adminContent>
+	
+	<wrapClassIds>
+		<!-- Template -->
+		<wrapClass id="page-title-container" class="page-title-l&gt;page-title-r&gt;page-title-bar" />
+		<wrapClass id="page-title" class="page-title" />
+		
+		<wrapClass id="page-actionbar" class="mypage-actionbar" />
+		<wrapClass id="page-actionbar-action" class="mypage-actionbar-action" />
+		
+		<!-- Controls -->
+		<wrapClass id="panel" class="mypanel&gt;mypanel-bottom-l&gt;mypanel-bottom-r" />
+		<wrapClass id="panel-header" class="mypanel-header-l&gt;mypanel-header-r&gt;mypanel-header-center" />
+		<wrapClass id="panel-header2" class="mypanel-header2-outer&gt;mypanel-header2-inner" />
+		<wrapClass id="panel-title" class="mypanel-title" />
+		<wrapClass id="panel-description" class="mypanel-description" />
+		<wrapClass id="panel-body" class="mypanel-body-outer&gt;mypanel-body-inner&gt;mypanel-body-inner2" />
+		<wrapClass id="panel-body-content" class="mypanel-body-outer&gt;mypanel-body-inner&gt;mypanel-body-inner2&gt;mypanel-body-content" />
+		<wrapClass id="panel-body-options" class="mypanel-body-options" />
+		<wrapClass id="panel-content" class="mypanel-body-content" />
+		<wrapClass id="panel-actionbar-bottom" class="mypanel-actionbar-bottom&gt;mypanel-actionbar-bottom-inner" />
+		
+		<wrapClass id="actionbar" class="myactionbar-container&gt;myactionbar" />
+		<wrapClass id="actionbar-action" class="myaction" />
+		
+		<wrapClass id="datagrid-noresults" class="datagrid-noresults" />
+		
+		<!-- Editable Regions -->
+		<wrapClass id="editable-region" class="editable-region&gt;editable-region-inner" />
+		
+	</wrapClassIds>
+</theme-config>

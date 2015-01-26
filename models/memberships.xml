@@ -1,0 +1,33 @@
+<model name="memberships" version="1">
+	<fields>
+		<field name="approved" type="tinyint" required="true" default="0" />
+		<field name="approved_by" required="true" default="0" />
+		<field name="central_login_id" /> <!-- Allows the record to be synced with an external login server -->
+		<field name="comment" type="text" />
+		<field name="created" />
+		<field name="created_by" required="true" default="0" />
+		<field name="email" type="varchar" length="100" />
+		<field name="enable" type="tinyint" required="true" default="1" />
+		<field name="failed_login_attempts" />
+		<field name="id" />
+		<field name="last_activity" type="datetime" />
+		<field name="last_login" type="datetime" />
+		<field name="last_password_changed" type="datetime" />
+		<field name="login_key" type="varchar" length="50" required="true" default="" />
+		<field name="password" type="varchar" length="255" />
+		<field name="password_answer" type="varchar" length="255" />
+		<field name="password_question" type="varchar" length="255" />
+		<!-- <field name="site_id" relatedModel="sites" /> -->
+		<field name="updated" />
+		<field name="updated_by" />
+		<field name="username" type="varchar" length="100" required="true" default="" />
+		<field name="verify_key" type="varchar" length="20" />
+		<field name="visitor_id" />
+	</fields>
+	<data>
+		<row>
+			<username>admin</username>
+			<password>password</password>
+		</row>
+	</data>
+</model>

@@ -1,0 +1,84 @@
+<@Page templateId="admin-default" title="Page Controls">
+<cms:Content placeHolderId="ph_admin_main">
+
+	<ul class="nav nav-page-actions">
+		<li><a href="<?php echo ConfigurationManager::get('DIR_WS_ADMIN') ?>pages/edit.html?pageid=<?php echo Page::get('pageid'); ?>"><i class="glyphicon glyphicon-chevron-left"></i> Back to Page Details</a></li>
+		<li><a href="<?php echo ConfigurationManager::get('DIR_WS_ADMIN') ?>content<?php echo $this_page->page_url ?>"><i class="glyphicon glyphicon-eye-open"></i> Go to Page</a></li>
+	</ul>
+	<div class="wrap">
+		<div class="page-header">
+			<h1><cms:Literal id="lbl_page_title" /></h1>
+			<cms:literal id="lbl_page_url" />
+		</div>
+	
+		<div class="panel panel-default">
+			<div class="panel-heading">Page Controls</div>
+			
+			<cms:DataList id="dl_page_controls" tableClass="table">
+				<Template>
+					<HeaderTemplate><![CDATA[
+						<table cellspacing="0" cellpadding="0" border="0">
+						<tr>
+							<th>Internal ID</th>
+							<th>Placeholder</th>
+							<th>Class</th>
+							<th>Config</th>
+							<th>Mirror</th>
+							<th>Sort Order</th>
+						</tr>
+					]]></HeaderTemplate>
+					<ItemTemplate><![CDATA[
+						<tr>
+							<td><Data field="id"/></td>
+							<td><Data field="placeholder"/></td>
+							<td><Data field="class_name"/></td>
+							<td><Data field="config"/></td>
+							<td><Data field="mirror_id"/></td>
+							<td><Data field="sortorder"/></td>
+						</tr>
+					]]></ItemTemplate>
+					<FooterTemplate><![CDATA[
+						</table>
+					]]></FooterTemplate>
+					<EmptyTemplate><![CDATA[
+						There are not currently any controls associated with this page.
+					]]></EmptyTemplate>
+				</Template>
+			</cms:DataList>
+		</div>
+		
+		<script type="text/javascript" language="javascript">
+			function getPageControls(field) {
+				$.get(
+					'/admin/pages/ajax_pagecontrols.html?pageid=' + field.options[field.selectedIndex].value,
+					function(data) {
+						$('#control_from_page').html(data);
+					});
+			}
+		</script>
+		<form method="post" action="pagecontrols.html">
+			<input type="hidden" name="pageid" value="<?php echo Page::get('pageid') ?>" />
+			
+			<cms:WrapOutput wrapClassId="panel">
+				<cms:WrapOutput wrapClassId="panel-header">
+					<cms:WrapOutput wrapClassId="panel-title">Clone Page Controls</cms:WrapOutput>
+					<cms:WrapOutput wrapClassId="panel-description">Page parameters are for advanced use only.</cms:WrapOutput>
+				</cms:WrapOutput>
+				<cms:WrapOutput wrapClassId="panel-body">
+					<table cellspacing="0" cellpadding="0" border="0" class="table">
+						<tr>
+							<th>Placeholder</th>
+							<th>From Page</th>
+							<th>Clone Control</th>
+						</tr>
+						<tr>
+							<td><cms:Select struct="pagecontrol" structKey="placeholder" keyField="id" textField="id" id="cbo_placeholder" /></td>
+							<td><cms:Select struct="pagecontrol" structKey="page_id" id="cbo_pages" keyField="id" textField="title" defaultText="-- Select a Page -- " onchange="getPageControls(this)" /></td>
+							<td><div id="control_from_page"></div></td>
+						</tr>
+					</table>
+				</cms:WrapOutput>
+			</cms:WrapOutput>
+		</form>
+	</div>
+</cms:Content>

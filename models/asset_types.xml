@@ -1,0 +1,35 @@
+<model name="asset_types" version="1">
+	<fields>
+		<field name="created" />
+		<field name="created_by" />
+		<field name="extensions" type="varchar" length="50" />
+		<field name="folder" type="varchar" length="20" />
+		<field name="id" />
+		<field name="name" type="varchar" length="20" />
+		<!-- <field name="site_id" relatedModel="sites" /> -->
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>
+	<data>
+		<row>
+			<extensions>jpg,jpeg,gif,png,bmp</extensions>
+			<name>Image</name>
+		</row>
+		<row>
+			<extensions>pdf</extensions>
+			<name>PDF</name>
+		</row>
+		<row>
+			<extensions>doc,docx</extensions>
+			<name>DOC</name>
+		</row>
+		<row>
+			<extensions>xls</extensions>
+			<name>Spreadsheet</name>
+		</row>
+		<row>
+			<extensions>fla,flv,swf</extensions>
+			<name>Flash</name>
+		</row>
+	</data>
+</model>

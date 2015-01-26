@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model name="form_entries">
+	<fields>
+		<field name="created" />
+		<field name="created_by" />
+		<field name="form_id" />
+		<field name="id" />
+		<field name="ip" type="varchar" length="45" />
+		<field name="page_id" />
+		<field name="page_url" type="varchar" length="255" />
+		<field name="page_referrer" type="varchar" length="255" />
+		<field name="read" type="tinyint" required="true" default="0" />
+		<field name="stat_id" /> <!-- Tie form submission to stats user - should it be stat_session_id? -->
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>
+</model>

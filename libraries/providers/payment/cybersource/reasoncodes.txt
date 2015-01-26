@@ -1,0 +1,41 @@
+These are known reason codes for Cybersource as of 2/20/2009
+
+Reason Code	Description
+ 
+100		Successful transaction.
+
+101		The request is missing one or more required fields. 
+		Possible action: See the reply fields missingField_0...N for which fields are missing. Resend the request with the complete information. See Missing or Invalid Fields.
+
+102		One or more fields in the request contains invalid data.
+		Possible action: See the reply fields invalidField_0...N for which fields are invalid. Resend the request with the correct information. See Missing or Invalid Fields.
+
+150		Error: General system failure. 
+		See the documentation for your CyberSource client (SDK) for information about how to handle retries in the case of system errors.
+
+151		Error: The request was received but there was a server timeout. This error does not include timeouts between the client and the server.
+		Possible action: To avoid duplicating the transaction, do not resend the request until you have reviewed the transaction status in the Enterprise Business Center. See the documentation for your CyberSource client (SDK) for information about how to handle retries in the case of system errors.
+
+152		Error: The request was received, but a service did not finish running in time. 
+		Possible action: To avoid duplicating the transaction, do not resend the request until you have reviewed the transaction status in the Enterprise Business Center. See the documentation for your CyberSource client (SDK) for information about how to handle retries in the case of system errors.
+
+223		A request was made to credit an order for which there is no corresponding, unused payment record. Occurs if there was not a previously successful payPalButtonCreateService or payPalPreapprovedPaymentService request, or if the previously successful payment has already been used by another payPalCreditService request.
+		Possible action: Verify that have not already credited this payment, or verify that you are crediting the correct payment.
+
+233		General decline by the processor.
+		Possible action: Request a different form of payment.
+
+234		There is a problem with your CyberSource merchant configuration.
+		Possible action: Do not resend the request. Contact Customer Support to correct the configuration problem.
+
+236		Processor failure. 
+		Possible action: Wait a few minutes and resend the request.
+
+239		The requested transaction amount must match the previous transaction amount. 
+		Possible action: Correct the amount and resend the request.
+
+241		The request ID is invalid.
+		Possible action: Verify you are using the correct request ID.
+
+250		Error: The request was received, but there was a timeout at the payment processor.
+		Possible action: To avoid duplicating the transaction, do not resend the request until you have reviewed the transaction status in the Enterprise Business Center.

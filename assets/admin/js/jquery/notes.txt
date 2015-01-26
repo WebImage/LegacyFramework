@@ -1,0 +1,37 @@
+1.8.1
+
+
+UI Core
+	Core
+	Widget
+	Mouse
+	Position
+Interactions
+	Draggable
+	Dropable
+	Resizable	
+	Selectable
+	Sortable
+Widgets
+	Accordian
+	Autocomplete
+	Button
+	Dialog
+	Slider
+	Tabs
+	Datepicker
+	Progressbar
+Effects
+	Effects Core
+	Effects "Blind"
+	Effects "Bounce"
+	Effects "Clip""
+	Effects "Drop"
+	Effects "explode"
+	Effects "Fold"
+	Effects "Highlight"
+	Effects "Pulsate"
+	Effects "Scale"
+	Effects "Shake"
+	Effects "Slide"
+	Effects "Transfer"

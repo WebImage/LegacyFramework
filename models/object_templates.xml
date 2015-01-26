@@ -1,0 +1,13 @@
+<model name="object_templates" instanceName="object_template" version="1">
+	<fields>
+		<field name="created" />
+		<field name="created_by" />
+		<field name="locale" type="varchar" length="10" />
+		<field name="profile" type="varchar" length="20" />
+		<field name="object_id" />
+		<field name="object_tag" type="varchar" length="20" />
+		<field name="template_id" />
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>
+</model>

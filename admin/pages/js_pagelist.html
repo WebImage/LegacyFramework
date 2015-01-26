@@ -1,0 +1,55 @@
+<?php
+$callback = Page::get('callback');
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Asset Manager</title>
+<script type="text/javascript">
+function Page(id, title, link, full_link) {
+	this.id = id;
+	this.title = title;
+	this.pageUrl = link;
+	this.fullLink = full_link;
+}
+Page.prototype.setId = function(id) { this.id = id; }
+Page.prototype.setTitle = function(title) { this.title = title; }
+Page.prototype.setPageUrl = function(page_url) { this.pageUrl = page_url; }
+Page.prototype.setFullLink = function(link) { this.fullLink = link; }
+
+Page.prototype.getId = function() { return this.id; }
+Page.prototype.getTitle = function() { return this.title; }
+Page.prototype.getPageUrl = function() { return this.pageUrl; }
+Page.prototype.getFullLink = function() { return this.fullLink; }
+
+function createPage(id, title, link, full_link) {
+	page = new Page(id, title, link, full_link);
+	<?php
+	if (strlen($callback) > 0) {
+		echo $callback . ';';
+		?>
+		window.close();
+		<?php
+	} else {
+	?>
+	alert('A callback function was not specified.');
+	return false;
+	<?php
+	}
+	?>
+}
+</script>
+</head>
+<body>
+<cms:DataList id="dl_pages">
+	<Template>
+		<ItemTemplate><![CDATA[
+			<div style="border-bottom:1px solid #ccc;padding:5px 0;">
+				<Data field="space" /><Data field="icon" /> <a href="#" onclick="createPage('<Data field="id" />', '<Data field="title" />', '<Data field="page_url" />', '<Data field="full_link" />');return false;"><strong><Data field="title" /></strong></a><br />
+			</div>
+		]]></ItemTemplate>
+	</Template>
+</cms:DataList>
+</body>
+</html>

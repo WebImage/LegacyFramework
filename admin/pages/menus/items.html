@@ -1,0 +1,111 @@
+<@Page templateId="admin-default" title="Menu Items">
+
+<cms:Content placeHolderId="ph_admin_main">
+
+	<style type="text/css">
+
+		.menuitem-placeholder {
+			background-color: #cfcfcf;
+			outline:1px dashed #ccc;
+		}
+		.menuitem-placeholder-nodrop {
+			background-color:#c99;
+			outline:1px dashed #c00;
+		}
+
+		.ui-nestedSortable-error {
+			background:#fbe3e4;
+			color:#8a1f11;
+		}
+
+		ol.editablemenu {
+			margin: 0;
+			padding: 0;
+			padding-left: 30px;
+		}
+
+		ol.editablemenu, ol.editablemenu ol {
+			margin: 0 0 0 25px;
+			padding: 0;
+			list-style-type: none;
+		}
+
+		ol.editablemenu {
+			margin:0;
+		}
+
+		.editablemenu li {
+			margin: 7px 0 0 0;
+			padding: 0;
+		}
+
+		.editablemenu li div.menu-row  {
+			border: 1px solid #ccc;
+			padding: 3px;
+			margin: 0;
+			cursor: move;
+		}
+		.item-name { font-weight:bold; }
+		
+		.item-name { display:inline-block; margin-right:10px; }
+		.item-url { display:inline-block; }
+		
+	</style>
+
+	<ul class="nav nav-page-actions">
+		<li><a href="index.html"><i class="glyphicon glyphicon-chevron-left"></i> Back to Menus</a></li>
+		<li><a href="#" onclick="$('#menu1').editableMenu('newItem');return false;"><i class="glyphicon glyphicon-plus"></i> Add Menu Item</a></li> 
+	</ul>
+	
+	<div class="wrap">
+		<div class="page-header"><h1>Menu Items for <span id="menu-name"><cms:Literal id="menu_name" /></span></h1></div>
+		
+		<script type="text/javascript">
+			$(document).ready(function() {
+				/*$('#menu-name').clickedit({
+					inputControlDisplay:'inline',
+					placeholder:'<em>Menu Name</em>'
+				});*/
+			
+				$('.editablemenu').editableMenu().editableMenu('newItem');				
+			});
+			function saveMenu($menu) {
+
+				function cancelClick(ev) {
+					ev.preventDefault();
+				}
+				
+				$menu.bind('click', cancelClick).css('opacity', .5);
+				
+				var data = $menu.editableMenu('export');
+				var saveBtn = $('#save-btn');
+				var restoreText = saveBtn.text();
+				saveBtn.text('Saving...');
+				data.action = 'save';
+				data.menu = <?php echo $menu_id; ?>;
+				CWI.Request.sendRequest({
+					data:data,
+					success:function(response) {
+						saveBtn.text(restoreText);
+						$menu.unbind('click', cancelClick).css('opacity', 1);
+					},
+					error:function(response) {
+						saveBtn.text(restoreText);
+						$menu.unbind('click', cancelClick).css('opacity', 1);
+						alert('An error occurred: ' + response.message);
+					}
+				});
+			}
+		</script>
+		
+		<?php echo renderMenu($menu, 'menu1', 'editablemenu'); ?>
+		
+		<p><a href="#" onclick="$('#menu1').editableMenu('newItem');return false;"><i class="glyphicon glyphicon-plus"></i> Add Menu Item</a></p>
+		
+		<p class="m-t">
+			<a href="#" onclick="saveMenu($('#menu1'));return false;" id="save-btn" class="btn btn-primary">Save</a>
+		</p>
+		
+	</div>
+	
+</cms:Content>

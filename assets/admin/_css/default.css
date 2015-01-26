@@ -1,0 +1,741 @@
+/* Admin Styles */
+html, body { height:100%; }
+body {
+	background-color:#0a3d5c;
+	background-position:bottom left;
+	color:#333;
+	margin:0;
+	padding:12px;
+	padding-top:0;
+	padding-bottom:100px;
+	background-attachment:fixed;
+	}
+body, td { 
+	font-family:Verdana,Helvetica,sans-serif;
+	font-size:8.5pt;
+	}
+body, a { color:#666; margin:0; padding:0;}
+h1, h2, h3, h4, h5, h6 { color:#000; font-family:"Lucida Sans","Times New Roman", Times, Verdana, serif; }
+h1 { font-size:x-large; }
+h2 { font-size:large; }
+h3 { font-size:medium; }
+form { margin:0; }
+/**
+ * Template Styles
+ */
+#admin-site-container {
+	margin-top:44px;
+	margin-left:24px;
+	margin-right:24px;
+	}
+#header-bar {
+	background-color:#0a3d5c;
+	position:fixed;
+	left:0;
+	top:0;
+	right:0;
+	height:43px;
+	z-index:1000;
+	}
+#admin-header { display:none; }
+#admin-logo { 
+	float:left;
+	margin-top:6px; 
+	margin-left:14px;
+	width:235px;
+	}
+#site-info {
+	color:#000;
+	height:30px;
+	padding:5px 10px 0 20px;
+	float:right;
+	}
+#site-info div {
+	float:left;
+	}
+#site-info #info-icon { margin-top:5px; margin-right:10px; }
+#site-info #comment-icon { 
+	border-left:1px solid #2b3b35;
+	margin-top:4px;
+	margin-left:12px;
+	padding-left:12px;
+	}
+
+#siteid-editing, #siteid-domain {
+	font-size:11px;
+	line-height:14px;
+	}
+#siteid-editing {
+	color:#94f2fe;
+	}
+#siteid-domain {
+	color:#fff;
+	}
+	
+.page-title-l {
+        background:url(/assets/admin/img/tpl/bg_page-title-l.gif) left top no-repeat #ebebeb;
+        padding-left:3px;
+        }
+.page-title-r {
+        background:url(/assets/admin/img/tpl/bg_page-title-r.gif) right top no-repeat #ebebeb;
+        padding-right:3px;
+        }
+.page-title-bar {
+        background-color:#ebebeb;
+        border-top:1px solid #d7d6d6;
+        font-family:"Century Gothic",Verdana, Arial, Helvetica, sans-serif;
+        _height:18px;
+        _padding:9px;
+        height:40px;
+        }
+.page-title {
+        color:#404040;
+        float:left;
+        font-size:18px;
+        font-weight:bold;
+        height:18px;
+        padding:11px 0 0 9px;
+        }
+
+#ph_page_actions {
+	float:right;
+	}
+#ph_page_actions .page-actionbar img { border:0; }
+#ph_page_actions .page-actionbar {
+	float:left;
+	}
+#ph_page_actions .page-actionbar .action {
+	background:url(/assets/admin/img/menus/pageaction/b_action.gif) top left no-repeat;
+	float:left;
+	margin-left:10px;
+	margin-top:4px;
+	padding-left:10px;
+	}
+#ph_page_actions .page-actionbar .action a {
+	background:url(/assets/admin/img/menus/pageaction/b_action.gif) top right no-repeat;
+	display:block;
+	float:left;
+	font-size:12px;
+	height:12px;
+	line-height:12px;
+	padding:8px 10px 12px 10px;
+	padding-left:0;
+	text-decoration:none;
+	}
+	
+#admin-body-container {
+	background-color:#fff;
+	padding:10px;
+	}
+/**
+ * Theme Specific Standard Page Controls
+ */
+.breadcrumb {
+	background-color:#f7f7f7;
+	border:1px solid #d7d6d6;
+	height:30px;
+	}
+.breadcrumb span.breadcrumb-element {
+	background:url(/assets/admin/img/tpl/breadcrumb-divider.gif) right center no-repeat;
+	cursor:pointer;
+	display:block;
+	float:left;
+	font-size:10px;
+	height:10px;
+	padding:10px 22px 10px 12px;
+	}
+.breadcrumb a.breadcrumb-link {
+	text-decoration:none;
+	}
+
+.spacetop {
+	margin-top:7px;
+	}
+.panel {
+	margin:7px 0;
+	}
+.panel .panel-header, .detaileditview-header, .search .search-title {
+	border:1px solid #185f7e;
+	border-bottom:0;
+	font-size:1.2em;
+	font-weight:bold;
+	padding:10px;
+	border-color:#75a7c6;
+	}
+.panel .panel-header, .search .search-title, .detaileditview-header {
+	background:url(/assets/admin/img/datagrid/bg_datagrid-header2.gif) left top repeat-x #216f9f;
+	}
+.panel-header { color:#fff; }
+.panel-header .panel-header-title, .detaileditview-header, .search-title {
+	color:#fff;
+	font-size:1.2em;
+	font-weight:bold;
+	}
+.panel-header .panel-header-description {
+	color:#ddd;
+	font-size:.9em;
+	font-style:italic;
+	font-weight:normal;
+	}
+
+/**
+ * Panel
+ */
+
+
+
+div.panel-tabs {
+	background:url(/assets/admin/img/menus/tabs/bg_tabs.gif) repeat-x #d9e6f4;
+	border:1px solid #9dbde9;
+	border-bottom:0;
+	height:25px;
+	}
+div.panel-tabs ul { 
+	list-style:none;
+	margin:0;
+	padding:0;
+	}
+div.panel-tabs li {
+	background:url(/assets/admin/img/menus/tabs/bg_tab.png) no-repeat;
+	background-position:top left;
+	float:left;
+	height:24px;
+	margin:0;
+	margin-left:3px;
+	margin-top:1px;
+	padding:0;
+	padding-left:10px;
+	}
+div.panel-tabs li a {
+	background:url(/assets/admin/img/menus/tabs/bg_tab.png) no-repeat;
+	background-position:top right;
+	color:#416aa3;
+	display:block;
+	float:left;
+	font-size:11px;
+	line-height:11px;
+	height:24px;
+	padding-right:10px;
+	padding-top:5px;
+	}
+div.panel-tabs li.selected {
+	background:url(/assets/admin/img/menus/tabs/bg_tab-selected.png) no-repeat;
+	background-position:top left;
+	height:25px;
+	}
+div.panel-tabs li.selected a { 
+	background:url(/assets/admin/img/menus/tabs/bg_tab-selected.png) no-repeat;
+	background-position:top right;
+	font-weight:bold;
+	height:25px;
+	padding-top:4px;
+	}
+div.tab-panel {
+	display:none;
+	}
+div.panel div.panel-body, table.panel div.panel-body {
+	border:1px solid #787878;
+	border-color:#75a7c6;
+	padding:7px;
+	}
+div.panel div.panel-content {
+	background-color:#fff;
+	}
+/**
+ * Datagrids inside of panel-content sections
+ */
+div.panel div.panel-content .datagrid table, div.panel div.panel-content table.datagrid { border:0; }
+div.panel div.panel-content .datagrid table th, div.panel div.panel-content table.datagrid th { 
+	background:none;
+	background-color:#fff;
+	border:0;
+	border-bottom:1px solid #90cbe5;
+	padding:6px 10px;
+	}
+
+div.panel div.panel-header2 { 
+	background-color:#f2f2f2;
+	border:1px solid #787878;
+	border-color:#75a7c6;
+	border-bottom:0;
+	font-size:.9em;
+	font-weight:bold;
+	padding:6px 10px;
+	/* New */
+	background:none;
+	background-color:#dff8fa;
+	background:url(/assets/admin/img/panel/bg_section-title.gif) repeat-x #efefef;
+	color:#216f9f;
+	color:#333;
+	font-size:1.2em;
+	padding:10px;
+	}
+div.panel div.panel-body div.panel-body-inner {}
+div.panel div.panel-footer {
+	padding-left:10px;
+	text-align:left;
+}
+div.panel div.panel-footer div.panel-footer-inner {}
+div.panel div.panel-header-stacked, div.panel div.panel-header2-stacked {
+	border-top:0;
+	}
+table.panel {
+	border:1px solid #787878;
+	}
+table.panel td.panel-left, table.panel td.panel-right, td.panel-full {}
+table.panel td.panel-cell {
+	border:1px solid #787878;
+	padding:7px;
+	}
+table.panel td.panel-cell-content {
+	background-color:#fff;
+	}
+.panel .sidebar-nav {}
+.panel .sidebar-nav ul {
+	list-style:none;
+	margin:0;
+	padding:0;
+	}
+.panel .sidebar-nav li {
+	margin:0;
+	margin-bottom:4px;
+	padding:0;
+	}
+.panel .sidebar-nav li.last {
+	margin-bottom:0;
+	}
+.panel .sidebar-nav a {
+	display:block;
+	padding:4px 0;
+	text-decoration:none;
+	}
+.panel .sidebar-nav a:hover {
+	font-weight:bold;
+	}
+
+
+/**
+ * DataGrid Table
+ */
+.datagrid table, table.datagrid {
+	border-collapse:collapse;
+	border:1px solid #787878;
+	border-left-color:#aaa;
+	border-color:#75a7c6;
+	}
+.datagrid table, table.datagrid {
+	width:100%;
+	}
+
+.datagrid th {
+	background-color:#dff8fa;
+	border:1px solid #aac9d8;
+	border-color:#75a7c6;
+	border-right-width:0;
+	color:#185f7e;
+	padding:.5em;
+	text-align:left;
+	}
+.datagrid th.actions {
+	background:url(/assets/admin/img/datagrid/bg_th_actions.gif) repeat-x #eeeeee;
+	border:1px solid #ddd;
+	border-right-width:0;
+	}
+
+.datagrid td {
+	background-color:#fff;
+	border-bottom:1px solid #efefef;
+	border-right:0;border-left:0;
+	font-size:12px;
+	padding:8px 10px;
+	}
+.datagrid td a { color:#185f7e;}
+.datagrid td.filter {
+	background-color:#bde0f1;
+	border-bottom:1px solid #90cbe5;
+	color:#185f7e;
+	}
+	
+.datagrid tr.altrow1 td, .datagrid td.altrow1 { 
+	background-color:#fafafa;
+	}
+.datagrid td.actions, .datagrid td.actions-altrow1 {
+	padding-left:10px;
+	}
+.datagrid td.actions img, .datagrid td.actions-altrow1 img {
+	border:0;
+	}
+
+.datagrid td.currency { text-align:right; padding-right:5px; }
+.datagrid tr.summary td { background-color:#e1e1e1; }
+.datagrid tr.summary td.summary-name { text-align:right; padding-right:0; }
+.datagrid tr.summary td.summary-value { font-weight:bold; }
+
+.datagrid td.section { 
+	background-color:#e1e1e1;
+	border-bottom-color:#ccc;
+	color:#666;
+	font-size:1.2em;
+	font-weight:bold;
+	padding-top:.5em;padding-bottom:.5em;
+	}
+	
+.detaileditview {
+	background-color:#fff;
+	}
+table.detaileditview-sidebyside {
+	background-color:#e9e9e9;
+	border:1px solid #787878;
+	}
+.detaileditview-sidebyside td.sidebyside-cell {
+	background-color:#fff;
+	border:1px solid #787878;
+	}
+.detaileditview-sidebyside td.sidebyside-cell-noborder {
+	border:0;
+	}
+.detaileditview td {
+	padding:10px 0;
+	}
+.detaileditview td.field, .detaileditview td.field2col { 
+	color:#185f7e;
+	font-weight:bold;
+	padding-right:10px;
+	}
+
+.detaileditview .divider-bottom {
+	border-bottom:1px solid #90cbe5;
+	}
+.detaileditview .value input, .detaileditview .value select, .detaileditview textarea { 
+	border:1px solid #90cbe5;
+	background-color:#e8f8ff;
+	padding:5px;
+	}
+.detaileditview textarea {
+	width:400px;
+	height:120px;
+	}
+.detaileditview-actionbar, .panel-actionbar, .search-actionbar  {
+	background:url(/assets/admin/img/detaileditview/bg_detaileditview-actionbar.gif) left top repeat-x #d9d9d9;
+	border:1px solid #787878;
+	border-top:0;
+	padding:7px;
+	}
+
+.detaileditview-sidebyside div.section-title, .detaileditview td.section, .panel div.section-title {
+	background:url(/assets/admin/img/panel/bg_section-title.gif) repeat-x #efefef;
+	border-bottom:1px solid #787878;
+	color:#333;
+	font-weight:bold;
+	padding:1.1em;
+	}
+
+.detaileditview-sidebyside div.section-body, .panel div.section-body {
+	padding:10px;
+	}
+.detaileditview-sidebyside td.sidebyside-cell .detaileditview {	}	
+.detaileditview-sidebyside td.sidebyside-cell-padding { padding:7px; }
+
+
+
+/**
+ * Get Rid Of
+ */
+.search-body {
+	border:1px solid #787878;
+	padding:7px;
+	}
+.search-body-inner fieldset {
+	border:1px solid #d7d6d6;
+	padding:2px 7px;
+	}
+.search-body-inner fieldset legend {
+	color:#666;
+	}
+.search .fieldname {
+	font-weight:bold;
+	color:#666;
+	}
+
+.search-body-inner>p { margin:8px 0; }
+
+
+
+
+/* Menu */
+
+#admin-menu {
+	height:30px;
+	padding-top:10px;
+	}
+#admin-menu ul {
+	list-style:none;
+	padding:0; margin:0; 
+	}
+#admin-menu a {
+	text-decoration:none; 
+	}
+li.menu-item {
+	float:left;
+	padding-left:3px;
+	position:relative;
+	z-index:1000;
+	}
+li.menu-item .section-header {
+	cursor:pointer;
+	font-size:11px;
+	height:12px;
+	line-height:12px;
+	padding:9px 14px 9px 11px;
+	
+	}
+li.menu-item:hover {
+	background:url(/assets/admin/img/menus/stacked/bg_menu-over.gif) no-repeat top left;
+	}
+
+li.menu-item .section-header, li.menu-item .section-header a {
+	color:#fff;
+	color:#23b7da;
+	}
+li.menu-item .section-header a {
+	color:#23b7da;
+	}
+li.menu-item .menu-header {
+	}
+
+li.menu-item:hover .section-header {
+	background:url(/assets/admin/img/menus/stacked/bg_menu-over.gif) no-repeat top right;
+	color:#000;
+	}
+li.menu-item:hover .section-header a {
+	color:#000;
+	}
+li.visible .section-header {
+	color:#000;
+	}
+li.visible div.groups { /* Same as li.menu-item */
+	display:block;
+	}
+.menu-item div.groups {
+	background-color:#fff;
+	border:1px solid #ccc;
+	border-left-color:#fff;
+	border-top-color:#fff;
+	display:none;
+	left:0px;
+	padding:7px 0;
+	position:absolute;
+	top:30px;
+	}
+
+._menu-item .menu-item-arrow {
+	margin:-16px 0 10px 10px;
+	}
+
+.menu-item li.group {
+	margin-bottom:0px;
+	}
+.menu-item li.group h2 {
+	color:#2a5545;
+	font-size:11px;
+	margin:0;
+	padding:0;
+	padding:8px 60px 3px 20px;
+	}
+.menu-item li.group .group-body {
+	}
+
+.menu-item li.button {
+	}
+.menu-item li.button a {
+	color:#518cb1;
+	display:block;
+	padding:6px 60px 6px 40px;
+	}
+.menu-item li.button a:hover {
+	background-color:#e1e1e1;
+	color:081d15;
+	}
+
+.actionbar-container {
+	background:url(/assets/admin/img/menus/actionbar/bg_actionbar.png) top left no-repeat;
+	padding-left:7px;
+	}
+
+.actionbar-container .actionbar {
+	background:url(/assets/admin/img/menus/actionbar/bg_actionbar.png) top right no-repeat;
+	height:42px;
+	}
+.actionbar-container .actionbar div.action {
+	background:url(/assets/admin/img/menus/actionbar/bg_actionbar_a.png) top left no-repeat;
+	float:left;
+	margin-top:7px;
+	margin-right:3px;
+	padding-left:12px;
+	}
+.actionbar-container .actionbar div.action a {
+	background:url(/assets/admin/img/menus/actionbar/bg_actionbar_a.png) top right no-repeat;
+	color:#548bb1;
+	display:block;
+	font-size:10px;
+	font-weight:bold;
+	height:16px;
+	padding:6px 12px;
+	padding-left:0;
+	text-decoration:none;
+	}
+.actionbar-container a:hover {
+	}
+.x_actionbar-container a span {
+	background:url(/assets/admin/img/bg_actionbar_a_r.gif) top right no-repeat #2a8d3f;
+	display:block;
+	float:left;
+	height:16px;
+	padding:6px;
+	}
+.actionbar-container img {
+	border:0;
+	}
+
+/**
+*
+* Tabs
+*
+**/
+
+.ui-tabs-nav {
+	list-style: none;
+	margin: 0;
+	padding: 0 0 0 3px;
+	}
+.ui-tabs-nav li {
+	float: left;
+	margin: 0 0 0 2px;
+	font-weight: bold;
+	}
+.ui-tabs-nav:after { /* clearing without presentational markup, IE gets extra treatment */
+	display: block;
+	clear: both;
+	content: " ";
+	}
+
+.ui-tabs-nav span {}
+
+.ui-tabs-nav a, .ui-tabs-nav a span {
+	background: url(/assets/admin/img/bg_tabs.png) no-repeat;
+	float: left; /* fixes dir=ltr problem and other quirks IE */
+	padding: 0 12px;
+	}
+.ui-tabs-nav a {
+	margin: 5px 0 0; /* position: relative makes opacity fail for disabled tab in IE */
+	padding-left: 0;
+	background-position: 100% 0;
+	text-decoration: none;
+	white-space: nowrap; /* @ IE 6 */
+	outline: 0; /* @ Firefox, prevent dotted border after click */    
+	}
+.ui-tabs-nav a:link, .ui-tabs-nav a:visited {
+	color: #1d4284;
+	}
+.ui-tabs-nav .ui-tabs-selected a {
+	border-bottom:1px solid #fff;
+	color:#000;
+	position: relative;
+	top: 1px;
+	z-index: 2;
+	margin-top:5px;
+	background-position: 100% -27px;
+	}
+.ui-tabs-nav a span {
+	padding-top: 1px;
+	padding-right: 0;
+	height: 25px;
+	background-position: 0 0;
+	line-height: 25px;
+	}
+.ui-tabs-nav .ui-tabs-selected a span {
+	padding-top: 0;
+	height: 27px;
+	background-position: 0 -27px;
+	line-height: 27px;
+	margin-top
+	}
+.ui-tabs-nav .ui-tabs-selected a:link, .ui-tabs-nav .ui-tabs-selected a:visited,
+.ui-tabs-nav .ui-tabs-disabled a:link, .ui-tabs-nav .ui-tabs-disabled a:visited { /* @ Opera, use pseudo classes otherwise it confuses cursor... */
+	cursor: text;
+	}
+.ui-tabs-nav a:hover, .ui-tabs-nav a:focus, .ui-tabs-nav a:active,
+.ui-tabs-nav .ui-tabs-unselect a:hover, .ui-tabs-nav .ui-tabs-unselect a:focus, .ui-tabs-nav .ui-tabs-unselect a:active { /* @ Opera, we need to be explicit again here now... */
+	cursor: pointer;
+	}
+.ui-tabs-disabled {
+	opacity: .4;
+	filter: alpha(opacity=40);
+	}
+.ui-tabs-nav .ui-tabs-disabled a:link, .ui-tabs-nav .ui-tabs-disabled a:visited {
+	color: #000;
+	}
+.ui-tabs-panel {
+	background: #fff; /* declare background color for container to avoid distorted fonts in IE while fading */
+	border: 1px solid #787878;
+	color:#666;
+	padding: 10px;
+	}
+/* Additional IE specific bug fixes... */
+* html .ui-tabs-nav { /* auto clear @ IE 6 & IE 7 Quirks Mode */
+	display: inline-block;
+	}
+*:first-child+html .ui-tabs-nav  { /* auto clear @ IE 7 Standards Mode - do not group selectors, otherwise IE 6 will ignore complete rule (because of the unknown + combinator)... */
+	display: inline-block;
+	}
+	
+.ui-tabs-hide { display: none; }
+/* End Tabs */
+
+/**
+ * Index pages
+ */
+a.section-option {
+	background-color:#e1e1e1;
+	border:1px solid #ccc;
+	display:block;
+	margin-bottom:7px;
+	padding:5px;
+	text-decoration:none;
+	}
+a.section-option:hover {
+	background-color:#d0d0d0;
+	}
+a.section-option img { border:0; }
+a.section-option span.name {
+	color:#333;
+	font-weight:bold;
+	}
+a.section-option span.description {
+	color:#999;
+	font-style:italic;
+	padding-left:24px;
+	}
+/**
+ * Footer
+ */
+#footerbottom {
+	background:url(/assets/admin/img/tpl/bg_bottom-left.png) top left no-repeat;
+	margin:0 24px;
+	padding-left:9px;
+	}
+#footerbottom div {
+	background:url(/assets/admin/img/tpl/bg_bottom-right.png) top right no-repeat;
+	padding-right:9px;
+	}
+#footerbottom div div {
+	background:none;
+	background-color:#fff;
+	font-size:8px;
+	line-height:8px;
+	height:8px;
+	color:#999;
+	padding:0;
+	padding-bottom:1px;
+	text-align:center;
+	}

@@ -1,0 +1,1 @@
+<cms:EditableElement id="${control_field.description}" submitId="description" editFieldType="wysiwyg" defaultContent="Click to edit content" />

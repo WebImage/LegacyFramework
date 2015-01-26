@@ -1,0 +1,31 @@
+<@Page templateId="admin-default" title="Role Manager">
+
+<cms:Content placeHolderId="ph_page_actions" wrapClassId="page-actionbar">
+	<cms:WrapOutput wrapClassId="page-actionbar-action"><a href="../"><img src="<?php echo ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_IMG') ?>icons/i_back.gif" align="absmiddle" /> Back </a></cms:WrapOutput>
+</cms:Content>
+
+<cms:Content placeHolderId="ph_admin_main">
+	<ul class="nav nav-page-actions">
+		<li><a href="edit.html"><i class="glyphicon glyphicon-plus"></i> Add Roles</a></li>
+		<li><a href="permissions/"> Permissions</a></li>
+	</ul>
+	
+	<div class="wrap">
+		<div class="page-header"><h1>Roles</h1></div>
+		
+		<cms:DataGrid id="dg_roles" tableClass="table table-striped" emptyTemplateWrapClassId="panel-content">
+			<Columns rowClass="hover-show-invisible">
+				<Column headerText="Role"><![CDATA[
+					<a href="permissions.html?roleid=<Data field="id" />"><Data field="name" /></a>
+					<a href="edit.html?roleid=<Data field="id" />" class="invisible"><i class="glyphicon glyphicon-pencil"></i></a>
+				]]></Column>
+				<Column headerText="Description" field="description" />
+				<Column headerText="Start Page" field="start_page" />
+				<NoResults><![CDATA[
+					There are not currently any roles
+				]]></NoResults>
+			</Columns>
+		</cms:DataGrid>
+		
+	</div>
+</cms:Content>

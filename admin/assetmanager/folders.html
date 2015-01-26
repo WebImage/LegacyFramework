@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Asset Manager</title>
+<link type="text/css" rel="stylesheet" href="<?php echo ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_CSS') ?>assetmanager.css" />
+</head>
+<body>
+<div class="navtabs">
+	<ul>
+		<li><a href="<?php echo $home_url ?>"><i class="glyphicon glyphicon-th"></i> Assets</a></li>
+		<li class="active"><a href="<?php echo $folder_url ?>"><i class="glyphicon glyphicon-folder-close"></i> Folders</a></li>
+		<li><a href="<?php echo $upload_url ?>"><i class="glyphicon glyphicon-plus"></i> Add New</a></li>
+	</ul>
+	<br style="clear:both;" />
+</div>
+
+<h1>Asset Folders</h1>
+<cms:Error />
+<form method="post" action="folders.html" class="search">
+	<?php echo CWI_STRING_UrlManipulator::makeHidden($base_url); ?>
+	<cms:Input type="text" id="name" struct="assetfolder" size="50" maxlength="50"/>
+	<cms:Input type="submit" value="Add Folder" />
+</form>
+
+<cms:DataList id="dl_folders" tableClass="table">
+	<Template>
+		<HeaderTemplate><![CDATA[
+			<!--<div class="panel-header"><div class="panel-header-inner"><div class="panel-header-title">Folders</div></div></div>-->
+			<table cellspacing="0" cellpadding="0" border="0">
+			<tr><th>Name</th><th>Actions</th></tr>]]></HeaderTemplate>
+		<ItemTemplate><![CDATA[
+			<tr>
+				<td><img src="<?php echo ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_IMG') ?>icons/i_folder.gif" align="absmiddle" /> <a href="<Data field="folder_link" />"><Data field="name" /></a></td>
+				<td width="150">
+					<nobr><img src="<?php echo ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_IMG') ?>icons/i_folderedit.gif" align="absmiddle" /> <a href="editfolder.html?folderid=<Data field="id" />" class="action">Edit</a></nobr> | 
+					<nobr><img src="<?php echo ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_IMG') ?>icons/i_folderdelete.gif" align="absmiddle" /> <a href="folders.html?delete=<Data field="id" />" class="action" onclick="if (!confirm('Deleting this folder will permanently effect any site functionality that is linked to this asset folder.\n\nIf you know that there are not any images linked to this directory then it is probably safe to delete.\n\nAre you sure you want to delete this folder?')) return false;">Delete</a></nobr>
+				</td>
+			</tr>
+		]]></ItemTemplate>
+		<FooterTemplate><![CDATA[</table>]]></FooterTemplate>
+	</Template>
+</cms:DataList>
+
+</body>
+</html>

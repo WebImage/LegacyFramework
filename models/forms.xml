@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model name="forms">
+	<fields>
+		<field name="created" />
+		<field name="created_by" />
+		<field name="config" type="text" />
+		<field name="enable" type="tinyint" required="true" default="1" />
+		<field name="id" />
+		<field name="name" type="varchar" length="255" />
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>
+</model>

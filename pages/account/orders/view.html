@@ -1,0 +1,57 @@
+<@Page masterPageFile="~/templates/default.tpl">
+<cms:Content placeHolderId="ph_main">
+	<style type="text/css">
+		.order-summary {}
+		table.order-summary { border-collapse:collapse; }
+		.order-summary .summary-header td { padding:5px; }
+		.order-summary .summary-line td { background-color:#e1e1e1; padding:5px; border:1px solid #ccc; }
+		.order-summary .summary-line-alt td { background-color:#fff; }
+	</style>
+	<h1>Order Details</h1>
+		<p><strong>Order Placed:</strong> <cms:Literal id="lbl_created" /><br />
+		<strong>Order number: </strong> <cms:Literal id="lbl_order_id" /><br />
+		<strong>Email: </strong> <cms:Literal id="lbl_email" /><br />
+		<strong>Status: </strong> <cms:Literal id="lbl_status" /></p>
+	
+	<table cellspacing="0" cellpadding="5" border="0" class="order-summary" width="100%">
+		<tr>
+			<th>Qty.</th>
+			<th align="left">Items</th>
+			<th align="center">Unit Price</th>
+			<th align="center">Total Price</th>
+		</tr>
+
+	<cms:DataList id="dl_order_items">
+		<Template>
+			<ItemTemplate><![CDATA[
+				<tr class="summary-line">
+					<td valign="top"><Data field="quantity" /></td>
+					<td valign="top"><Data field="product_name" /> - <Data field="sku_name" /><Data field="user_instructions" /></td>
+					<td align="right" valign="top">$<Data field="price" format="number_format('%field', 2)" /></td>
+					<td align="right" valign="top">$<Data field="total_price" format="number_format('%field', 2)" /></td>
+				</tr>
+			]]></ItemTemplate>
+			<ItemTemplate><![CDATA[
+				<tr class="summary-line summary-line-alt">
+					<td valign="top"><Data field="quantity" /></td>
+					<td valign="top"><Data field="product_name" /> - <Data field="sku_name" /><Data field="user_instructions" /></td>
+					<td align="right" valign="top">$<Data field="price" format="number_format('%field', 2)" /></td>
+					<td align="right" valign="top">$<Data field="total_price" format="number_format('%field', 2)" /></td>
+				</tr>
+			]]></ItemTemplate>
+		</Template>
+	</cms:DataList>
+		<tr>
+			<td align="right" colspan="3"><strong>Tax: </strong></td>
+			<td align="right"><strong>$<cms:Literal id="lbl_tax" /></strong></td>
+		</tr>
+		<tr>
+			<td align="right" colspan="3"><strong>Shipping Cost: </strong></td>
+			<td align="right"><strong>$<cms:Literal id="lbl_shipping_cost" /></strong></td>
+		</tr>
+		<tr>
+			<td align="right" colspan="3"><strong>Total: </strong></td>
+			<td align="right"><strong>$<cms:Literal id="lbl_total" /></strong></td>
+		</tr>
+	</table>
+</cms:Content>

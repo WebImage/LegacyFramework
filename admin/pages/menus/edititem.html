@@ -1,0 +1,45 @@
+<@Page templateId="admin-default" title="Edit Menu Item">
+
+<cms:Content placeHolderId="ph_page_actions" wrapClassId="page-actionbar">
+	<cms:WrapOutput wrapClassId="page-actionbar-action"><a href="items.html?menuid=<?php echo Page::getStructFieldValue('menu_item', 'menu_id'); ?>"><img src="<?php echo ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_IMG') ?>icons/i_back.gif" align="absmiddle" /> Back to Items</a></cms:WrapOutput>
+</cms:Content>
+
+<cms:Content placeHolderId="ph_admin_main">
+	<form method="post">
+	<cms:WrapOutput wrapClassId="panel">
+		<cms:WrapOutput wrapClassId="panel-header">
+			<cms:WrapOutput wrapClassId="panel-title">Edit Menu Item</cms:WrapOutput>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-body-content">
+			
+				<cms:Input type="hidden" struct="menu_item" structKey="id" />
+				<cms:Input type="hidden" struct="menu_item" structKey="menu_id" />
+				
+				<table cellspacing="0" cellpadding="0" border="0" class="detaileditview">
+					<tr>
+						<td class="field">Name:</td>
+						<td class="value"><cms:Input type="text" struct="menu_item" structKey="name" /></td>
+					</tr>
+					<tr>
+						<td class="field">Link:</td>
+						<td class="value"><cms:Input type="text" struct="menu_item" structKey="link" size="50" /></td>
+					</tr>
+					<tr>
+						<td class="field">Parent:</td>
+						<td class="value"><cms:Select struct="menu_item" structKey="parent_id" id="menu_item_parent_id" defaultKey="0" defaultText="-- Top Level --" /></td>
+					</tr>
+					<tr>
+						<td class="field">Sort Order:</td>
+						<td class="value">
+							<cms:Input type="text" struct="menu_item" structKey="sortorder" size="3" maxlength="3" />
+						</td>
+					</tr>
+				</table>
+			
+		</cms:WrapOutput>
+		<div class="form-actions">
+			<input type="submit" value="Save" class="btn btn-primary" />
+		</div>
+	</cms:WrapOutput>
+	</form>
+</cms:Content>

@@ -1,0 +1,14 @@
+<model name="roles_permissions" version="1">
+	<fields>
+		<field name="allow_create" type="tinyint" />
+		<field name="allow_read" type="tinyint" />
+		<field name="allow_update" type="tinyint" />
+		<field name="allow_delete" type="tinyint" />
+		<field name="created" />
+		<field name="created_by" />
+		<field name="permission" type="varchar" length="60" />
+		<field name="role_id" />
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>
+</model>

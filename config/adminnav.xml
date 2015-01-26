@@ -1,0 +1,81 @@
+<siteMap>
+	<!-- 
+INSERT INTO permissions (permission) VALUES('Admin.Pages');
+INSERT INTO permissions (permission) VALUES('Admin.LiveSite');
+INSERT INTO permissions (permission) VALUES('Admin.AssetManager');
+INSERT INTO permissions (permission) VALUES('Admin.Catalog.Categories');
+INSERT INTO permissions (permission) VALUES('Admin.Catalog.Products');
+INSERT INTO permissions (permission) VALUES('Admin.Catalog.Skus');
+INSERT INTO permissions (permission) VALUES('Admin.Catalog.Shipping.Methods');
+INSERT INTO permissions (permission) VALUES('Admin.Catalog.Shipping.Warehouses');
+INSERT INTO permissions (permission) VALUES('Admin.Catalog.Categories');
+
+INSERT INTO permissions (permission) VALUES('Admin.Company.Warehouses');
+INSERT INTO permissions (permission) VALUES('Admin.Company.Employees');
+
+INSERT INTO permissions (permission) VALUES('Admin.System.Memberships');
+INSERT INTO permissions (permission) VALUES('Admin.System.Memberships.Roles');
+INSERT INTO permissions (permission) VALUES('Admin.System.Memberships.AssignRoles');
+INSERT INTO permissions (permission) VALUES('Admin.System.Memberships.Roles.Permissions');
+	-->
+	<siteMapNode url="%DIR_WS_ADMIN%pages/" title="Pages">
+		<siteMapNode url="%DIR_WS_ADMIN%pages" title="Page Management">
+			<siteMapNode url="%DIR_WS_ADMIN%pages/" title="Page List" description="Hierarchical list of pages" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_sitemap.gif" />
+			<siteMapNode url="%DIR_WS_ADMIN%content/" title="Edit Live Site" description="View the live site to edit pages directly" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_pagelightning.gif" />
+			<siteMapNode url="%DIR_WS_ADMIN%pages/edit.html" title="Add Page" description="Add a new page to the site" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_pageadd.gif" />
+		</siteMapNode>
+		<siteMapNode url="%DIR_WS_ADMIN%assetmanager/" title="Asset Management">
+			<siteMapNode url="%DIR_WS_ADMIN%assetmanager/" title="Asset Manager" description="Manage site images and other media" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_film.gif" newWindow="width=960,height=640,scrollbars=1,resizable=1" />
+		</siteMapNode>
+		<siteMapNode title="Page Objects">
+			<siteMapNode url="%DIR_WS_ADMIN%system/templates/" title="Templates" description="Manage page and other templates" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_layout.gif" />
+			<siteMapNode url="%DIR_WS_ADMIN%pages/menus/" title="Menus" description="Manage menus" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_pagedown.gif" />
+			<siteMapNode url="%DIR_WS_ADMIN%system/controls/" title="Controls" description="Control types that can be included in pages" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_cog.gif" />
+		</siteMapNode>
+	</siteMapNode>
+	<siteMapNode url="%DIR_WS_ADMIN%store/orders/" title="Orders" roles="AdmStoreBase">
+		<siteMapNode url="%DIR_WS_ADMIN%store/orders/" title="Order Management">
+			<siteMapNode url="%DIR_WS_ADMIN%store/orders/" title="New Orders" description="View new system orders" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_applicationform.gif" />
+			<siteMapNode url="%DIR_WS_ADMIN%store/orders/search.html" title="Search Orders" description="Search thru all system orders" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_applicationformsearch.gif" />
+		</siteMapNode>
+	</siteMapNode>
+	<siteMapNode url="%DIR_WS_ADMIN%store/" title="Store" roles="AdmStoreBase">
+		<siteMapNode title="Products">
+			<siteMapNode url="%DIR_WS_ADMIN%store/products/" title="Products" description="Manage catalog products" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_page.gif" />
+			<siteMapNode url="%DIR_WS_ADMIN%store/categories/" title="Categories" description="Manage catalog categories" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_folder.gif" />
+			<!--<siteMapNode url="%DIR_WS_ADMIN%store/manufacturers/" title="Manufacturers" description="Manage product manufacturer list" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_building.gif" />-->
+			<!--<siteMapNode url="%DIR_WS_ADMIN%store/coupons/" title="Coupons" description="Manage catalog discounts" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_tagblue.gif" />-->
+		</siteMapNode>
+		<siteMapNode title="Shipping">
+			<siteMapNode url="%DIR_WS_ADMIN%store/shipping/carriers.html" title="Shipping Carriers" descriptino="" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_ups.gif" />
+			<siteMapNode url="%DIR_WS_ADMIN%store/shipping/methods.html" title="Methods" description="Available shipping methods" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_truck.gif" />
+			<!-- <siteMapNode url="%DIR_WS_ADMIN%store/shipping/countries.html" title="Countries" description="" icon"%DIR_WS_ADMIN_ASSETS_IMG%icons/i_world.gif" /> -->
+			<siteMapNode url="%DIR_WS_ADMIN%store/shipping/warehouses.html" title="Warehouses" description="Where products are shipped from" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_warehouse.gif" />
+			<siteMapNode url="%DIR_WS_ADMIN%store/shipping/packages.html" title="Packages" description="Package used for shipping products" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_box.gif" />
+			<siteMapNode url="%DIR_WS_ADMIN%store/taxes/" title="Taxes" description="Manage tax values" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_coins.gif" />
+		</siteMapNode>
+	</siteMapNode>
+	<siteMapNode _url="%DIR_WS_ADMIN%system/" title="System">
+		<siteMapNode title="Sync" roles="AdmSyncManager">
+			<siteMapNode url="%DIR_WS_ADMIN%system/sync/models/" title="Models" roles="AdmSyncManager" />
+			<siteMapNode url="%DIR_WS_ADMIN%system/sync/plugins/" title="Plugins" roles="AdmSyncManager" />
+		</siteMapNode>
+		<siteMapNode title="Plugins" _roles="AdmSyncManager">
+			<siteMapNode url="%DIR_WS_ADMIN%system/plugins/" title="Plugins" _roles="AdmSyncManager" />
+		</siteMapNode>
+		<siteMapNode title="Log">
+			<siteMapNode url="%DIR_WS_ADMIN%system/logs/" title="Logs" />
+		</siteMapNode>
+	</siteMapNode>
+	<siteMapNode title="Users">
+		<siteMapNode title="Website Access">
+			<siteMapNode url="%DIR_WS_ADMIN%system/memberships/" title="Users" description="System Users" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_user.gif" />
+			<siteMapNode url="%DIR_WS_ADMIN%system/memberships/roles/" title="Roles" description="User Roles" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_vcard.gif" />
+		</siteMapNode>
+	</siteMapNode>
+	<siteMapNode title="Settings">
+		<siteMapNode title="General">
+			<siteMapNode url="%DIR_WS_ADMIN%system/site/" title="Site" description="Manage general site settings" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_cog.gif" />
+		</siteMapNode>
+	</siteMapNode>
+</siteMap>

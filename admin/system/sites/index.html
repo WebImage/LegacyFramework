@@ -1,0 +1,30 @@
+<@Page templateId="admin-default" title="Site List">
+
+<cms:Content placeHolderId="ph_admin_main">
+
+	<ul class="nav nav-page-actions">
+		<li><a href="edit.html">Add Site</a></li>
+	</ul>
+	
+	<cms:WrapOutput wrapClassId="panel">
+		<cms:WrapOutput wrapClassId="panel-header">
+			<cms:WrapOutput wrapClassId="panel-title">Site List</cms:WrapOutput>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-body">
+			<cms:DataGrid id="dg_sites" tableClass="table" emptyTemplateWrapClassId="panel-content">
+				<Columns>
+					<Column headerText="Company" field="company_name" />
+					<Column headerText="Domain"><![CDATA[<a href="edit.html?siteid=<Data field="id" />"><Data field="domain" /></a>]]></Column>
+					<Column headerText="Environment" field="environment" />
+					<Column headerText="ID" field="id" />
+					<Column headerText="Name" field="name" />
+					<Column headerText="Key" field="key" />
+					<Column headerText="Remote?"><![CDATA[<Data field="is_remote" format="('%field'==1)?'Yes':'No'" />]]></Column>
+					<NoResults><![CDATA[
+					There are not currently any sites configured.
+					]]></NoResults>
+				</Columns>
+			</cms:DataGrid>
+		</cms:WrapOutput>
+	</cms:WrapOutput>
+</cms:Content>

@@ -1,0 +1,27 @@
+<@Page templateId="admin-default">
+<cms:Content placeHolderId="ph_admin_main">
+
+	<cms:WrapOutput wrapClassId="panel">
+		<cms:WrapOutput wrapClassId="panel-header">
+			<cms:WrapOutput wrapClassId="panel-title">Pages</cms:WrapOutput>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-body">
+			<cms:DataGrid id="dg_forms" tableClass="table table-striped">
+			
+				<Columns>
+					
+					<Column headerText="Form"><![CDATA[
+						<a href="entries.html?formid=<Data field="id" />"><Data field="name" /></a>
+					]]></Column>
+					<Column headerText="Created" field="created" format="date('m/d/Y', strtotime('%field'))" />
+					<Column headerText="Actions" headerClass="actions" class="actions" width="100"><![CDATA[
+						<a href="entries.html?formid=<Data field="id" />" class="btn">Entries</a>
+					]]></Column>
+				</Columns>
+				
+			</cms:DataGrid>
+		</cms:WrapOutput>
+		
+	</cms:WrapOutput>
+	
+</cms:Content>

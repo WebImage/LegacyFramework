@@ -1,0 +1,8 @@
+<model name="installed_dependencies" version="1">
+	<fields>
+		<field name="owner" type="varchar" length="20" primaryKey="true" />
+		<field name="owner_type" type="varchar" length="20" primaryKey="true" />
+		<field name="dependency" type="varchar" length="20" primaryKey="true" />
+		<field name="dependency_type" type="varchar" length="20" primaryKey="true" />
+	</fields>
+</model>

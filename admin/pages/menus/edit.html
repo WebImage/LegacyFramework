@@ -1,0 +1,18 @@
+<@Page templateId="admin-default" title="Edit Menu">
+
+<cms:Content placeHolderId="ph_admin_main">
+	<ul class="nav nav-page-actions">
+		<li><a href="index.html"><i class="glyphicon glyphicon-chevron-left"></i> Back to Menus</a></li>
+	</ul>
+	<div class="wrap">
+		<div class="page-header"><h1>Menu Details</h1></div>
+		<form method="post">
+			<cms:Input type="hidden" struct="menu" structKey="id" />
+			<div class="form-group">
+				<label for="menu_name">Name:</label>
+				<cms:Input type="text" struct="menu" structKey="name" />
+			</div>
+			<input type="submit" value="Save" class="btn btn-primary" />
+		</form>
+	</div>
+</cms:Content>

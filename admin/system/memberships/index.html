@@ -1,0 +1,51 @@
+<@Page templateId="admin-default" title="Memberships">
+<cms:Content placeHolderId="ph_admin_main">
+	<div class="cols-fs">
+		<div class="col-fs col-fs-hpanel-2 col-fs-hpanel-nav">
+			<div class="section wrap">
+				<form method="get" action="index.html">
+					<div class="form-group">
+						<label for="q">Search users:</label>
+						<cms:Input type="text" id="q" size="15" class="form-control" />
+					</div>
+					<p>
+						<input type="submit" name="action" value="Search" class="btn btn-default" />
+						<?php if (!empty($keyword)): ?>
+							<a href="<cms:ConfigValue name="DIR_WS_ADMIN" />system/memberships/?action=Search" class="btn btn-link">Reset</a>
+						<?php endif; ?>
+					</p> 
+				</form>
+			</div>
+			
+		</div>
+		<div class="col-fs col-fs-loffset-2">
+			<ul class="nav nav-page-actions">
+				<li><a href="edit.html"><i class="glyphicon glyphicon-plus"></i> Add User</a></li>
+				<li><a href="parameters.html"><i class="glyphicon glyphicon-list-alt"></i> Custom User Fields</a></li>
+			</ul>
+			<div class="wrap">
+				<div class="page-header">
+					<h1><i class="glyphicon glyphicon-user"></i> Users</h1>
+					<?php if (!empty($keyword)): ?>
+						<p class="text-muted"><em>Showing results for &quot;<?php echo htmlentities($keyword); ?>&quot;</em></p>
+					<?php endif; ?>
+				</div>
+				
+				<cms:DataGrid id="dg_membership" tableClass="table table-hover">
+					<Columns rowClass="hover-show-invisible">
+						<Column headerText="Username"><![CDATA[
+							<a href="detail.html?membershipid=<Data field="id" />"><strong><Data field="username" /></strong></a>
+							<a href="edit.html?membershipid=<Data field="id" />" class="invisible"><i class="glyphicon glyphicon-pencil"></i></a>
+						]]></Column>
+						<Column headerText="Email" field="email" />
+						<Column headerText="Roles" field="roles" />
+						
+					</Columns>
+				</cms:DataGrid>
+				<cms:Paging forControlId="dg_membership" />
+			</div>
+		</div>
+	</div>
+	
+
+</cms:Content>

@@ -1,0 +1,83 @@
+<@Page templateId="admin-default">
+
+<cms:Content placeHolderId="ph_page_actions" wrapClassId="page-actionbar">
+	<cms:WrapOutput wrapClassId="page-actionbar-action"><a href="index.html"><img src="<?php echo ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_IMG') ?>icons/i_back.gif" align="absmiddle" /> Back to Memberships</a></cms:WrapOutput>
+</cms:Content>
+
+<cms:Content placeHolderId="ph_admin_main">
+
+	<ul class="nav nav-page-actions">
+		<li><a href="index.html"><i class="glyphicon glyphicon-chevron-left"></i> Back to Users</a></li>
+	</ul>
+	
+	<div class="wrap">
+		<div class="page-header"><h1><i class="glyphicon glyphicon-user"></i> User Details <a href="edit.html?membershipid=<?php echo $membership_id; ?>" class="btn btn-primary">Edit</a></h1></div>
+		
+		<div class="row">
+			<div class="col-md-6">
+				<div class="panel panel-default">
+					<div class="panel-heading"><i class="glyphicon glyphicon-user"></i> User Info </div>
+					<div class="panel-body">
+						<table cellspacing="0" cellpadding="0" border="0" class="detaileditview">
+							<tr>
+								<td class="field"><label>Username:</label> </td>
+								<td class="value"><cms:Literal id="username" /></td>
+							</tr>
+							<tr>
+								<td class="field"><label>Email:</label> </td>
+								<td class="value"><cms:Literal id="email" /></td>
+							</tr>
+							<tr>
+								<td class="field"><label>Password:</label> </td>
+								<td class="value"><em>Encrypted</em> <a href="edit.html?membershipid=<?php echo Page::get('membershipid'); ?>" class="btn btn-default"><i class="glyphicon glyphicon-lock"></i> Change</a></td>
+							</tr>
+							<cms:DataList id="dg_parameters" wrapOutput="false">
+								<Template>
+									<HeaderTemplate><![CDATA[
+										<tr>
+											<td class="section" colspan="2">Parameters</td>
+										</tr>
+									]]></HeaderTemplate>
+									<ItemTemplate><![CDATA[
+										<tr>
+											<td class="field"><Data field="parameter_name" /></td>
+											<td class="value"><Data field="parameter_value" /></td>
+										</tr>
+									]]></ItemTemplate>
+									<EmptyTemplate><![CDATA[
+										<tr><td class="field"><label>Parameters:</label></td><td><em>None</em></td></tr>
+									]]></EmptyTemplate>
+								</Template>
+							</cms:DataList>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">Roles</div>
+					
+					<cms:DataGrid id="dg_roles" tableClass="table table-striped" emptyTemplateClass="panel-body">
+						<Columns>
+							<Column field="name" />
+							<Column headerClass="actions" class="actions"><![CDATA[
+							<a href="roles.html?membershipid=<?php echo Page::get('membershipid') ?>&removerole=<Data field="id" />&returnpath=detail.html" class="btn btn-danger">Remove</a>
+							]]></Column>
+							<NoResults><![CDATA[
+							This user does not currently have any assigned roles. 
+							]]></NoResults>
+						</Columns>
+					</cms:DataGrid>
+					<cms:WrapOutput class="panel-footer" id="candidate_roles">
+						<form method="get" action="roles.html" class="form-inline">
+						<cms:Input type="hidden" id="membershipid" />
+						<input type="hidden" name="returnpath" value="detail.html" />
+						Add user to role: <cms:Select id="addrole" defaultText="-- Select Role --" onchange="jQuery(this).parent('form').submit();" class="form-control" />
+						</form>
+					</cms:WrapOutput>
+				
+				</div>
+			</div>
+		</div>
+	</div>
+</cms:Content>

@@ -1,0 +1,24 @@
+<model name="controls" version="1">
+	<fields>
+		<field name="created" />
+		<field name="created_by" />
+		<field name="id" />
+		<field name="class_name" type="varchar" length="30" />
+		<field name="enable" type="tinyint" required="true" default="1" />
+		<!--<field name="enable_search" type="tinyint" required="true" default="0" />-->
+		<field name="file_src" type="varchar" length="255" />
+		<!--<field name="has_search" type="tinyint" required="true" default="0" />-->
+		<field name="label" type="text" required="true" />
+		<!-- <field name="site_id" relatedModel="sites" /> -->
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>
+	<data>
+		<row>
+			<class_name>EditableContentControl</class_name>
+			<enable>1</enable>
+			<file_src>~/controls/editablecontent/editablecontent.php</file_src>
+			<label>Text</label>
+		</row>
+	</data>
+</model>

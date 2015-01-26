@@ -1,0 +1,14 @@
+<model name="plugins" version="1">
+	<fields>
+		<field name="created" />
+		<field name="created_by" />
+		<field name="enable" type="tinyint" />
+		<field name="friendly_name" type="varchar" length="255" />
+		<field name="name" type="varchar" length="100" primaryKey="true" />
+		<field name="path" type="varchar" length="255" />
+		<!-- <field name="site_id" /> -->
+		<field name="updated" />
+		<field name="updated_by" />
+		<field name="version" type="decimal" length="10" scale="2" />
+	</fields>
+</model>

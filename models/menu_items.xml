@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model name="menu_items" version="1">
+	<fields>
+		<field name="config" type="text" />
+		<field name="created" />
+		<field name="created_by" />
+		<field name="id" />
+		<field name="menu_id" />
+		<field name="name" type="varchar" length="255" required="true" />
+		<field name="parent_id" />
+		<field name="sortorder" />
+		<field name="updated" />
+		<field name="updated_by" />
+		<field name="url" type="varchar" length="255" required="true" />
+	</fields>
+</model>

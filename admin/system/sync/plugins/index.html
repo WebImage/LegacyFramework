@@ -1,0 +1,16 @@
+<@Page templateId="admin-default" />
+<cms:Content placeHolderId="ph_admin_main">
+	<cms:WrapOutput wrapClassId="panel">
+		<cms:WrapOutput wrapClassId="panel-header">
+			<cms:WrapOutput wrapClassId="panel-title"><cms:Literal id="lbl_plugin_info" /></cms:WrapOutput>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-body">
+			<cms:DataGrid id="dg_plugins" tableClass="table table-striped">
+				<Columns>
+					<Column headerText="Name" field="display_name" />
+					<Column headerText="Status" field="status" />
+				</Columns>
+			</cms:DataGrid>
+		</cms:WrapOutput>
+	</cms:WrapOutput>
+</cms:Content>

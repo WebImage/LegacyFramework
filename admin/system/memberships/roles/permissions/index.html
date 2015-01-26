@@ -1,0 +1,26 @@
+<@Page templateId="admin-default" title="Permission Manager">
+<cms:Content placeHolderId="ph_admin_main">
+	
+	<ul class="nav nav-page-actions">
+		<li><a href="<cms:ConfigValue name="DIR_WS_ADMIN">system/memberships/roles/"><i class="glyphicon glyphicon-chevron-left"></i> Back to Roles</a></li>
+		<li><a href="add.html"><i class="glyphicon glyphicon-plus"></i> Add Permission</a></li>
+	</ul>
+	
+	
+	<div class="wrap">
+		<div class="page-header"><h1>Permission Manager</h1></div>
+			
+		<cms:DataGrid id="dg_permissions" tableClass="table table-striped">
+			<Columns>
+				<Column><![CDATA[
+					<Data field="permission" />
+					<a href="#" onclick="if (confirm('Delete permission: <Data field="permission" />?')) window.location.href='index.html?delete=<Data field="permission" />';return false;" class="text-danger"><i class="glyphicon glyphicon-trash"></i></a>
+				]]></Column>
+				<NoResults><![CDATA[
+					There are not currently any permissions setup.
+				]]></NoResults>
+			</Columns>
+		</cms:DataGrid>
+	</div>
+	
+</cms:Content>

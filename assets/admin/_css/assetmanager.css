@@ -1,0 +1,42 @@
+.editable-region { border:2px solid #7fceed; }
+.editable-region-body {}
+.editable-control { background-color:#fafafa; border:2px solid #7fceed; margin:5px;}
+.editable-control-bar { background-color:#cacaca; color:#fff;font-weight:bold;; padding:5px; border-bottom:2px solid #7fceed; font-size:11px; font-family:Verdana, Arial, Helvetica, sans-serif; }
+.editable-body { padding:10px; }
+.editable-add-control { background-color:#b1d390; border:1px solid #999; margin:5px; padding:15px; }
+
+body { 
+	background-color:#bfdff0;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	}
+body, td { font-size:medium; color:#000; }
+h1 { 
+	font-family:Geneva, Arial, Helvetica, sans-serif; 
+	color:#2488c6; 
+	display:none;
+	font-size:x-large; 
+	margin-bottom:5px;
+	}
+a { color:#2488c6; }
+label { color:#000; }
+form { 
+	background-color:#dcf1f8;
+	border:1px solid #fff;
+	margin:10px 0;
+	padding:10px;
+	}
+
+div.datagrid table { border-collapse:collapse; border:1px solid #2488c6;width:100%; background-color:#fff; margin-top:10px; }
+div.datagrid table caption { background-color:#2488c6; color:#fff; text-align:center; font-weight:bold; padding:5px 0; }
+div.datagrid table th { font-family:Geneva, Arial, Helvetica, sans-serif; background-color:#dcf1f8; color:#2488c6;font-size:11px;font-weight:bold; text-align:left; border-bottom:1px solid #fff; }
+div.datagrid table td { padding:8px; }
+div.datagrid table th { padding:6px 4px; }
+div.datagrid table td { color:#666; font-size:small; background-color:#fff; border-bottom:1px solid #e1e1e1; }
+
+div.navtabs { }
+div.navtabs ul { list-style-type:none; float:left; width:100%; margin:0; padding:0; border-bottom:1px solid #fff; margin-bottom:10px; }
+div.navtabs ul li { float:left; background-color:#2488c6; color:#fff; margin-left:2px; font-size:11px; }
+div.navtabs ul li a { display:block; padding:10px; color:#fff; text-decoration:none; }
+div.navtabs ul li.active { background-color:#bfdff0; color:#2488c6; border:1px solid #fff; border-bottom:1px solid #bfdff0; position:relative; top:1px; font-weight:bold; }
+div.navtabs ul li.active a { color:#2488c6; }
+div.navtabs img { border:0; }

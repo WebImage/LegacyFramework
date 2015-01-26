@@ -1,0 +1,21 @@
+<table cellspacing="5" cellpadding="1" border="0">
+	<tr>
+		<td><span _class="fieldname">Credit Card Type</span></td>
+		<td><cms:Select id="%getFormFieldName('credit_card_type')%" /></td>
+	</tr>
+	<tr>
+		<td><span _class="fieldname">Card Number</span></td>
+		<td><cms:Input type="text" id="%getFormFieldName('credit_card_number')%" /></td>
+	</tr>
+	<tr>
+		<td><span _class="fieldname">Credit Card Expiration</span></td>
+		<td>
+			<cms:Select id="%getFormFieldName('credit_card_exp_month')%" />
+			<cms:Select id="%getFormFieldName('credit_card_exp_year')%" />
+		</td>
+	</tr>
+	<tr>
+		<td><span _class="fieldname">Card Verification Code</span></td>
+		<td><cms:Input type="text" id="%getFormFieldName('credit_card_csc')%" size="4" maxlength="4" /></td>
+	</tr>
+</table>

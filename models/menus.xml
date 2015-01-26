@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model name="menus" version="1">
+	<fields>
+		<field name="config" type="text" />
+		<field name="created" />
+		<field name="created_by" />
+		<field name="id" />
+		<field name="name" type="varchar" length="255" required="true" />
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>
+</model>

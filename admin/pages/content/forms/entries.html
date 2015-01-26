@@ -1,0 +1,17 @@
+<@Page templateId="admin-default">
+<cms:Content placeHolderId="ph_page_actions" wrapClassId="page-actionbar">
+	<cms:WrapOutput wrapClassId="page-actionbar-action"><a href="index.html"><img src="<?php echo ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_IMG') ?>icons/i_back.gif" align="absmiddle" /> Back to Forms</a></cms:WrapOutput>
+</cms:Content>
+<cms:Content placeHolderId="ph_admin_main">
+
+	<cms:WrapOutput wrapClassId="panel">
+		<cms:WrapOutput wrapClassId="panel-header">
+			<cms:WrapOutput wrapClassId="panel-title">Form Entries: <cms:Literal id="form_name" /></cms:WrapOutput>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-body">
+			<cms:DataList id="dl_entries" tableClass="table" emptyTemplateWrapClassId="panel-content" />
+		</cms:WrapOutput>
+		
+	</cms:WrapOutput>
+	
+</cms:Content>

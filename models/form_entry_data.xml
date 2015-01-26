@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model name="form_entry_data">
+	<fields>
+		<field name="form_entry_id" />
+		<field name="field_id" />
+		<field name="id" />
+		<field name="updated" />
+		<field name="updated_by" />
+		<field name="value" type="text" />
+	</fields>
+</model>

@@ -1,0 +1,43 @@
+<@Page templateId="admin-default" title="Plugin Management">
+<cms:Content placeHolderId="ph_admin_main">
+	<div class="wrap">
+		<div class="page-header">
+			<h1>Plugin Management</h1>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">Installed Plugins</div>
+			
+				<cms:DataGrid id="dg_installed_plugins" tableClass="table table-striped" emptyTemplateClass="panel-body">
+					<Columns>
+						<Column width="50" headerText="Enabled"><![CDATA[<Data field="enable" format="('%field'==1)?'Y':'N'" />]]></Column>
+						<Column headerText="Name"><![CDATA[<Data field="friendly_name" /> (<Data field="name" />)]]></Column>
+						<Column headerText="Version" field="version" width="100" />
+						<Column headerText="Actions" headerClass="actions" class="actions" width="100"><![CDATA[
+							<nobr><a href="index.html?install=<Data field="name" />" class="btn btn-primary">Reinstall</a></nobr>
+						]]></Column>
+						<NoResults><![CDATA[There are not currently any installed plugins.]]></NoResults>
+					</Columns>
+				</cms:DataGrid>
+			
+		</div>
+		
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				Not Installed Plugins
+			</div>
+			
+			<cms:DataGrid id="dg_notinstalled_plugins" tableClass="table table-striped" emptyTemplateClass="panel-body">
+				<Columns>
+					<Column width="50" headerText="Enabled"><![CDATA[<Data field="enable" format="('%field'==1)?'Y':'N'" />]]></Column>
+					<Column headerText="Name"><![CDATA[<Data field="friendly_name" /> (<Data field="name" />)]]></Column>
+					<Column headerText="Version" field="version" width="100" />
+					<Column headerText="Actions" headerClass="actions" class="actions" width="100"><![CDATA[
+						<nobr><a href="index.html?install=<Data field="name" />" class="btn btn-primary">Install</a></nobr>
+					]]></Column>
+					<NoResults><![CDATA[There are not currently any plugins that can be installed.]]></NoResults>
+				</Columns>
+			</cms:DataGrid>
+			
+		</div>
+	</div>
+</cms:Content>

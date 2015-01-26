@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model name="service_handlers" version="1">
+	<fields>
+		<field name="class_file" type="varchar" length="255" />
+		<field name="class_name" type="varchar" length="100" primaryKey="true" />
+		<field name="config" type="text" />
+		<field name="plugin" type="varchar" length="100" />
+		<field name="sortorder" required="true" default="1" />
+		<field name="type" type="varchar" length="50" required="true" default="undefined" primaryKey="true" />
+	</fields>
+</model>

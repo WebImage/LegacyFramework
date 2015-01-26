@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model name="page_stats">
+	<fields>
+		<field name="browser" type="varchar" length="255" default="-1" />
+		<field name="browser_majver" required="true" default="-1" />
+		<field name="browser_minver" required="true" default="-1" />
+		<field name="created" />
+		<field name="created_by" />
+		<field name="domain" type="varchar" length="255" />
+		<field name="enable" type="tinyint" required="true" default="1" />
+		<field name="id" type="varchar" length="64" primaryKey="true" /><!-- Special ID -->
+		<field name="ip_address" type="varchar" length="15" />
+		<field name="is_crawler" type="tinyint" required="true" default="-1" />
+		<field name="is_entry" type="tinyint" required="true" default="-1" />
+		<field name="is_secure" type="tinyint" required="true" default="0" />
+		<field name="is_exit" type="tinyint" required="true" default="-1" />
+		<field name="js_enabled" type="tinyint" required="true" default="-1" />
+		<!--<field name="last_checkin" type="datetime" />-->
+		<field name="loc_lat" type="decimal" length="10" scale="7" required="true" default="-1" />
+		<field name="loc_long" type="decimal" length="10" scale="7" required="true" default="-1" />
+		<field name="loc_city" type="varchar" length="30" />
+		<field name="loc_state" type="varchar" length="20" />
+		<field name="loc_country" type="varchar" length="20" />
+		<field name="membership_id" />
+		<field name="os" type="varchar" length="255" default="-1" />
+		<field name="page_id" />
+		<field name="path" type="varchar" length="255" />
+		<field name="protocol" type="varchar" length="10" />
+		<field name="query" type="text" />
+		<field name="referrer" type="text" />
+		<field name="request_handler" type="varchar" length="255" />
+		<field name="resolution" type="varchar" length="12" />
+		<field name="session_id" type="varchar" length="255" />
+		<!-- <field name="site_id" type="varchar" length="255" /> -->
+		<field name="unique_user_id" relatedModel="stat_sessions" />
+		<field name="updated" />
+		<field name="updated_by" />
+		<field name="user_agent" type="text" />
+	</fields>
+</model>

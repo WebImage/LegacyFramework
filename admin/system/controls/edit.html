@@ -1,0 +1,36 @@
+<@Page templateId="admin-default" title="Edit Control">
+
+<cms:Content id="content1" placeHolderId="ph_admin_main">
+
+	<ul class="nav nav-page-actions">
+		<li><a href="index.html"><i class="glyphicon glyphicon-chevron-left"></i> Back to Controls</a></li>
+	</ul>
+	
+	<div class="wrap">
+		<div class="page-header">
+			<h1>Control Details</h1>
+		</div>
+		<form method="post" action="edit.html">
+			<cms:Input type="hidden" id="id" struct="control" />
+			
+			<div class="form-group">
+				<label for="label">Label: </label>
+				<cms:Input type="text" id="label" struct="control" size="30" class="form-control" />
+			</div>
+			<div class="form-group">
+				<label for="class_name">Class Name: </label>
+				<cms:Input type="text" id="class_name" struct="control" size="30" class="form-control" />
+			</div>
+			<div class="form-group">
+				<label for="file_src">File Source: </label>
+				<cms:Input type="text" id="file_src" struct="control" size="50" class="form-control" />
+			</div>
+			<div class="form-group">			
+				<label>Enabled:</label>
+				<cms:Select struct="control" id="enable" class="form-control" />
+			</div>
+			
+			<p><input type="submit" value="Save" class="btn btn-primary" /></p>
+		</form>
+	</div>
+</cms:Content>

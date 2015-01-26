@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model name="parameters" version="1">
+	<fields>
+		<field name="config" type="text" />
+		<field name="created" />
+		<field name="created_by" />
+		<field name="description" type="text" />
+		<field name="group" type="varchar" length="50" />
+		<field name="input_element" type="varchar" length="100" />
+		<field name="key" type="varchar" length="50" />
+		<field name="name" type="varchar" length="50" />
+		<field name="sortorder" />
+		<field name="type" type="varchar" length="20" />
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>
+</model>

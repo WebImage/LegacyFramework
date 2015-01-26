@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Asset Manager</title>
+<link type="text/css" rel="stylesheet" href="<?php echo ConfigurationManager::get('DIR_WS_GASSETS_CSS') ?>bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo ConfigurationManager::get('DIR_WS_GASSETS_CSS') ?>uploadify/uploadifive.css" />
+<link rel="stylesheet" type="text/css" href="<cms:ConfigValue name="DIR_WS_ADMIN_ASSETS_CSS" />assetmanager.css"></link>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" type="text/javascript"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js" type="text/javascript"></script>
+<!--<script type="text/javascript" src="<?php echo ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_JS') ?>jquery/jquery.clickedit.js"></script>-->
+<script type="text/javascript" src="<?php echo ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_JS') ?>assetmanager.js"></script>
+<script type="text/javascript" src="<?php echo ConfigurationManager::get('DIR_WS_GASSETS_JS') ?>bootstrap.min.js"></script>
+
+<!--<script type="text/javascript" src="<?php echo ConfigurationManager::get('DIR_WS_GASSETS_JS') ?>tinymce/tiny_mce_popup.js"></script>-->
+<!--<script type="text/javascript" src="<?php echo ConfigurationManager::get('DIR_WS_GASSETS_JS') ?>tinymce/utils/mctabs.js"></script>-->
+<!--<script type="text/javascript" src="<?php echo ConfigurationManager::get('DIR_WS_GASSETS_JS') ?>tinymce/utils/form_utils.js"></script>-->
+<!--<script type="text/javascript" src="<?php echo ConfigurationManager::get('DIR_WS_GASSETS_JS') ?>tinymce/plugins/assetmanager/js/dialog.js"></script>
+-->
+<script type="text/javascript" src="<?php echo ConfigurationManager::get('DIR_WS_GASSETS_JS') ?>uploadify/jquery.uploadifive.min.js"></script>
+
+
+<script type="text/javascript">
+var folders = <cms:Literal id="json_folders" />;
+var assets = <cms:Literal id="json_assets" />; /* assets['folder_x'] = [] */
+var currentFolderId; // set below when generateFolders() is first called
+
+<cms:Literal id="js_template_functions" />
+
+function insertImage(asset_id, asset_src, asset_width, asset_height) {
+	var asset = new CWI.Assets.Asset();
+	asset.setId(asset_id);
+	asset.setFileSrc(asset_src);
+	asset.setParameter('width', asset_width);
+	asset.setParameter('height', asset_height);
+	
+	// Do not use until current Asset Manager is retired: AssetManagerDialog.insert(asset);
+	<?php
+	
+	if (isset($callback) && strlen($callback) > 0) {
+		// example: window.opener.myfunction(asset);
+		echo $callback . '(asset);';
+		?>
+		window.close();
+		<?php
+	} else {
+	?>
+	return false;
+	<?php
+	}
+	
+	?>
+	/**
+	 In the future we'll add the ability to return an Asset object:
+	var asset_object = new Asset();
+	*/
+}
+
+function getFolderIndex(folder_id) {
+	
+	for(var i=0; i < folders.length; i++) {
+		
+		if (folders[i].id == folder_id) return i;
+		
+	}
+	return -1;
+}
+
+
+function getFolder(folder_id) {
+	
+	var folderIndex = getFolderIndex(folder_id);
+	
+	if (folderIndex >= 0) return folders[folderIndex];
+}
+
+function generateBreadcrumb(folder_id) {
+	
+	var $breadcrumb = $('#breadcrumb');
+	$breadcrumb.empty();
+	
+	var folder = getFolder(folder_id);
+	
+	if (folder) {
+		
+		var $home = $('<li><a href="#" onclick="generateFolders(0);return false;"><i class="glyphicon glyphicon-home"></i> Home</a> <span class="divider">/</span></li>');
+		$breadcrumb.append($home);
+		
+		var $current = $('<li class="active"><i class="glyphicon glyphicon-folder-close"></i> ' + folder.name + '</li>');
+		$breadcrumb.append($current);
+		
+		var currentFolder = folder;
+		
+		while (parentFolder = getFolder(currentFolder.parent_id)) {
+			$current.before('<li><a href="#" onclick="generateFolder('+parentFolder.id + ');return false;"><i class="glyphicon glyphicon-folder-close"></i> ' + parentFolder.name + '</a> <span class="divider">/</span></li>');			
+			currentFolder = parentFolder;
+		}
+		
+	} else {
+		$breadcrumb.append('<li class="active"><i class="glyphicon glyphicon-home"></i> Home</li>');
+	}
+	
+/*
+<li><a href="#">Home</a> <span class="divider">/</span></li>
+<li><a href="#">Library</a> <span class="divider">/</span></li>
+<li class="active">Data</li>
+*/
+	
+}
+
+function generateFolders(parent_id, reloadAssets) {
+	
+	currentFolderId = parent_id; // set global folder
+	
+	generateBreadcrumb(parent_id);
+	
+	var $assetContainer = $('#asset-container');
+	$assetContainer.empty();
+	
+	var currentFolder;
+	
+	// Add "up level" folder
+	if (currentFolder = getFolder(parent_id)) {
+		if (parent_id != 0) {
+			$assetContainer.append(
+				$('<a href="#" class="folder-box pull-left" onclick="generateFolders(' + currentFolder.parent_id + ');return false;"><i class="glyphicon glyphicon-arrow-up icon-white"></i> ..</a>')
+			);
+		}
+	}
+	
+	// Add folders to container
+	for(var i=0; i < folders.length; i++) {
+		
+		if (folders[i].parent_id == parent_id) {
+			$assetContainer.append(generateFolderHTML(folders[i]));
+		}
+		
+	}
+	
+	var parentKey = 'parent_' + parent_id;
+	// Take an array of assets and add them to the container
+	function addAssets(assets) {
+		
+		for (var i=0; i < assets.length; i++) {
+			
+			$assetContainer.append(generateAssetHTML(assets[i]));
+			
+		}
+	}
+	
+	// retrieve assets
+	if (typeof(assets[parentKey]) !== 'undefined' && !reloadAssets) {
+		// Add cached assets
+		addAssets(assets[parentKey]);
+		
+		if (assets[parentKey].length == 0) {
+			var $noAssets = $('<div />').addClass('loading-box').addClass('pull-left').text('No assets in this folder');
+			$assetContainer.append($noAssets);
+		}
+		
+	} else {
+		
+		var $loading = $('<div />').addClass('loading-box').addClass('pull-left').text('Loading assets...');
+		$assetContainer.append($loading);
+		
+		var url = '?action=getassets&folderid=' + parent_id;
+		
+		jQuery.ajax({
+			url: url,
+			error : function() { $loading.text('We are sorry, but there was an error retrieving assets for this folder'); },
+			success : function(arr_assets, textStatus, jqXHR) {
+				
+				assets[parentKey] = arr_assets;
+				addAssets(arr_assets);
+				if (arr_assets.length == 0) {
+					$loading.text('No assets in this folder');
+				} else {
+					$loading.remove(); // remove loading message
+				}
+				
+			}
+		});
+		
+	}
+	
+}
+
+$(document).ready(function() {
+	generateFolders(<?php echo (empty($folder_id) ? 0 : $folder_id); ?>);
+	$('#file_upload').uploadifive({
+		auto:true,
+		fileObjName : 'fileupload',
+		formData : {
+			action : 'uploadfile'
+		},
+		uploadScript: 'index.html',
+		buttonClass: 'btn',
+		height:'auto',
+		buttonText: 'Upload Files',
+		onAddQueueItem : function(file) {
+			//file.queueItem.css();
+			//alert('onAddQueueItem: ' + this.uploadifive('option', 'action'));
+			this.data('uploadifive').settings.formData.folderid = currentFolderId;
+		},
+		
+		onFallback : function() {
+			$('#fallback-button').show();
+		},
+		onUploadComplete : function(file, data) {
+			var response = jQuery.parseJSON(data);
+			
+			var $assetContainer = $('#asset-container');
+			
+			if (response.success) {
+				//$assetContainer.append(generateAssetHTML(response.asset));
+				generateFolders(currentFolderId, true);
+			} else {
+				var $errorContainer = $('#errors');
+				if ($errorContainer.length == 0) {
+					$errorContainer = $('<div />').attr('id', 'errors');
+					$assetContainer.before( $errorContainer );
+				}
+				
+				$errorContainer.empty();
+				
+				for(var i=0; i < response.errors.length; i++) {
+					$errorContainer.append( $('<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button>' + response.errors[i] + '</div>') );
+				}
+			}
+			/*
+			*/
+		},
+		onQueueComplete : function(uploads) {
+			//alert('onQueueComplete');
+			/*
+			array(
+		'folder' => $folder->folder,
+		'id' => $folder->id,
+		'name' => $folder->name,
+		'parent_id' => $folder->parent_id
+		);
+			*/
+		},
+/*
+//onInit : function() { alert('onInit'); },
+//onAddQueueItem : function(file) { alert('onAddQueueItem'); },
+onCheck : function(file, fileExists) { alert('onCheck'); },
+onCancel : function(file) { alert('onCancel'); },
+onClearQueue : function(queue) { alert('onClearQueue'); },
+onDestroy : function() { alert('onDestroy'); },
+onDrop : function(files, fileDropCount) { alert('onDrop'); },
+onError : function(errorType, filesToUpload) { alert('onError'); },
+//onFallback : function() { alert('onFallback'); },
+onProgress : function(file, event) { alert('onProgress'); },
+//onQueueComplete : function(uploads) { alert('onQueueComplete'); },
+onSelect : function(queue) { alert('onSelect'); },
+onUpload : function(filesToUpload) {},
+onUploadComplete : function(file, data) { alert('onUploadComplete'); },
+onUploadFile : function(file) { alert('onUploadFile'); }
+*/
+/*
+Uploadify options/events:
+file.name
+file.size
+file.queueItem HTML representation of object
+
+1. onAddQueueItem(file) - Triggered when a new item is added to the queue.  This is triggered whether or not the file item returns an error.
+2. onInit() - Triggered at the end of the initialization phase.
+3. onUpload(filesToUpload - The number of files that need to be uploaded) - Triggered once during an upload operation that was called with the upload method.
+4. onSelect(queue) - Triggered once for every file that is selected whether it returns and error or not.
+	queue - An object containing information about the queue
+	cancelled - The number of files cancelled (not replaced)
+	count - The total number of files in the queue
+	errors - The number of files that returned an error
+	queued - The number of files added to the queue
+	replaced - The number of files replaced
+	selected - The number of files selected
+5. onProgress(file, event) - Triggered every time a file upload has a progress update.
+	event - The event object with details about the progress update
+	event.lengthComputable - Boolean telling whether the length of the file is computable
+	event.loaded - The number of btyes loaded
+	event.total - The total number of bytes to be loaded
+6. onUploadComplete(file, data) - Triggered once for each file upload that completes.
+
+
+
+onCheck(file, fileExists) - Triggered after a file is checked against existing files in the destination folder.  Only triggered if the onCheck option is not set to false.
+
+onCancel(file) - Triggered when a file is cancelled / removed from the queue.
+onClearQueue(queue - The jQuerified DOM element of the file queue) - Triggered when the queue is cleared using the 'clearQueue' method.
+onDestroy() - Triggered when the UploadiFive instance is destroyed using the destroy method.
+
+onDrop(files, fileDropCount) - Triggered when a file is dropped onto the file queue.
+
+onError(errorType [QUEUE_LIMIT_EXCEEDED, UPLOAD_LIMIT_EXCEEDED, FILE_SIZE_LIMIT_EXCEEDED, FORBIDDEN_FILE_TYPE, and 404_FILE_NOT_FOUND], file/filesToUpload) - Triggered when an error occurs either adding a file to the queue or uploading a file.
+onFallback() - Triggered during initialization if the browser does not have compatible HTML5 file API capabilities.
+
+onQueueComplete(uploads) - Triggered when all files in the queue have completed uploading.
+	uploads.attempts - The number of file uploads attempted in the last upload operation 
+	uploads.successful - The number of successful file uploads in the last upload operation 
+	uploads.errors - The number of file uploads that returned an error in the last upload operation 
+	uploads.count - The total number of files uploaded from this instance of UploadiFive
+
+
+onUploadFile(file) - Triggered once for every file upload that starts.
+*/
+	});
+});
+</script>
+</head>
+<body>
+
+</div>
+	<div id="upload-container">
+		<form method="post">
+			<input id="file_upload" type="file" name="file_upload" />
+			<div id="fallback-button" class="hide">
+				<input type="submit" value="Upload" class="btn"/>
+			</div>
+		</form>
+		
+		<a href="javascript:editFolder()" class="btn"><i class="glyphicon glyphicon-plus"></i> Create Folder</a>
+	</div>
+
+
+<ul id="breadcrumb" class="breadcrumb"></ul>
+
+<div id="asset-container" class="clearfix">
+	<cms:DataList id="dl_folders" class="clearfix">
+		<Template>
+			<ItemTemplate><![CDATA[
+				<a class="folder-box pull-left" href="#">
+					<span class="name"><i class="glyphicon glyphicon-folder-close icon-white"></i> Folder Name</span>
+				</a>
+			]]></ItemTemplate>
+		</Template>
+	</cms:DataList>    
+	<cms:DataList id="dl_assets" class="clearfix">
+		<Template>
+			<ItemTemplate><![CDATA[
+				<div class="asset-box pull-left well well-small">
+					<a href="#" class="image">
+						<img src="<Data field="thumbnail_image" />" width="<Data field="thumbnail_width" />" border="0" alt="<Data field="original_file_name" />" class="preview"  style="width:<Data field="thumbnail_width" />px;margin:0 auto;" />
+					</a>
+					<div class="thumbnail-info">
+						<span class="name"><Data field="display_file_name" /></span><br />
+						<span class="dimensions"><Data field="dimensions" /></span>
+					</div>
+					<div class="thumbnail-actions">
+						<a href="upload.html?assetid=<Data field="id" />" class="btn"><i class="glyphicon glyphicon-pencil"></i></a> 
+						<a href="index.html?delete=<Data field="id" />" class="btn btn-danger"><i class="glyphicon glyphicon-trash"></i></a>
+					</div>
+				</div>
+				<!--
+				<div class="asset-box">
+					<div class="thumbnail-image" style="width:<Data field="width" />px;margin:0 auto;">
+						<a href="#" onclick="insertImage('<Data field="id" />', '<Data field="file_src" />', '<Data field="width" />', '<Data field="height" />');return false;" title="<Data field="original_file_name" />"><img src="<Data field="thumbnail_image" />" width="<Data field="thumbnail_width" />" border="0" alt="<Data field="original_file_name" />" class="preview" /></a>
+					</div>
+					<div class="thumbnail-info">
+						<span class="name"><Data field="display_file_name" /></span><br />
+						<span class="dimensions"><Data field="dimensions" /></span>
+					</div>
+					<div class="thumbnail-actions">
+						<a href="upload.html?assetid=<Data field="id" />" class="btn"><i class="glyphicon glyphicon-pencil"></i></a> 
+						<a href="index.html?delete=<Data field="id" />" class="btn btn-danger"><i class="glyphicon glyphicon-trash"></i></a>
+					</div>
+				</div>
+				-->
+			]]></ItemTemplate>
+		</Template>
+	</cms:DataList>
+	
+</div>
+<script type="text/javascript">
+	function editFolder(id) {
+		$('#folderid').val('');
+		$('#foldername').val('');
+			
+		if (id && (folder = getFolder(id))) {
+			$('#folderid').val(folder.id);
+			$('#foldername').val(folder.name);
+		}
+		$('#folder-modal').modal();
+		document.getElementById('foldername').focus();
+		
+	}
+	function saveFolder() {
+		var saveObj = {
+			action:'savefolder',
+			folderid: $('#folderid').val(),
+			foldername: $('#foldername').val(),
+			parentid: currentFolderId
+		};
+		
+		var isNew = (!saveObj.folderid);
+		
+		jQuery.ajax({
+			url: 'index.html',
+			type:'POST',
+			data: saveObj,
+			error: function() { alert('There was an unknown error.  Please try again later'); },
+			success: function(folderObj) {
+
+				var $folderErrors = $('#folder-errors');
+				$folderErrors.empty();
+				
+				if (folderObj.success) {
+					//alert(folderObj.id + ' - ' + folderObj.name + ' - ' + folderObj.parent_id + ' - ' + folderObj.folder);
+					if (isNew) {
+						var $folderBox = generateFolderHTML(folderObj);
+						var $lastBox = $('.folder-box').last();
+						if ($lastBox.length > 0) $lastBox.after($folderBox);
+						else $('#asset-container').prepend($folderBox);
+						folders[folders.length] = folderObj;
+					} else {
+						folders[getFolderIndex(folderObj.id)] = folderObj;
+						$('#folder-' + folderObj.id).replaceWith( generateFolderHTML(folderObj) );
+					}
+					
+					$('#folder-modal').modal('hide');
+				} else {
+					
+					for(var i=0; i < folderObj.errors.length; i++) {
+						$folderErrors.append( $('<div class="alert alert-error">'+folderObj.errors[i]+'</div>') );
+					}
+					
+				}
+			
+			}
+		});
+	}
+</script>
+<div id="folder-modal" class="modal hide fade">
+	<div class="modal-header">
+		<h3>Create Folder</h3>
+	</div>
+	<div class="modal-body">
+		<div id="folder-errors"></div>
+		<form method="post" onsubmit="saveFolder();return false;">
+			<label>Folder:</label>
+			<input type="hidden" id="folderid" name="folderid" />
+			<input type="text" id="foldername" name="foldername" />
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		<a href="javascript:saveFolder()" class="btn btn-primary">Save</a>
+	</div>
+</div>
+<script type="text/javascript">
+
+$('.folder-box').live('contextmenu',function(e) {
+	e.preventDefault();
+	e.stopPropagation();
+
+	// create and show menu
+	editFolder($(this).attr('data-id'));
+
+});
+</script>
+</body>
+</html>

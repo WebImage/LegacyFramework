@@ -1,0 +1,24 @@
+<model name="roles" version="1">
+	<fields>
+		<field name="created" />
+		<field name="created_by" />
+		<field name="description" type="text" />
+		<field name="id" />
+		<field name="name" type="varchar" length="20" />
+		<!-- <field name="site_id" relatedModel="sites" /> -->
+		<field name="start_page" type="varchar" length="100" />
+		<field name="updated" />
+		<field name="updated_by" />
+		<field name="visible" type="tinyint" required="true" default="1" />
+	</fields>
+	<data>
+		<name>AdmBase</name>
+		<start_page>/admin/</start_page>
+		<visible>1</visible>
+	</data>
+	<indexes>
+		<index name="roles_name">
+			<field name="name" />
+		</index>
+	</indexes>
+</model>

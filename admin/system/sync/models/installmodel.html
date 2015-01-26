@@ -1,0 +1,98 @@
+<@Page templateId="admin-default">
+<cms:Content placeHolderId="ph_page_actions" wrapClassId="page-actionbar">
+	<cms:WrapOutput wrapClassId="page-actionbar-action"><a href="index.html"><img src="<?php echo ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_IMG') ?>icons/i_back.gif" align="absmiddle" /> Back to Models</a></cms:WrapOutput>
+</cms:Content>
+<cms:Content placeHolderId="ph_admin_main">
+	<cms:WrapOutput wrapClassId="panel">
+		<cms:WrapOutput wrapClassId="panel-header">
+			<cms:WrapOutput wrapClassId="panel-title">Table Details</cms:WrapOutput>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-body-content">
+			<table cellspacing="0" cellpadding="0" border="0" class="detaileditview" width="100%">
+				<tr>
+					<td width="100" class="field divider-bottom">Model:</td>
+					<td class="value divider-bottom"><cms:Literal id="lbl_model" /></td>
+				</tr>
+				<tr>
+					<td class="field divider-bottom">Table Name:</td>
+					<td class="value divider-bottom"><cms:Literal id="lbl_table_name" /></td>
+				</tr>
+				<tr>
+					<td class="field">Status:</td>
+					<td class="value"><cms:Literal id="lbl_status" /></td>
+				</tr>
+			</table>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-header2">
+			<cms:WrapOutput wrapClassId="panel-title">Fields</cms:WrapOutput>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-body-content">
+			<cms:DataGrid id="dg_fields" tableClass="table table-striped" emptyTemplateWrapClassId="datagrid-noresults">
+				<Columns>
+					<Column headerText="Name" field="name" />
+					<Column headerText="DB Type" field="type" width="200" />
+					<Column headerText="Required" align="center" field="required" width="80" />
+					<Column headerText="Size" field="size" width="80" />
+					<Column headerText="Scale" field="scale" width="80" />
+					<Column headerText="Default" field="default" width="80" />
+					<Column headerText="Primary Key" align="center" field="primary_key" width="80" />
+					<Column headerText="Auto Increment" align="center" field="auto_increment" width="80" />
+					<NoResults>There are not any fields associated with this model.</NoResults>
+				</Columns>
+			</cms:DataGrid>
+		</cms:WrapOutput>
+	</cms:WrapOutput>
+	
+	<cms:WrapOutput wrapClassId="panel">
+		<cms:WrapOutput wrapClassId="panel-header">
+			<cms:WrapOutput wrapClassId="panel-title">Dependencies</cms:WrapOutput>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-body">
+			<cms:DataGrid id="dg_requirements" tableClass="table table-striped" emptyTemplateWrapClassId="datagrid-noresults">
+				<Columns>
+					<Column headerText="Name" field="name" />
+					<Column headerText="Status" field="status" width="100" />
+					<NoResults><![CDATA[
+						There are not any sub-requirements that will be installed.
+					]]></NoResults>
+				</Columns>
+			</cms:DataGrid>
+		</cms:WrapOutput>
+	</cms:WrapOutput>
+	
+
+	<!--
+	<cms:WrapOutput wrapClassId="panel">
+		<cms:WrapOutput wrapClassId="panel-header">
+			<cms:WrapOutput wrapClassId="panel-title">Table Details</cms:WrapOutput>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-body-content">
+				<table cellspacing="0" cellpadding="0" border="0" class="detaileditview" width="100%">
+					<tr>
+						<td width="150" class="field divider-bottom">Model:</td>
+						<td class="value divider-bottom"><cms:Literal id="lbl_model" /></td>
+					</tr>
+					<cms:Content id="c_table_form" visible="false" wrapOutput="">
+						<form method="post">
+						<cms:Input type="hidden" id="model" />
+						<cms:Input type="hidden" id="retrievallink" />
+						<tr>
+							<td class="field divider-bottom">Table Name:</td>
+							<td class="value divider-bottom"><cms:Input type="text" id="tablename" /></td>
+						</tr>
+						</table>
+						<p><input type="submit" value="Save Table" /></p>
+						</form>
+					</cms:Content>
+					<cms:Content id="c_table_name" visible="false" wrapOutput="">
+						<tr>
+							<td class="field">Table Name:</td>
+							<td class="value"><cms:Literal id="lbl_table_name" /></td>
+						</tr>
+						</table>
+					</cms:Content>
+		</cms:WrapOutput>
+	</cms:WrapOutput>
+	
+	-->
+</cms:Content>

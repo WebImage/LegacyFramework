@@ -1,0 +1,22 @@
+<@Page masterPageFile="~/templates/default.tpl">
+<cms:Content placeHolderId="ph_main">
+	<h1>My Account</h1>
+	
+	<h2>Recent Orders</h2>
+	<style type="text/css">
+		.order-summary {}
+		.order-summary table { border-collapse:collapse; }
+		.order-summary .summary-header td { padding:5px; }
+		.order-summary .summary-line td { background-color:#e1e1e1; padding:5px; border:1px solid #ccc; }
+		.order-summary .summary-line-alt td { background-color:#fff; }
+	</style>
+	<cms:DataGrid id="dg_order" width="100%" class="order-summary">
+		<Columns headerClass="summary-header" rowClass="summary-line,summary-line summary-line-alt">
+			<Column headerText="Order #"><![CDATA[<a href="orders/view.html?o=<Data field="display_id" />"><Data field="display_id" /></a>]]></Column>
+			<Column headerText="Order Date" field="date" align="center" />
+			<Column headerText="Ship To" field="ship_to" />
+			<Column headerText="Order Total" field="total" align="right" />
+			<Column headerText="Order Status" field="order_status" align="center" />
+		</Columns>
+	</cms:DataGrid>
+</cms:Content>

@@ -1,0 +1,27 @@
+<@Page templateId="admin-default" title="Duplicate Page Content">
+<cms:Content placeHolderId="ph_admin_main">
+	<ul style="list-style:none;">
+		<li><strong>Step #1: </strong> Select the page from which you wish to copy content.</li>
+		<li><strong>Step #2: </strong> Select the section from the page for which you are copying content.</li>
+		<li><strong>Step #3: </strong> Select the content to be copied.</li>
+	</ul>
+	<form method="post">
+		<cms:Input type="hidden" id="placeholder" />
+		<cms:Input type="hidden" id="pageid" />
+		<table cellspacing="0" cellpadding="0" border="0" class="detaileditview">
+			<tr>
+				<td class="field"><label>Select Page:</label> </td>
+				<td class="value"><cms:Select id="lst_page" keyField="id" textField="title" /></td>
+			</tr>
+			<tr>
+				<td class="field"><label>Section:</label> </td>
+				<td class="value"><cms:Select id="lst_section" /></td>
+			</tr>
+			<tr>
+				<td class="field"><label>Content:</label> </td>
+				<td class="value"><cms:Literal id="content" /></td>
+			</tr>
+		</table>
+		<p><cms:Input type="submit" value="Test" /></p>
+	</form>
+</cms:Content>

@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Edit Folder</title>
+<link type="text/css" rel="stylesheet" href="<?php echo ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_CSS') ?>assetmanager.css" />
+</head>
+<body>
+<div class="navtabs">
+	<ul>
+		<li><a href="<?php echo $home_url ?>"><i class="glyphicon glyphicon-th"></i> Assets</a></li>
+		<li class="active"><a href="<?php echo $folder_url ?>"><i class="glyphicon glyphicon-folder-close"></i> Folders</a></li>
+		<li><a href="<?php echo $upload_url ?>"><i class="glyphicon glyphicon-plus"></i> Add New</a></li>
+
+	</ul>
+	<br style="clear:both;" />
+</div>
+
+<h1>Edit Folder</h1>
+<form method="post" action="editfolder.html">
+	<?php echo CWI_STRING_UrlManipulator::makeHidden($base_url); ?>
+	
+	<cms:Input type="hidden" id="id" struct="assetfolder" />
+	<p><cms:Literal for="">Folder Name</cms:Literal><br />
+	<cms:Input type="text" id="name" struct="assetfolder" size="50" maxlength="50" /></p>
+	<p><cms:Input type="submit" value="Update" /></p>
+</form>
+
+</body>
+</html>

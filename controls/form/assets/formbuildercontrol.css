@@ -1,0 +1,113 @@
+.form-controls { 
+	background-color:#fafafa;
+	padding:5px;
+	position:fixed;
+	top:0;left:550px;
+	}
+.form-controls a { 
+	border-bottom:1px solid #e1e1e1;
+	display:block;
+	padding:10px;
+	text-decoration:none;
+	vertical-align:middle;
+	}
+.form-controls a span.icon {}
+.form-controls a:last-child { border:none; }
+.form-controls a:hover { 
+	background-color:#999;
+	color:#fff;
+	}
+.field-container {
+	/*
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-width:0;
+	*/
+	/*
+	margin:14px 0;
+	*/
+	position:relative;
+	cursor:move;
+	}
+.field-container:hover {
+	outline:1px dashed #ccc;
+	}
+.field-controls { 
+	display:none;
+	position:absolute;
+	top:0;
+	right:0;
+	}
+.field-controls a { 
+	background-color:#f0f0f0;
+	display:inline-block;
+	font-family:sans-serif;
+	font-size:16px;
+	font-weight:bold;
+	height:16px;
+	line-height:16px;
+	margin:1px;
+	text-align:center;
+	vertical-align:middle;
+	text-decoration:none;
+	overflow:hidden;
+	width:16px;
+}
+.field-controls a.action-remove { color:#c00; }
+.field-controls .action-move { cursor:move; }
+.field-drop-container { 
+	/*border-color:#c00;*/
+	}
+.field-container:hover .field-controls {
+	display:block;
+	}
+.editform {
+	/*background-color:#fff;
+	padding:10px
+	*/
+	}
+/*
+.f_25 { 
+	width:25%;
+	}
+.f_50 {
+	width:50%;
+	}
+.f_75 {
+	width:75%;
+	}
+.f_100 {
+	width:100%;
+	}
+*/
+.form-container label {}
+.form-container input, .form-container textarea { 
+	/*
+	font: 12px/14px Helvetica Neue, "Arial", Helvetica, Verdana, sans-serif;
+	padding: 6px 0;
+	color: #798e94;
+	outline: none;
+	display: inline-block;
+	position: relative;
+	z-index: 2;
+	border-radius: 2px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	*/
+	}
+
+.form-container input[type="text"], .form-container textarea { /* width:98%;*/ }
+/*
+.form-container input[type="submit"] { border:inherit; }
+*/
+.form-container textarea { height:170px; }
+.form-builder-new-field {
+	overflow:hidden;
+	position:relative;
+	text-align:center;
+	/*display:none;*/
+}
+.field-container:hover .form-builder-new-field {
+	display:block;
+}

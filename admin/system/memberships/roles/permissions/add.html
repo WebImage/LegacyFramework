@@ -1,0 +1,26 @@
+<@Page templateId="admin-default">
+<cms:Content placeHolderId="ph_admin_main">
+
+	<ul class="nav nav-page-actions">
+		<li><a href="index.html"><i class="glyphicon glyphicon-chevron-left"></i> Back to Permissions</a></li> 
+	</ul>
+	
+	<div class="wrap">
+		<div class="page-header"><h1>Add Permission</h1></div>
+		
+		<form method="post">
+			
+			<div class="form-group">
+				<label for="permission" class="control-label">Permission Key: </label>
+				<input type="text" name="permission" size="40" class="form-control" />
+			</div>
+		
+			<div class="checkbox">
+				<label><input type="checkbox" name="add_another" id="add_another" value="1" /> <label for="add_another">Add another permission</label>
+			</div>
+		
+			<p><cms:Input type="submit" value="Save" class="btn btn-primary" /></p>
+		
+		</form>
+	</div>
+</cms:Content>

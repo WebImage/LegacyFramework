@@ -1,0 +1,159 @@
+/*
+#d9eefa#53b9de
+#bfdff0
+*/
+/* CSS Document */
+.placeholder {
+  border: 1px solid #53b9de;
+  background: #ccc;
+  height: 50px; }
+
+.editable-clickable {
+  cursor: pointer; }
+
+.editable-control:hover, .editable-highlight:hover {
+  outline: 1px dashed #bfdff0;
+  outline-width: 2px; }
+
+/**
+ * On Page Controls
+ */
+.editable-region {
+  /* Entire Region */ }
+  .editable-region .editable-region-bar {
+    background: #0277bd;
+    color: white;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    border-radius: 0px;
+    height: 24px;
+    margin-bottom: 10px;
+    padding: 5px 5px 5px 14px; }
+    .editable-region .editable-region-bar .editable-region-title {
+      font-weight: bold;
+      float: left;
+      font-size: 16px;
+      padding-top: 4px; }
+    .editable-region .editable-region-bar .editable-region-addcontent-container {
+      float: right;
+      position: relative; }
+      .editable-region .editable-region-bar .editable-region-addcontent-container a.editable-region-addcontent-button {
+        display: block;
+        width: 23px;
+        height: 23px;
+        float: right;
+        background: url(/assets/admin/img/themes/blue/editablecontrols/b_addcontent.png) no-repeat top;
+        z-index: 3; }
+      .editable-region .editable-region-bar .editable-region-addcontent-container .editable-region-add-options {
+        background-color: #0277bd;
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
+        -moz-border-radius-bottomleft: 0px;
+        -moz-border-radius-bottomright: 0px;
+        -webkit-border-bottom-left-radius: 0px;
+        -webkit-border-bottom-right-radius: 0px;
+        color: #fff;
+        display: none;
+        padding: 5px 0;
+        position: absolute;
+        right: 0;
+        top: 28px;
+        z-index: 2; }
+        .editable-region .editable-region-bar .editable-region-addcontent-container .editable-region-add-options ul {
+          list-style: none;
+          margin: 0;
+          padding: 0; }
+        .editable-region .editable-region-bar .editable-region-addcontent-container .editable-region-add-options li {
+          margin: 0;
+          padding: 0; }
+          .editable-region .editable-region-bar .editable-region-addcontent-container .editable-region-add-options li a {
+            color: #fff;
+            display: block;
+            font-weight: bold;
+            padding: 5px 20px 5px 20px;
+            text-decoration: none; }
+          .editable-region .editable-region-bar .editable-region-addcontent-container .editable-region-add-options li a:hover {
+            background-color: #81d4fa;
+            color: #01579b; }
+        .editable-region .editable-region-bar .editable-region-addcontent-container .editable-region-add-options .editable-region-add-section {
+          padding: 5px 5px 5px 14px;
+          font-weight: bold;
+          font-size: 1.2em; }
+  .editable-region .editable-region-body .editable-control-bar .editable-control-toolbar {
+    background-color: #039be5;
+    color: white;
+    padding: 8px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    border-radius: 0px; }
+    .editable-region .editable-region-body .editable-control-bar .editable-control-toolbar .left {
+      float: left; }
+    .editable-region .editable-region-body .editable-control-bar .editable-control-toolbar .editable-toolbar-title {
+      color: white;
+      display: inline-block;
+      font-size: 14px;
+      font-weight: bold;
+      _float: left;
+      padding-top: 5px; }
+  .editable-region .editable-region-body .editable-control-bar .editable-control-waiting, .editable-region .editable-region-body .editable-control-bar .editable-control-actionbar {
+    background-color: #039be5;
+    padding: 8px;
+    color: white;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    border-radius: 0px; }
+  .editable-region .editable-region-body .editable-control-bar .editable-control-configbar {
+    background-color: #29b6f6;
+    color: #01579b;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    border-radius: 0px;
+    padding: 5px; }
+    .editable-region .editable-region-body .editable-control-bar .editable-control-configbar .row {
+      -webkit-border-radius: 0px;
+      -moz-border-radius: 0px;
+      -ms-border-radius: 0px;
+      border-radius: 0px;
+      margin: 3px 0;
+      padding: 8px; }
+    .editable-region .editable-region-body .editable-control-bar .editable-control-configbar .row label {
+      font-weight: bold; }
+
+/**
+ * Top Navigation Bar
+ */
+.admin-header-controls {
+  background-color: #0277bd;
+  color: white;
+  padding: 0;
+  text-align: center;
+  height: 46px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  /*@include opacity(.8);*/ }
+  .admin-header-controls img {
+    border: 0; }
+  .admin-header-controls .admin-header-controls-left {
+    float: left;
+    height: 37px;
+    padding-top: 7px;
+    padding-left: 7px; }
+    .admin-header-controls .admin-header-controls-left a {
+      color: #fff;
+      display: inline-block;
+      font-size: 11px;
+      height: 12px;
+      line-height: 12px;
+      margin-right: 5px;
+      padding: 7px 12px 11px 12px;
+      text-decoration: none; }
+  .admin-header-controls .admin-header-controls-right {
+    float: right;
+    padding-right: 10px;
+    padding-top: 4px; }

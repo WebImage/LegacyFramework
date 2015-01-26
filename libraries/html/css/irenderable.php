@@ -1,0 +1,1 @@
+<?php interface CWI_HTML_CSS_IRenderable { function render(); } ?>

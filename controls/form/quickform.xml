@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<quickForm>
+	<languages>
+		<languagePack language="en">
+			<labels>
+				<label id="single-line" text="Single Line" />
+				<label id="number" text="Number" />
+				<label id="paragraph" text="Paragraph" />
+				<label id="checkbox" text="Checkbox" />
+				<label id="radio" text="Select One" />
+				<label id="select" text="Dropdown" />
+				<label id="section-title" text="Section" />
+				<label id="email" text="Email" />
+			</labels>
+		</languagePack>
+	</languages>
+	<fieldTypes>
+		<fieldType id="text" inputElementType="TextInputElement" modelFieldType="varchar" labelId="single-line" builderIcon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_page.gif" />
+		<!--<fieldType id="number" inputElementType="NumberInputElement" modelFieldType="double" labelId="number" labelId="number" builderIcon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_page.gif" />-->
+		<fieldType id="paragraph" inputElementType="TextAreaInputElement" modelFieldType="text" labelId="paragraph" builderIcon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_page.gif" />
+		<fieldType id="checkbox" inputElementType="CheckboxInputElement" modelFieldType="int" labelId="checkbox" saveOptionsSeparately="true" builderIcon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_page.gif">
+			<optionTemplate type="external"><![CDATA[
+				<div class="option">
+					<input type="checkbox" name="${field_id}[]" id="${id}" value="${value}">
+					<label for="${id}">${label}</label>
+				</div>
+			]]></optionTemplate>
+		</fieldType>
+		<fieldType id="radio" inputElementType="RadioInputElement" modelFieldType="int" labelId="radio" builderIcon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_page.gif">
+			<optionTemplate type="external"><![CDATA[
+				<div class="option">
+					<input type="radio" name="${field_id}" id="${id}" value="${value}">
+					<label for="${id}">${label}</label>
+				</div>
+			]]></optionTemplate>
+		</fieldType>
+		<fieldType id="select" inputElementType="SelectInputElement" modelFieldType="int" labelId="select" builderIcon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_page.gif">
+			<optionTemplate type="internal"><![CDATA[
+				<option value="${value}">${label}</option>
+			]]></optionTemplate>
+		</fieldType>
+		<!--<fieldType id="section" inputElementType="none" labelId="section-title" builderIcon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_page.gif" />-->
+		<!--
+		<fieldType id="name">
+			<input>
+				<element type="text" labelId="name.title" />
+				<element type="text" labelId="name.first" />
+				<element type="text" labelId="name.last" />
+				<element type="text" labelId="name.suffix" />
+			</input>
+			<modelFields>
+				<field name="title" type="varchar" length="255" />
+				<field name="first" type="varchar" length="255" />
+				<field name="last" type="varchar" length="255" />
+				<field name="suffix" type="varchar" length="255" />
+			</modelFields>
+		</fieldType>
+		<fieldType id="date" />
+		<fieldType id="simple_phone" inputElementType="TextInputElement" modelFieldType="varchar" />
+		<fieldType id="website" inputElementType="WebsiteInputElement" modelFieldType="varchar" />
+		<fieldType id="price" />
+		-->
+		<fieldType id="email" inputElementType="EmailInputElement" labelId="email" />
+		<!--
+		<fieldType id="address" labelId="address">
+			<input>
+				<element name="street1" type="text" labelId="address.street1" />
+				<element name="street2" type="text" labelId="address.street2" />
+				<element name="city" type="text" labelId="address.city" />
+				<element name="state" type="text" labelId="address.state" />
+				<element name="zip" type="text" labelId="address.zip" />
+				<element name="country" type="SelectInputElement" labelId="address.country" />
+			</input>
+			<modelFields>
+				<field type="varchar" length="255" inputElement="{street1}" />
+				<field type="varchar" length="255" inputElement="{street2}" />
+				<field type="varchar" length="255" inputElement="{city}" />
+				<field type="varchar" length="255" inputElement="{state}" />
+				<field type="varchar" length="255" inputElement="{zip}" />
+				<field type="int" inputElement="{country}" format="%s" />
+			</modelFields>
+		</fieldType>
+		<fieldType id="time">
+			<input>
+				<element name="hour" type="NumberInputElement">
+					<options>
+						<option name="minValue" value="1" />
+						<option name="maxValue" value="12" />
+					</options>
+				</element>
+				<element name="minute" type="NumberInputElement">
+					<options>
+						<option name="minValue" value="0" />
+						<option name="maxValue" value="59" />
+					</options>
+				</element>
+				<element name="day_part" type="Select">
+					<choices>
+						<choice key="am" text="AM" />
+						<choice key="pm" text="PM" />
+					</choices>
+				</element>
+			</input>
+			<modelFields>
+				<field type="time" elements="{hour}:{minute}" />
+			</modelFields>
+		</fieldType>
+		-->
+	</fieldTypes>
+</quickForm>

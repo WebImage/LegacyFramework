@@ -1,0 +1,11 @@
+<model name="permissions" version="1">
+	<fields>
+		<field name="created" />
+		<field name="created_by" />
+		<field name="description" type="varchar" length="255" />
+		<field name="permission" type="varchar" length="60" primaryKey="true" />
+		<!-- <field name="site_id" relatedModel="sites" /> -->
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>
+</model>

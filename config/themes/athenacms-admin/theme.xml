@@ -1,0 +1,65 @@
+<theme-config name="AthenaCMS Admin Default">
+	<template id="admin-default">
+		<!--<stylesheets>
+			<add file="%DIR_WS_ADMIN_ASSETS_CSS%default.css" />
+		</stylesheets>
+		-->
+		<controls>
+			<control classPath="~/controls/literalcontrol/literalcontrol.php" className="LiteralControl" placeHolderId="ph_main">
+				<callFunction function="setText">
+					<parameters>
+						<parameter name="text">The text to add to the page!</parameter>
+					</parameters>
+				</callFunction>
+			</control>
+		</controls>
+	</template>
+	
+	<stylesheets>
+		<add file="%DIR_WS_ADMIN_ASSETS_CSS%default.css" />
+	</stylesheets>
+	<wrapClassIds>
+		<wrapClass id="page-title-container" class="page-title-l&gt;page-title-r&gt;page-title-bar" />
+		<wrapClass id="page-title" class="page-title" />
+		<!--
+		<@Page masterPageFile="..." />
+		<@Page themeTemplateKey="default" />
+		<@Page themeTemplateFile="admin/default.tpl" />
+		
+		<@Page templateFile="admin/defaul.tpl" />
+		<@Page templateKey="admin_default" />
+		
+		<templates>
+			<template id="admin_default" file="admin/default.tpl" preProcessor="" postProcessor="" />
+		</templates>
+		
+		Classes / Functions
+		- - - - - - - - - - -
+		ClassWrapHelper::wrapContainerUsingId('page-title-container');
+		ClassWrapHelper::wrapInsideContainerUsingId('page-title-container');
+		
+		<wrapOutput
+		
+		outsideOfContainer -> For example, on links <a href="#">Test</a>  we would want wrapWithClassesOutsideOfContainer('mylink', '<a href="#">Test</a>') to output '<div class="mylink-outer"><a href="#">Test</a></div>
+		insideOfContainer -> For example, on a div container <div id="test">Test</div> we would want wrapWithClassesInsideContainer('mylink', '<div id="test">Test</div> to output <div id="test" class="mylink"><div class="mylink-inner">Test</div></div>
+		
+		
+		Possible IDS
+		- - - - - - - - - - - 
+		ErrorControl
+		NotificationControl
+		Breadcrumb
+		
+		Panel
+		CollabsiblePanel
+		TabbedPanel
+			TabSection
+			TabBody
+			
+		-->
+	</wrapClassIds>
+	<!-- How can I select a section automatically without any additional intervention or manual specification -->
+	<section id="Admin" defaultTemlpate="~/templates/admin/default.tpl" />
+	<section id="AssetManager" />
+	<section id="Store" />
+</theme-config>

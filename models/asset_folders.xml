@@ -1,0 +1,14 @@
+<model name="asset_folders" version="1">
+	<fields>
+		<field name="created" />
+		<field name="created_by" />
+		<field name="folder" type="varchar" length="255" />
+		<field name="id" />
+		<field name="name" type="varchar" length="50" />
+		<field name="parent_id" relatedModel="asset_folders" />
+		<!-- <field name="site_id" relatedModel="sites" /> -->
+		<field name="type" type="varchar" length="20" />
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>
+</model>

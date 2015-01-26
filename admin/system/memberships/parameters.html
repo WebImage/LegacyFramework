@@ -1,0 +1,126 @@
+<@Page templateId="admin-default" title="Memberships">
+<cms:Content placeHolderId="ph_admin_main">
+<script type="text/javascript">
+	function updateMachineReadable() {
+		var name = document.getElementById('name');
+		var key = document.getElementById('key');
+		var key_assigned = document.getElementById('key_assigned');
+		
+		if (key_assigned.value == 1) return; // Value already assigned, don't regenerate
+
+		var key_desc = document.getElementById('key_desc');
+		
+		var machine_key = strToMachineKey(name.value);
+		key.value = machine_key;
+		key_desc.innerHTML = machine_key;
+	}
+</script>
+	<div class="cols-fs">
+		<div class="col-fs col-fs-roffset-3">
+			<ul class="nav nav-page-actions">
+				<li><a href="index.html"><i class="glyphicon glyphicon-chevron-left"></i> Back to Users</a>
+			</ul>
+			
+			<div class="page-header"><h1><i class="glyphicon glyphicon-list-alt"></i> Custom User Fields</h1></div>
+			
+			<cms:DataGrid id="dg_parameters" tableClass="table table-hover" emptyTemplateClass="">
+				<Columns>
+					<Column headerText="Parameter"><![CDATA[
+						<a href="parameters.html?key=<Data field="key" />#editparameter"><Data field="name" /></a>
+					]]></Column>
+					<Column headerText="Input" field="input_element_description" />
+					<Column headerText="Group" field="group" />
+					<Column headerText="Roles" field="edit_roles" />
+					<Column headerText="Sort Order" field="sortorder" width="50" />
+					<Column headerText="Required" field="required" format="('%field' == 1) ? 'Yes':'No'" width="50" />
+					<Column headerText="Actions" headerClass="actions" class="actions"><![CDATA[
+						<a href="parameters.html?key=<Data field="key" />#editparameter" class="btn btn-primary">Edit</a>
+						<a href="#" onclick="if (confirm('Are you sure you want to delete <Data field="name" />?  Deleting a parameter does not delete user data previously entered for this parameter.')) window.location.href='parameters.html?delete=<Data field="key" />#editparameter';return false;" class="btn btn-danger">Delete</a>
+					]]></Column>
+					<NoResults><![CDATA[
+						There are not currently any parameters that can be edited.
+					]]></NoResults>
+				</Columns>
+			</cms:DataGrid>
+		</div>
+		<div class="col-fs col-fs-hpanel-3 col-fs-rpanel col-fs-hpanel-nav">
+			<form method="post" action="parameters.html">
+				<a name="editparameter"></a>
+				<div class="panel panel-default">
+					<div class="panel-heading"><cms:Literal id="parameter_form_action" /> Parameter</div>
+					<div class="panel-body">
+						<div class="form-group">
+							<label class="control-label" for="name">Name: </label>
+							<cms:Input type="text" id="name" class="form-control" onkeyup="updateMachineReadable()" />
+							<cms:Input type="hidden" id="key"  />
+							<cms:Input type="hidden" id="key_assigned" />
+							<div class="help-text">Internal: <span id="key_desc"><em><cms:Literal id="generated_internal_name" /></em></span></div>
+						</div>
+						<div class="form-group">
+							<label class="control-label">Type:</label>
+							<cms:Select id="inputelement" defaultText="-- Select Element --" class="form-control" />
+							<div class="help-text">The input field type that will be used for this parameter</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label">Description:</label>
+							<cms:Input type="textarea" id="description" class="form-control" />								
+						</div>
+						<div class="form-group">
+							<label class="control-label">Group:</label>
+							
+							<script type="text/javascript">
+								function checkOtherGroup() {
+									var obj = document.getElementById('group');
+									var other = document.getElementById('group_other_section');
+									if (obj.options[obj.selectedIndex].value == '--other--') {
+										other.style.display = 'block';
+									} else {
+										other.style.display = 'none';
+									}
+								}
+	
+							</script>
+							
+							<cms:Select id="group" defaultText="-- Select --" onchange="checkOtherGroup()" class="form-control" />
+							<div class="help-text">An arbitrary value that can be used to group parameters together.  Parameters sharing an exact group name will be clumped together.  For example, you could have three parameters: Name, Birth Day, and Age and specify &quot;Personal Information&quot; as the group name on each to group these three parameters together.</div>
+							<div id="group_other_section">
+								Other: <cms:Input type="text" id="group_other" />
+							</div>
+							<script type="text/javascript">
+								checkOtherGroup();
+							</script>
+						</div>
+						<div class="form-group">
+							<label class="control-label">Sort Order:</label>
+							<cms:Input type="text" id="sortorder" size="3" maxlength="3" class="form-control" />
+							<div class="help-text">A weight setting that controls the order in which parameters are displayed.  Lower numbers float to the top, higher numbers sink to the bottom.</div>
+									</div>
+						<div class="form-group">
+							<label class="control-label">Required:</label>
+							<cms:Input type="checkbox" id="required" value="1" class="form-checkbox" />
+							<div class="help-text">Checking this box will require the user to enter a value in their profile.</div>								
+						</div>
+						<div class="form-group">
+							<label class="control-label">Applies to roles:</label>
+							
+							<cms:DataList id="dl_roles" wrapOutput="false">
+								<Template>
+									<ItemTemplate><![CDATA[
+										<div class="checkbox"><label><input type="checkbox" name="paramrole[]" value="<Data field="name" />" <Data field="selected" /> /> <Data field="name" /></label></div>
+									]]></ItemTemplate>
+									<EmptyTemplate><![CDATA[
+									<em>All</em>
+									]]></EmptyTemplate>
+								</Template>
+							</cms:DataList>
+													</div>
+					</table>
+					<div class="form-actions">
+						<input type="submit" value="Save" class="btn btn-primary" />
+						<a href="parameters.html" class="btn btn-link">Cancel</a>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</cms:Content>

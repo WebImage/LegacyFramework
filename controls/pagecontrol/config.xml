@@ -1,0 +1,8 @@
+<config version="1.0">
+	<configurables>
+		<configurable var="contentId" type="Select" label="Content ID" helpText="Simple text">
+			<option key="0" text="Shouldn't be selected" />
+			<option key="1" text="The Current Selection" />
+		</configurable>
+	</configurables>
+</config>

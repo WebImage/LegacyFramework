@@ -1,0 +1,18 @@
+<model name="memberships_roles" version="1">
+	<fields>
+		<field name="created" />
+		<field name="created_by" />
+		<field name="is_primary" type="tinyint" />
+		<field name="membership_id" relatedModel="memberships" required="true" default="0" />
+		<field name="role_id" required="true" default="0" />
+		<field name="updated" />
+		<field name="updated_by" />
+	</fields>
+	<data>
+		<row>
+			<is_primary>1</is_primary>
+			<membership_id>1</membership_id>
+			<role_id>1</role_id>
+		</row>
+	</data>
+</model>

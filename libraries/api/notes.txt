@@ -1,0 +1,80 @@
+/api/
+
+Post:
+	Method:
+		CNodeAssociation.searchCNodeAssociations
+	Parameters:
+		keyword
+
+Mapped to:
+~/api/cnodeassociation/handler.php
+	
+
+class ApiRequest {
+	/**
+	 * @property string $method A string representation of a method, e.g. Page.getPages
+	 **/
+	private $method;
+	/**
+	 * @property Dictionary $parameters Any parameters that will be passed to the method
+	 **/
+	private $parameters;
+	/**
+	 * @property MembershipUser $user A membership user
+	private $user;
+	
+	function __construct($method, $parameters, $user=null) {
+		$this->method = $method;
+		$this->parameters = $parameters;
+		$this->user = $user;
+	}
+	
+	public function getUser() { return $this->user; }
+	public function getMethod() { return $this->method; }
+	public function getParameters() { return $this->parameters; }
+
+}
+
+
+class CNodeAssociationsApi {
+	
+	public function mapRequestToMethod() {
+		$d = new Dictionary();
+		$d->set(
+		return $d;
+	}
+	
+}
+
+// Call path:
+
+$method = Page::getPost('method');
+
+// Translate method to path:
+$method_parts = explode('.', $method, 2);
+
+if (count($method_parts) != 2) die('Invalid request');
+
+$request_class = $method_parts[0];
+
+$folder_key = strtolower($request_class);
+
+$request_class .= 'Api';
+
+$api_path = '~/api/' . $folder_key . '/handler.php';
+
+if ($api_handler_path = PathManager::translate($api_path)) {
+
+	require_once($api_handler_path);
+	
+	$parameters = Page::getAll();
+	
+	$api_request = new ApiRequest($method, $parameters, null);
+	
+	$handler = new $request_class($api_request);
+	
+	if ($handler->canExecute()) 
+	
+	}
+
+}

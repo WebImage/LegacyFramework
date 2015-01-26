@@ -1,0 +1,266 @@
+/* Common Error & Notification */
+.error, .notification {
+  padding: 10px 20px;
+  _margin-top: 10px; }
+
+.error .errordesc, .notification .notificationdesc {
+  font-weight: bold;
+  margin: 0; }
+
+.error ul, .notification ul {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0; }
+
+/* Errors */
+.error {
+  background-color: #ffeeee;
+  border: 1px solid #cc0000;
+  border-left: 0;
+  border-right: 0; }
+
+.error .errordesc {
+  color: #cc0000; }
+
+.error .errormsg {
+  color: #cc0000; }
+
+/* Notifications */
+.notification {
+  background-color: #d3ff86;
+  border: 1px solid #86c814;
+  border-left: 0;
+  border-right: 0; }
+
+.notification .notificationdesc {
+  color: #669911; }
+
+.notification .notificationmsg {
+  color: #666; }
+
+/*.editable-region { border:2px solid #7fceed; }*/
+/**
+ * Header Admin Controls
+ */
+.admin-header-controls {
+  background-color: #0a3d5c;
+  border-bottom: 1px solid #09293d;
+  padding: 0;
+  text-align: center;
+  height: 46px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  filter: alpha(opacity=80);
+  -moz-opacity: 0.8;
+  -khtml-opacity: 0.8;
+  opacity: 0.8; }
+
+.admin-header-controls img {
+  border: 0; }
+
+.admin-header-controls-left {
+  float: left;
+  height: 37px;
+  padding-top: 7px;
+  padding-left: 7px; }
+
+.admin-header-controls-left a {
+  _background-color: #203f33;
+  border: 1px solid #09293d;
+  color: #fff;
+  display: inline-block;
+  font-size: 11px;
+  height: 12px;
+  line-height: 12px;
+  margin-right: 5px;
+  padding: 7px 12px 11px 12px;
+  text-decoration: none; }
+
+.admin-header-controls-left a:hover {
+  background-color: #09293d; }
+
+.admin-header-controls-right {
+  float: right;
+  padding-right: 10px;
+  padding-top: 4px; }
+
+/**
+ * On Page Controls
+ */
+/* Entire Region */
+.editable-region-bar {
+  background: url(/assets/admin/img/controlbar/bg_editableregionbar.gif) repeat-x #21638c;
+  border: 1px solid #185f7e;
+  color: #fff;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 10px; }
+
+/* Region Body */
+/* Control Bar for Adding New Content */
+.editable-add-control {
+  margin-bottom: 9px;
+  border: 1px solid #aac9d8; }
+
+/* Bar (without slide out) */
+.editable-add-control .editable-region-new-content {
+  background: url(/assets/admin/img/controlbar/bg_editableaddcontrol.gif) repeat-x #cbeef1;
+  padding: 4px; }
+
+.editable-add-control .editable-region-new-content a.tab {
+  background: url(/assets/admin/img/controlbar/bg_button.gif) top left no-repeat;
+  cursor: pointer;
+  display: inline-block;
+  margin-left: 4px;
+  padding-left: 8px;
+  text-decoration: none;
+  top: 1px; }
+
+.editable-add-control .editable-region-new-content a.tab span {
+  background: url(/assets/admin/img/controlbar/bg_button.gif) top right no-repeat;
+  color: #185f7e;
+  font-weight: bold;
+  display: inline-block;
+  font-size: 11px;
+  padding: 4px 0;
+  padding-right: 10px; }
+
+.editable-add-control .editable-add-control-new-content {
+  background-color: #cbeef1;
+  color: #185f7e;
+  font-size: 11px;
+  line-height: 22px;
+  padding: 15px;
+  display: none; }
+
+.editable-add-control .editable-add-control-new-content select {
+  color: #185f7e;
+  font-size: 11px; }
+
+.editable-add-control .editable-add-control-new-content ul {
+  margin: 10px 0;
+  padding: 0;
+  list-style: none; }
+
+.editable-add-control .editable-add-control-new-content li {
+  margin: 0;
+  padding: 0; }
+
+.editable-add-control .editable-add-control-new-content li a {
+  color: #666;
+  font-size: 11px;
+  font-weight: bold; }
+
+/* Control Bar for Editing Individual Control */
+/* Individual Control Wrap */
+.editable-control {
+  _background-color: #f0f0f0;
+  _padding-bottom: 15px;
+  _outline: 2px dashed #aac9d8; }
+
+.editable-control:hover {
+  _outline: 2px dashed #999; }
+
+.editable-control-bar {
+  background: url(/assets/admin/img/controlbar/bg_editableaddcontrol.gif) repeat-x #cbeef1;
+  border: 1px solid #aac9d8;
+  padding: 4px; }
+
+.editable-control:hover .editable-control-bar {
+  _border-color: #7997a8; }
+
+.editable-control-bar a.button {
+  background: url(/assets/admin/img/controlbar/bg_button.gif) top left no-repeat;
+  cursor: pointer;
+  display: inline-block;
+  margin-left: 4px;
+  padding-left: 8px;
+  text-decoration: none; }
+
+.editable-control-bar a.button span {
+  background: url(/assets/admin/img/controlbar/bg_button.gif) top right no-repeat;
+  color: #185f7e;
+  font-weight: bold;
+  display: inline-block;
+  font-size: 11px;
+  padding: 4px 0;
+  padding-right: 10px; }
+
+/*
+.editable-control-options {
+	background-color:#efefef;
+	border:1px solid #999;
+	display:none;
+	left:0;
+	padding:5px 10px;
+	position:absolute;
+	top:33px;
+	width:140px;
+	z-level:20;
+	}
+.editable-control-options ul {
+	list-style:none;
+	margin:0;
+	padding:0;
+	}
+.editable-control-options ul li {
+	margin:0;
+	padding:0 3px;
+	}
+.editable-control-options ul li.hr {
+	padding:0;
+	}
+.editable-control-options ul li.hr img {
+	border:0;
+	height:1px;
+	vertical-align:middle;
+	width:122px;
+	}
+.editable-control-options a {
+	color:#666;
+	font-weight:bold;
+	font-size:11px;
+	line-height:20px;
+	text-decoration:none;
+	}
+.editable-control-options a:hover {
+	color:#000;
+	}
+*/
+.editable-control-bar a.tab {
+  background: url(/assets/admin/img/controlbar/bg_tab.gif) top left no-repeat;
+  cursor: pointer;
+  display: inline-block;
+  margin-left: 3px;
+  position: relative;
+  padding-left: 10px;
+  text-decoration: none;
+  top: 1px; }
+
+.editable-control-bar a.tab span {
+  background: url(/assets/admin/img/controlbar/bg_tab.gif) top right no-repeat;
+  color: #666;
+  font-weight: bold;
+  display: inline-block;
+  font-size: 14px;
+  padding: 6px 0;
+  padding-right: 10px; }
+
+.editable-control:hover {
+  _background-color: #eee; }
+
+.editable-control div.loading {
+  background-color: #7fceed;
+  color: #fff;
+  font-weight: bold; }
+
+/*.editable-region:hover .editable-control-bar { background-color:#7fceed; }
+.editable-body { padding:10px; }
+.editable-add-control { background-color:#b1d390; border:1px solid #999; margin:5px; padding:15px; }
+*/
+.placeholder {
+  border: 1px solid #53b9de;
+  background: #bfdff0;
+  height: 50px; }

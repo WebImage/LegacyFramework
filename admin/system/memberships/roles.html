@@ -1,0 +1,38 @@
+<@Page templateId="admin-default" title="Roles">
+<cms:Content placeHolderId="ph_admin_main">
+	<cms:WrapOutput wrapClassId="panel">
+		<cms:WrapOutput wrapClassId="panel-header">
+			<cms:WrapOutput wrapClassId="panel-title">Roles</cms:WrapOutput>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-header2">
+			<cms:WrapOutput wrapClassId="panel-title">Current Roles</cms:WrapOutput>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-body">
+			<cms:DataGrid id="dl_current" tableClass="table" emptyTemplateWrapClassId="datagrid-noresults">
+				<Columns>
+					<Column headerText="Role" field="name" />
+					<Column headerText="Actions" width="100"><![CDATA[<a href="roles.html?membershipid=<?php echo Page::get('membershipid') ?>&removerole=<Data field="id" />">Remove</a>]]></Column>
+					<NoResults><![CDATA[
+					No Roles (Basic User)
+					]]></NoResults>
+				</Columns>
+			</cms:DataGrid>
+		</cms:WrapOutput>
+	</cms:WrapOutput>
+	<cms:WrapOutput wrapClassId="panel">
+		<cms:WrapOutput wrapClassId="panel-header">
+			<cms:WrapOutput wrapClassId="panel-title">Candidate Roles</cms:WrapOutput>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-body">
+			<cms:DataGrid id="dl_candidate" tableClass="table" emptyTemplateWrapClassId="datagrid-noresults">
+				<Columns>
+					<Column headerText="Role" field="name" />
+					<Column headerText="Actions" width="100"><![CDATA[<a href="roles.html?membershipid=<?php echo Page::get('membershipid') ?>&addrole=<Data field="id" />">Add</a>]]></Column>
+					<NoResults><![CDATA[
+						There are not currently any roles that can be added to this user.
+					]]></NoResults>
+				</Columns>
+			</cms:DataGrid>
+		</cms:WrapOutput>
+	</cms:WrapOutput>
+</cms:Content>

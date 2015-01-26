@@ -1,0 +1,227 @@
+$primary-bg:#0277bd;
+$primary-fg:#fff;
+$secondary-bg:#039be5;
+$secondary-fg:#fff;
+$tertiary-bg:#29b6f6;
+$tertiary-fg:#01579b;
+$quaternary-bg:#81d4fa;
+$quaternary-fg:#01579b;
+
+$admin-header-bg:$primary-bg;
+$admin-header-fg:$primary-fg;
+$region-bar-bg:$primary-bg;
+$region-bar-fg:$primary-fg;
+$region-menu-bg:$region-bar-bg;
+$region-menu-fg:$region-bar-fg;
+$region-menu-highlight-bg:$quaternary-bg;
+$region-menu-highlight-fg:$quaternary-fg;
+$control-toolbar-bg:$secondary-bg;
+$control-toolbar-fg:$secondary-fg;
+$control-actionbar-bg:$control-toolbar-bg;
+$control-actionbar-fg:$control-toolbar-fg;
+$control-configbar-bg:$tertiary-bg;
+$control-configbar-fg:$tertiary-fg;
+/*
+#d9eefa#53b9de
+#bfdff0
+*/
+			
+$standard-radius:0px;
+/* CSS Document */
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
+      -ms-border-radius: $radius;
+          border-radius: $radius;
+}
+@mixin opacity($opacity) {
+        opacity:$opacity;
+         filter:alpha(opacity=$opacity*100);
+   -moz-opacity:$opacity;
+ -khtml-opacity:$opacity;
+}
+
+.placeholder {
+	border: 1px solid #53b9de;
+	background:#ccc;
+	height:50px;
+	}
+	
+.editable-clickable {
+	cursor:pointer;
+	}
+.editable-control:hover, .editable-highlight:hover { 
+	outline:1px dashed #bfdff0;
+	outline-width:2px;
+	}
+/**
+ * On Page Controls
+ */
+
+.editable-region { /* Entire Region */
+	
+	.editable-region-bar {
+		background:$region-bar-bg;
+		color:$region-bar-fg;
+		@include border-radius($standard-radius);
+		height:24px;
+		margin-bottom:10px;
+		padding:5px 5px 5px 14px;
+		
+		.editable-region-title {
+			font-weight:bold;
+			float:left;
+			font-size:16px;
+			padding-top:4px;
+		}
+		.editable-region-addcontent-container {
+			float:right;
+			position:relative;
+			
+			a.editable-region-addcontent-button {
+				display:block;
+				width:23px;
+				height:23px;
+				float:right;
+				background:url(/assets/admin/img/themes/blue/editablecontrols/b_addcontent.png) no-repeat top;
+				z-index:3;
+			}
+			.editable-region-add-options { 
+				background-color:$region-menu-bg;
+				border-bottom-left-radius:$standard-radius;
+				border-bottom-right-radius:$standard-radius;
+					-moz-border-radius-bottomleft:$standard-radius;
+					-moz-border-radius-bottomright:$standard-radius;
+					-webkit-border-bottom-left-radius:$standard-radius;
+					-webkit-border-bottom-right-radius:$standard-radius;
+				color:#fff;	
+				display:none;
+				padding:5px 0;
+				position:absolute;
+				right:0;
+				top:28px;
+				z-index:2;
+				
+				ul { list-style:none; margin:0; padding:0; }
+				li { 
+					margin:0; padding:0;
+					
+					a {
+						color:#fff;
+						display:block;
+						font-weight:bold;
+						padding:5px 20px 5px 20px;
+						text-decoration:none;
+					}
+					a:hover {
+						background-color:$region-menu-highlight-bg;
+						color:$region-menu-highlight-fg;
+					} 
+				}
+				
+				.editable-region-add-section {
+					padding:5px 5px 5px 14px;
+					font-weight:bold;
+					font-size:1.2em;
+				}
+			}
+		}
+	}
+	.editable-region-body {
+	
+		.editable-control-bar {
+			
+			.editable-control-toolbar {
+				background-color:$control-toolbar-bg;
+				color:$control-toolbar-fg;
+				padding:8px;
+				@include border-radius($standard-radius);
+				
+				.left {
+					float:left;
+				}
+			
+				.editable-toolbar-title {
+					color:$control-toolbar-fg;
+					display:inline-block;
+					font-size:14px;
+					font-weight:bold;
+					_float:left;
+					padding-top:5px;
+					}
+			}
+			.editable-control-waiting, .editable-control-actionbar {
+				background-color:$control-actionbar-bg;
+				padding:8px;
+				color:$control-actionbar-fg;
+				@include border-radius($standard-radius);
+			}
+			.editable-control-configbar {
+				background-color:$control-configbar-bg;
+				color:$control-configbar-fg;
+				@include border-radius($standard-radius);
+				padding:5px;
+				
+				.row {
+					@include border-radius($standard-radius);
+					margin:3px 0;
+					padding:8px;
+					}
+				
+				.row label {
+					font-weight:bold;
+					}
+			}
+			
+		}
+		
+	}
+	
+}
+
+
+
+/**
+ * Top Navigation Bar
+ */
+.admin-header-controls {
+	background-color:$admin-header-bg;
+	color:$admin-header-fg;
+	padding:0;
+	text-align:center;
+	height:46px;
+	position:fixed;
+	top:0;
+	left:0;
+	right:0;
+	/*@include opacity(.8);*/
+		
+	img { border:0; }
+
+	.admin-header-controls-left {
+		float:left;
+		height:37px;
+		padding-top:7px;
+		padding-left:7px;
+		
+		a { 
+			color:#fff;
+			display:inline-block;
+			font-size:11px;
+			height:12px;
+			line-height:12px;
+			margin-right:5px;
+			padding:7px 12px 11px 12px;
+			text-decoration:none;
+			
+		}
+		a:hover {}
+		
+	}
+
+	.admin-header-controls-right {
+		float:right;
+		padding-right:10px;
+		padding-top:4px;
+	}
+}

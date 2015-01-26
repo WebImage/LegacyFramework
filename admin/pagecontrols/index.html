@@ -1,0 +1,24 @@
+<@Page templateId="admin-default" title="Control List">
+<cms:Content id="content1" placeHolderId="ph_admin_main">
+	<cms:WrapOutput wrapClassId="panel">
+		<cms:WrapOutput wrapClassId="panel-header">
+			<cms:WrapOutput wrapClassId="panel-title">Control List</cms:WrapOutput>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-body">
+			<cms:DataGrid id="dg1" dataSource="PageControlLogic::getAllPageControls()" tableClass="table">
+				<Columns>
+					<Column headerText="Config" field="config" />
+					<Column headerText="Control ID" field="control_id" />
+					<Column headerText="ID" field="id" />
+					<Column headerText="Mirror ID" field="mirror_id" />
+					<Column headerText="Page ID" field="page_id" />
+					<Column headerText="Place Holder" field="placeholder" />
+					<Column headerText="Sort Order" field="sortorder" />
+					<Column headerText="Actions"><![CDATA[
+						<a href="<?php echo ConfigurationManager::get('DIR_WS_HOME') ?>admin/pagecontrols/edit.html?pagecontrolid=<Data field="id" />">Edit</a>
+					]]></Column>
+				</Columns>
+			</cms:DataGrid>
+		</cms:WrapOutput>
+	</cms:WrapOutput>
+</cms:Content>

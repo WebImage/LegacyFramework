@@ -1,0 +1,42 @@
+<@Page templateId="admin-default" title="Edit Template">
+
+<cms:Content id="content1" placeHolderId="ph_admin_main">
+
+	<ul class="nav nav-page-actions">
+		<li><a href="index.html"><i class="glyphicon glyphicon-chevron-left"></i> Back to Templates</a></li>
+	</ul>
+	
+	<div class="wrap">
+	
+		<div class="page-header"><h1>Template Details</h1></div>
+		
+		<form method="post">
+			
+			<cms:Input type="hidden" struct="template" structKey="id" />
+			
+			<div class="form-group label-inline">
+				<label class="control-label">Name:</label> </td>
+				<div class="form-controls">
+					<cms:Input type="text" struct="template" structKey="name" maxlength="20" class="form-control" />
+					<span class="help-text">(20 chars)</span>
+				</div>
+			</div>
+			<div class="form-group label-inline">
+				<label class="control-label">File Path:</label> </td>
+				<div class="form-controls"><cms:Input type="text" struct="template" structKey="file_src" size="50" maxlength="255" class="form-control" /></div>
+			</div>
+			<div class="form-group label-inline">
+				<label class="control-label">Contents:</label> </td>
+				<div class="form-controls"><cms:Input type="textarea" struct="template" structKey="file_contents" class="form-control" rows="10" /></div>
+			</div>
+			<div class="form-group label-inline">
+				<label class="control-label">Type:</label> </td>
+				<div class="form-controls"><cms:Input type="text" struct="template" structKey="type" value="Page" class="form-control" /></div>
+			</div>
+			<div class="form-group label-inline">
+				<div class="form-controls"><input type="submit" value="Save" class="btn btn-primary" /></div>
+			</div>
+		</form>
+	</div>
+	
+</cms:Content>

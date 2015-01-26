@@ -1,0 +1,8 @@
+<config version="1.0">
+	<configurables>
+		<configurable var="text" type="Input" label="Label" helpText="Simple text" />
+		<configurable var="x" type="Select" label="XXXXXX" helpText="Simple text">
+			<option key="1" text="test" />
+		</configurable>
+	</configurables>
+</config>

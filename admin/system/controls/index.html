@@ -1,0 +1,30 @@
+<@Page templateId="admin-default" title="List Controls">
+<cms:Content id="content1" placeHolderId="ph_admin_main">
+	
+	<ul class="nav nav-page-actions">
+		<li><a href="edit.html"><i class="glyphicon glyphicon-plus"></i> Add Control</a></li>
+	</ul>
+	
+	<cms:WrapOutput wrapClassId="panel">
+		<cms:WrapOutput wrapClassId="panel-header">
+			<cms:WrapOutput wrapClassId="panel-title">Controls</cms:WrapOutput>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-body">
+			<cms:DataGrid id="dg1" tableClass="table table-striped" emptyTemplateWrapClassId="datagrid-noresults">
+				<Columns>
+					<Column headerText="Label"><![CDATA[
+						<a href="edit.html?id=<Data field="id" />"><i class="glyphicon glyphicon-cog"></i> <Data field="label" /></a>
+					]]></Column>
+					<Column headerText="Class Name"><![CDATA[
+						<a href="edit.html?id=<Data field="id" />"><Data field="class_name" /></a>
+					]]></Column>
+					<!--<Column headerText="File" field="file_src" />-->
+					<Column headerText="Active" field="enable" format="(%field==1)?'Yes':'No'" width="80" />
+					<NoResults><![CDATA[
+					There are not currently any installed controls.
+					]]></NoResults>
+				</Columns>
+			</cms:DataGrid>
+		</cms:WrapOutput>
+	</cms:WrapOutput>
+</cms:Content>

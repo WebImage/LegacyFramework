@@ -1,0 +1,64 @@
+<@Page templateId="admin-default" title="Edit Site" />
+
+<cms:Content placeHolderId="ph_page_actions" wrapClassId="page-actionbar">
+	<cms:WrapOutput wrapClassId="page-actionbar-action"><a href="index.html"><img src="<?php echo ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_IMG') ?>icons/i_back.gif" align="absmiddle" /> Back to Sites</a></cms:WrapOutput>
+</cms:Content>
+
+<cms:Content placeHolderId="ph_admin_main">
+	<form method="post">
+	<cms:WrapOutput wrapClassId="panel">
+		<cms:WrapOutput wrapClassId="panel-header">
+			<cms:WrapOutput wrapClassId="panel-title">Site</cms:WrapOutput>
+		</cms:WrapOutput>
+		<cms:WrapOutput wrapClassId="panel-body-content">
+			<cms:Input type="hidden" struct="site" structKey="id" />
+			<table cellspacing="0" cellpadding="0" border="0" class="detaileditview">
+				<tr>
+					<td class="field"><label>Company ID</label></td>
+					<td class="value"><cms:Select struct="site" id="cbo_company" structKey="company_id" defaultText="-- No Company --" defaultKey="0" /></td>
+				</tr>
+				<tr>
+					<td class="field"><label>Name:</label> </td>
+					<td class="value"><cms:Input type="text" struct="site" structKey="name" size="50" /></td>
+				</tr>
+				<tr>
+					<td class="field"><label>Domain:</label> </td>
+					<td class="value"><cms:Input type="text" struct="site" structKey="domain" size="30" /></td>
+				</tr>
+				<tr>
+					<td class="field"><label>Environment:</label> </td>
+					<td class="value"><cms:Select id="cbo_environment" type="text" struct="site" structKey="environment" /></td>
+				</tr>
+				<tr>
+					<td class="field"><label>Key:</label> </td>
+					<td class="value"><cms:Input type="text" type="text" struct="site" structKey="key" size="5" /></td>
+				</tr>
+				<tr>
+					<td class="field"><label>Is Remote:</label></td>
+					<td class="value"><cms:Input type="checkbox" struct="site" structKey="is_remote" value="1" /></td>
+				</tr>
+				<!--
+				<tr>
+					<td class="field"><label>DB Table Prefix:</label></td>
+					<td class="value">
+						<cms:Input type="text" id="table_prefix" />
+						<div class="description">Only specify to create new site/config directory.</div>
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="field"><label>User/Group:</label></td>
+					<td class="value">
+						<cms:Input type="text" id="os_user" /> | <cms:Input type="text" id="os_group" />
+						<div class="description">The OS system user/group that will be assigned to the site directory.</div>
+					</td>
+				</tr>
+				-->
+			</table>
+		</cms:WrapOutput>
+		<div class="form-actions">
+			<input type="submit" value="Save" class="btn btn-primary" />
+		</div>
+	</cms:WrapOutput>
+	</form>
+</cms:Content>
