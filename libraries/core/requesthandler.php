@@ -6,7 +6,7 @@ class RequestHandler {
 		$this->setPageRequest($page_request);
 		return true;
 	}
-	public function canHandleRequest($path) {
+	public function canHandleRequest($path=null) {
 		return false;
 	}
 	public function render() {

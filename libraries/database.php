@@ -597,8 +597,11 @@ class DataAccessObject {
 	
 	/**
 	 * Make query value safe for database
+	 * @param string $string A string to make database safe
+	 * @access public static
+	 * @static
 	 */
-	function safeString($string) {
+	public static function safeString($string) {
 		$db = ConnectionManager::getConnection();
 		$return_string = $string;
 		if (get_magic_quotes_gpc()) {
