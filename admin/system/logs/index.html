@@ -1,0 +1,37 @@
+<@Page templateId="admin-default" title="Custodian">
+
+<cms:Content placeHolderId="ph_admin_main">
+
+	<ul class="nav nav-page-actions">
+		<li><a href="index.html?clear=true"><i class="glyphicon glyphicon-trash"></i> Clear Logs</a></li>
+	</ul>
+	
+	<cms:WrapOutput wrapClassId="panel">
+		<cms:DataGrid id="dg_records" tableClass="table table-striped" emptyTemplateClass="panel-body">
+		
+			<Columns>
+				<Column headerText="Date" field="created" format="date('m/d/Y h:i:sa', strtotime('%field'))" />
+				<Column headerText="Type" field="type" />
+				<Column headerText="User" field="created_by" />
+				<Column headerText="Message"><![CDATA[
+					<Data field="message_formatted" /><br />
+					<em>Location: <Data field="location" /></em><br />
+					<em>Link: <Data field="link" /></em><br />
+					<em>Referrer: <Data field="referrer" /></em><br />
+					<em>Hostname: <Data field="hostname" /></em><br />
+				]]></Column>
+				<Column headerText="IP" field="remote_ip" />					
+				<Column headerText="Severity" field="severity_name" />
+				<Column headerText="Actions" headerClass="actions" class="actions"><![CDATA[
+					<a href="index.html?delete=<Data field="id" />" class="btn">Delete</a>
+				]]></Column>
+				<NoResults><![CDATA[
+				There are not any records that meet the selected criteria.
+				]]></NoResults>
+			</Columns>
+		</cms:DataGrid>
+		
+		<cms:Paging forControlId="dg_records" />
+		
+	</cms:WrapOutput>
+</cms:Content>

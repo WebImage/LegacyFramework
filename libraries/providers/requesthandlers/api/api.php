@@ -1,6 +1,6 @@
 <?php
 
-class ApiRequestHandler extends RequestHandler {
+class ApiRequestHandler extends AbstractRequestHandler {
 	public function canHandleRequest($internal_url=null) {
 		return true;		
 	}

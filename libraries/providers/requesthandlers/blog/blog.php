@@ -105,7 +105,7 @@ blogs [object type]
 
 */
 
-class BlogRequestHandler extends RequestHandler {
+class BlogRequestHandler extends AbstractRequestHandler {
 	/**
 	 * Right now only supports single blogs
 	 * In the future it may make sense to allow multiple blogs and to split this logic up further

@@ -11,7 +11,7 @@ class GetControlsArgs extends CWI_EVENT_Args {
 	public function getControls() { return $this->controls; }
 }
 
-class DatabaseRequestHandler extends RequestHandler {
+class DatabaseRequestHandler extends AbstractRequestHandler {
 	private $requestHandler;
 	
 	private $pageStruct;
@@ -148,7 +148,7 @@ class DatabaseRequestHandler extends RequestHandler {
 	}
 	
 	function getRequestHandler() {
-		if (is_object($this->requestHandler) && is_a($this->requestHandler, 'RequestHandler')) {
+		if (is_object($this->requestHandler) && is_a($this->requestHandler, 'IRequestHandler')) {
 			return $this->requestHandler;
 		} else return false;
 	}

@@ -1,6 +1,6 @@
 <?php
 
-class ErrorRequestHandler extends RequestHandler {
+class ErrorRequestHandler extends AbstractRequestHandler {
 	function canHandleRequest($request_path=null) {
 		return true;		
 	}

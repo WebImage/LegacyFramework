@@ -1,6 +1,6 @@
 <?php
 
-class AdminRequestHandler extends RequestHandler {
+class AdminRequestHandler extends AbstractRequestHandler {
 	private $requestHandler;
 	private $editingContent = false;
 	public function statsEnabled() { return false; }
@@ -108,7 +108,7 @@ class AdminRequestHandler extends RequestHandler {
 	}
 	
 	function getRequestHandler() {
-		if (is_object($this->requestHandler) && is_a($this->requestHandler, 'RequestHandler')) {
+		if (is_object($this->requestHandler) && is_a($this->requestHandler, 'IRequestHandler')) {
 			return $this->requestHandler;
 		}
 		return false;

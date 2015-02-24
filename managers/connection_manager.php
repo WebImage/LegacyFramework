@@ -36,45 +36,48 @@ class ConnectionManager {
 		$_this = Singleton::getInstance('ConnectionManager');
 		return $_this;
 	}
-	
-	public static function getConnectionSettings($connection_name='default') {
-		$_this = ConnectionManager::getInstance();
 
-		if (isset($_this->connection_configs[$connection_name])) {
-			return $_this->connection_configs[$connection_name];
-		}
-		
-		return false;
+	/**
+	 * @deprecated
+	 */
+	public static function getConnectionSettings($connection_name='default') {
+
+		return;
+
 	}
 	
 	public static function getConnection($connection_name='default') {
-		
+
 		$_this = ConnectionManager::getInstance();
 
-		if (!isset($_this->connections[$connection_name]) && ($settings = $_this->getConnectionSettings($connection_name))) {
+		$config = ConfigurationManager::getConfig();
+		$config_connection = (isset($config['database']['connections'][$connection_name])) ? $config['database']['connections'][$connection_name] : null;
+
+		if (!isset($_this->connections[$connection_name]) && null !== $config_connection) {
+
+			$host = (isset($config_connection['host'])) ? $config_connection['host'] : '';
+			$username = (isset($config_connection['username'])) ? $config_connection['username'] : '';
+			$password = (isset($config_connection['password'])) ? $config_connection['password'] : '';
+			$database = (isset($config_connection['database'])) ? $config_connection['database'] : '';
 
 			$_this->connections[$connection_name] = mysql_connect(
-				$settings->getHost(),
-				$settings->getUsername(),
-				$settings->getPassword());
-			$_this->databases[$connection_name] = mysql_select_db($settings->getDatabase(), $_this->connections[$connection_name]);
+				$host,
+				$username,
+				$password);
+			$_this->databases[$connection_name] = mysql_select_db($database, $_this->connections[$connection_name]);
+
 		}
 
-		#return $_this->databases[$connection_name];
 		return $_this->connections[$connection_name];
 	}
-	public static function addConnection($connection_name, $database_setting) {
-		$_this = ConnectionManager::getInstance();
-		
-		/**
-		 * If a connection already exists under this $connection_name, then it needs to be killed/reset
-		 */
-		ConnectionManager::_killConnection($connection_name);
-		
-		$_this->connection_configs[$connection_name] = $database_setting;
-		return true;
-	}
-	
+
+	/**
+	 * @deprecated
+	 */
+	public static function addConnection($connection_name, $database_setting) {}
+	/**
+	 * @deprecated
+	 */
 	private static function _killConnection($connection_name) {
 		$_this = ConnectionManager::getInstance();
 		if (isset($_this->connections[$connection_name])) {
@@ -82,6 +85,7 @@ class ConnectionManager {
 			unset($_this->connections[$connection_name]);
 		}
 	}
+
 }
 /**
  * A quick definition for table information used by DatabaseManager
@@ -118,25 +122,19 @@ class DatabaseManager {
 	 * Gets the global table prefix to be used on all tables.  Uses lazy loading so that information is only loaded once it is requested.
 	 */
 	public static function getTablePrefix() {
+
 		static $total_time = 0;
 		
 		$_this = DatabaseManager::getInstance();
-		
+
 		/**
 		 * Lookup table prefix if it has not already been set
 		 **/
 		if (is_null($_this->m_tablePrefix)) {
 
-			$table_prefix = '';
-			$xml_config = ConfigurationManager::getConfig();
-			if ($xml_table_sections = $xml_config->getPath('database/tables')) {
-				foreach($xml_table_sections as $xml_table_section) {
-					if ($prefix = $xml_table_section->getParam('prefix')) {
-						$table_prefix = $prefix;
-					}
-				}
-			}
-			
+			$config = ConfigurationManager::getConfig();
+			$table_prefix = (isset($config['database']['tableSettings']['prefix'])) ? $config['database']['tableSettings']['prefix'] : '';
+
 			return $table_prefix;
 		} else {
 			return $_this->m_tablePrefix;
@@ -180,35 +178,46 @@ class DatabaseManager {
 			}
 			
 		} else {
-			$xml_config = ConfigurationManager::getConfig();
-			
-			if ($xml_tables = $xml_config->getPath('database/tables/add[@name="' . $table_key . '"]')) {
-				$use_global_prefix = true;
-				foreach($xml_tables as $xml_table) {
-					if ($xml_table->getParam('useTablePrefix')) {
-						 $use_global_prefix = !($table->getParam('useGlobalPrefix')=='false');
-					}
-					if ($table_name = $xml_table->getParam('value')) {
-						if ($use_global_prefix) {
-							$table_name = $_this->getTablePrefix() . $table_name;
-						}
-					}
+
+			$config = ConfigurationManager::getConfig();
+			$config_db_tables = (isset($config['database']['tables'])) ? $config['database']['tables'] : array();
+
+			$use_global_prefix = true;
+
+			if (isset($config_db_tables[$table_key])) {
+
+				if (
+					isset($config_db_tables[$table_key]['useGlobalPrefix']) &&
+					$config_db_tables[$table_key]['useGlobalPrefix'] === false
+				) {
+					$use_global_prefix = false;
 				}
+
+				if (isset($config_db_tables[$table_key]['key'])) {
+
+					$table_name = $config_db_tables[$table_key]['key'];
+
+				}
+
 			}
+
+			// If table name is not defined then just assume the key is the table name
+			if (null === $table_name) $table_name = $table_key;
+
+			// Prepend global prefix
+			if ($use_global_prefix) $table_name = $_this->getTablePrefix() . $table_name;
+
 		}
-		/*
-		if (is_null($table_name)) return $table_key;
-		else return $table_name;
-		*/
 
 		if (is_null($table_name)) $table_name = $_this->getTablePrefix() . $table_key;
 		
 		return $table_name;
 	}
 	
+	// TODO: Review whether this can be removed depecrated since it does not appear to be used by getTableKey() below
 	// Called once a site has been initialized
 	public static function finalizeTableSettings() {
-		
+
 		$_this = DatabaseManager::getInstance();
 		
 		/**
@@ -218,49 +227,39 @@ class DatabaseManager {
 		$table_prefix = $_this->getTablePrefix();
 		
 		$_this->setTablePrefix($table_prefix);
-		
-		$xml_config = ConfigurationManager::getConfig();
-			
-		if ($xml_tables = $xml_config->getPath('database/tables/add')) {
-			
-			foreach($xml_tables as $xml_table) {
-				
-				$use_global_prefix = true;
-				
-				if ($xml_table->getParam('useTablePrefix')) {
-					 $use_global_prefix = !($xml_table->getParam('useGlobalPrefix')=='false');
-				}
-				
-				if ($alt_table_key = $xml_table->getParam('value')) {
-					
-					#if ($use_global_prefix) {
-					#	$alt_table_key = $_this->getTablePrefix() . $table_name;
-					#}
-					
-					self::setTableKey($xml_table->getParam('name'), $alt_table_key, $use_global_prefix);
-				}
+
+		$config = ConfigurationManager::getConfig();
+		$tables = (isset($config['database']['tables'])) ? $config['database']['tables'] : array();
+
+		foreach($tables as $table_key => $info) {
+
+			$use_global_prefix = isset($info['useGlobalPrefix']) ? $info['useGlobalPrefix'] : true;
+
+			if (isset($info['key'])) {
+				self::setTableKey($table_key, $info['key'], $use_global_prefix);
 			}
-			
+
 		}
-		
+
 		$_this->m_tablesFinalized = true;
 		
 	}
 	public static function getTableKey($table_name) {
+
 		$_this = DatabaseManager::getInstance();
-		$xml_config = ConfigurationManager::getConfig();
-		// Check the obviouos first
-		if ($xml_table = $xml_config->getPathSingleLast('database/tables/add[@value="' . $table_name . '"]')) {
-			return $xml_table->getParam('name');
-		// Then check if a global prefix exists and remove that from the search
+
+		$config = ConfigurationManager::getConfig();
+
+		if (isset($config['database']['tables'][$table_name]['key'])) {
+			return $config['database']['tables'][$table_name]['key'];
 		} else {
 			$prefix = $_this->getTablePrefix();
 			if (!empty($prefix)) {
 				if (substr($table_name, 0, strlen($prefix)) == $prefix) { // Make sure the requested table name has the same prefix as the global prefix
 					$check_table_name = substr($table_name, strlen($prefix));
-					
-					if ($xml_table = $xml_config->getPathSingleLast('database/tables/add[@value="' . $check_table_name . '"]')) {
-						return $xml_table->getParam('name');
+
+					if (isset($config['database']['tables'][$check_table_name]['key'])) {
+						return $config['database']['tables'][$check_table_name]['key'];
 					}
 				}
 			}
@@ -271,14 +270,6 @@ class DatabaseManager {
 	private static function setTableKey($table_key, $alt_table_key, $use_global_prefix=true) {
 		$_this = DatabaseManager::getInstance();
 		$_this->tableKeys[$table_key] = new DatabaseTableKey($alt_table_key, $use_global_prefix);
-		/*
-		$_this->m_tables[$table_key] = array(
-			'table_name' => $table_name,
-			'use_global_prefix' => $use_global_prefix
-		);
-		*/
 	}
 	
 }
-
-?>

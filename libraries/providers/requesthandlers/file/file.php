@@ -4,7 +4,7 @@
  * Changes
  * 03/22/2012	(Robert Jones) Changed constant name UPDATE_PATH to API_PATH to be more in line with what the constant actually represents
  **/
-class FileRequestHandler extends RequestHandler {
+class FileRequestHandler extends AbstractRequestHandler {
 	protected $loadControlFile;
 	protected $loadControlCodeFile;
 	private $systemPath;

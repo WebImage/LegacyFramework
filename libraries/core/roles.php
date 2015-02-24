@@ -36,7 +36,7 @@ class Roles {
 	}
 	public static function getProvider($provider_name=null) {
 		$_this = Roles::getInstance();
-		if (is_null($provider_name)) $provider_name = Roles::getDefaultProvider(); 
+		if (is_null($provider_name)) $provider_name = Roles::getDefaultProvider();
 		if (!isset($_this->m_providers[$provider_name])) return false;
 		return $_this->m_providers[$provider_name];
 	}

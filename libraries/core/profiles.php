@@ -4,41 +4,38 @@ class Profiles {
 	private $currentProfile;
 	var $m_providers = array();
 	// Common methods
-	function getInstance() { return Singleton::getInstance('Profiles'); }
-	function init() {}
-	function addProvider($config) {
+	public static function getInstance() { return Singleton::getInstance('Profiles'); }
+	public static function init() {}
+
+	public static function addProvider($config) {
+
 		#$config->set('__classFileValid', true); // Assume true by default
 		#$config->set('__classLoaded', false);
 		#$config->set('__instantiatedObject', null);
 
 		$_this = Profiles::getInstance();
 		$name = $config->get('name');
-		$class_name = $config->get('className');
-		#$provider = new $class_name;
-		#$provider->config = $config;
-		#$_this->m_providers[$name] = $provider;
-		#$_this->m_providers[$name] = $provider;
-		#$provider->config = $config;
+
 		$_this->m_providers[$name] = $config;
 	}
 	
-	function setDefaultProvider($provider) {
+	public static function setDefaultProvider($provider) {
 		$_this = Profiles::getInstance();
 		$_this->m_defaultProvider = $provider;
 	}
 	
-	function getDefaultProvider() {
+	public static function getDefaultProvider() {
 		$_this = Profiles::getInstance();
 		return $_this->m_defaultProvider;
 	}
-	function isProfilingActive() {
+	public static function isProfilingActive() {
 		if ($enable_profiles = strtolower(ConfigurationManager::get('ENABLE_PROFILES'))) {
 			if ($enable_profiles == 'true') return true;
 			else return false;
 		} else return false;
 	}
 	 
-	function getProvider($provider_name=null) {
+	public static function getProvider($provider_name=null) {
 		$_this = Profiles::getInstance();
 		/**
 		 * SCENARIO #1 - provider_name not passed
@@ -114,23 +111,23 @@ class Profiles {
 		if (!isset($_this->m_providers[$provider_name])) return false;
 		return $_this->m_providers[$provider_name];
 	}
-	private function getCurrentProfile() {
+	private static function getCurrentProfile() {
 		$_this = Profiles::getInstance();
 		if (!is_null($_this->currentProfile)) return $_this->currentProfile;
 		else return false;
 	}
-	private function setCurrentProfile($profile) {
+	private static function setCurrentProfile($profile) {
 		$_this = Profiles::getInstance();
 		$_this->currentProfile = $profile;
 	}
 
 	
-	public function getProviders() {
+	public static function getProviders() {
 		$_this = Profiles::getInstance();
 		return $_this->m_providers;
 	}
 	// Profiles specific methods
-	public function getCurrentProfileName() {
+	public static function getCurrentProfileName() {
 		if ($provider = Profiles::getProvider()) {
 			return $provider->getName();
 		} else {
@@ -138,7 +135,7 @@ class Profiles {
 		}
 	}
 	
-	public function setCurrentProfileByName($profile_name) {
+	public static function setCurrentProfileByName($profile_name) {
 		if ($provider = Profiles::getProvider($profile_name, false)) {
 			SessionManager::set('current_profile', $profile_name);
 			SessionManager::setCookie('current_profile', $profile_name);
@@ -150,7 +147,7 @@ class Profiles {
 		return true;
 	}
 	
-	public function resetCurrentProfile() {
+	public static function resetCurrentProfile() {
 		SessionManager::del('current_profile');
 		SessionManager::delCookie('current_profile');
 	}

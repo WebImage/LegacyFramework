@@ -16,39 +16,49 @@ function handle_autoload_core_classes($class_name) {
 	$class_lower = strtolower($class_name);
 	
 	switch ($class_lower) {
-		case 'icollection':
+		case 'abstractrequesthandler':
+		case 'application':
+		case 'applicationconfig':
 		case 'collection':
+		case 'configdictionary':
 		case 'dictionaryfield':
 		case 'dictionaryfieldcollection':
 		case 'dictionary':
 		case 'dictionaryhierarchy':
-		case 'singleton':
+		case 'factory':
+		case 'icollection':
+		case 'ifactory':
+		case 'imembership':
+		case 'irequesthandler':
+		case 'iservicemanager':
+		case 'iservicemanageraware':
+		case 'iservicemanagerconfig':
+		case 'lazyproviderdictionary':
+		case 'lazyprovider':
+		case 'logging':
+		case 'loggingprovider':
+		case 'loggingprovidercollection':
+		case 'membership':
+		case 'membershipprovider':
+		case 'membershipprovidercollection':
+		case 'membershipproviderconfiguration':
+		case 'membershipuser':
+		case 'permission':
+		case 'profileprovider':
+		case 'profiles':
 		case 'providerconfiguration':
 		case 'providerbase':
 		case 'providercollection':
 		case 'providerdictionary':
-		case 'lazyproviderdictionary':
-		case 'lazyprovider':
 		case 'providermanager':
-		case 'imembership':
-		case 'membership':
-		case 'membershipuser':
-		case 'membershipprovider':
-		case 'membershipprovidercollection':
-		case 'membershipproviderconfiguration':
-		case 'loggingprovider':
-		case 'loggingprovidercollection':
-		case 'sqlloggingprovider':
-		case 'logging':
-		case 'roles':
-		case 'permission':
 		case 'roleprovider':
-		case 'requesthandler':
-		case 'profiles':
-		case 'profileprovider':
+		case 'roles':
+		case 'servicemanager':
+		case 'servicemanagerconfig':
+		case 'singleton':
+		case 'sqlloggingprovider':
 		case 'ixmlobject':
 		case 'ixmlcreatableobject':
-		case 'configdictionary':
 			$class_file = dirname(__FILE__) . '/core/' . $class_lower . '.php';
 			include($class_file);
 			break;

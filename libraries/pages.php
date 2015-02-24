@@ -248,6 +248,10 @@ class PageRequest {
 	public function setTheme($theme) { $this->theme = $theme; }
 	
 	public function setRequestHandler($handler) {
+		if (class_implements($handler, 'IServiceAManagerAware')) {
+			$service_manager = FrameworkManager::getApplication()->getServiceManager();
+			$handler->setServiceManager($service_manager);
+		}
 		$this->requestHandler = $handler;
 	}
 
@@ -259,7 +263,8 @@ class PageRequest {
 		$this->internalUrl = $internal_url;
 	}
 	private function initUrl($url) {
-		$xml_config = ConfigurationManager::getConfig();
+
+		$config = ConfigurationManager::getConfig();
 		
 		$url = str_replace('/index.php', '/index.html', $url);
 		
@@ -308,17 +313,18 @@ class PageRequest {
 		 * If the request is for a directory then the default file "index.html" is set and appended to the requested file path
 		 *
 		 */
-		$xml_path_mappings = ConfigurationManager::getConfig()->getPath('pages/pathMappings/add');
+		$config_path_mappings = (isset($config['pages']['pathMappings'])) ? $config['pages']['pathMappings'] : array();
+		$config_request_handlers = (isset($config['pages']['requestHandlers'])) ? $config['pages']['requestHandlers'] : array();
 
-		foreach($xml_path_mappings as $xml_path_mapping) {
+		foreach($config_path_mappings as $mapping) {
 
-			$search = '#' . str_replace('#', '##', $xml_path_mapping->getParam('path')) . '#';
+			$search = '#' . str_replace('#', '##', $mapping['path']) . '#';
 
 			if (preg_match($search, $url_path, $path_matches)) {
-		
+
 				if (count($path_matches) > 0) {
 					
-					$translated_path = $xml_path_mapping->getParam('translate');
+					$translated_path = $mapping['translate'];
 					
 					if (!empty($translated_path)) {
 				
@@ -343,13 +349,20 @@ class PageRequest {
 							}
 						}
 					}
-					
-					if ($handler = $xml_path_mapping->getParam('requestHandler')) {
-						
-						if ($request_handler = ConfigurationManager::getConfig()->getPathSingle('pages/requestHandlers/add[@name=\''. $xml_path_mapping->getParam('requestHandler') . '\']')) {
-							if ($handler_file = PathManager::translate( $request_handler->getParam('classFile') )) {
+
+					$handler_name = (isset($mapping['requestHandler'])) ? $mapping['requestHandler'] : null;
+
+					if (null !== $handler_name) {
+
+						$handler_config = (isset($config_request_handlers[$handler_name])) ? $config_request_handlers[$handler_name] : null;
+
+						if (null !== $handler_config) {
+
+							if ($handler_file = PathManager::translate($handler_config['classFile'])) {
+
 								include_once($handler_file);
-								$class_name = $request_handler->getParam('className');
+								$class_name = $handler_config['className'];
+
 								if (class_exists($class_name)) {
 									$handler = new $class_name();
 									$handler->setPageRequest($this);
@@ -357,15 +370,7 @@ class PageRequest {
 								}
 							}
 						}
-						
-						/*if ($request_handler = ConfigurationManager::getRequestHandlerByName($xml_path_mapping->getParam('requestHandler'))) {
-							include_once($request_handler['file']);
-							$class_name = $request_handler['class'];
-							$handler = new $class_name();
-							$handler->setPageRequest($this);
-							$this->setRequestHandler($handler);
-						}
-						*/
+
 					}
 					
 					break;
@@ -379,17 +384,25 @@ class PageRequest {
 		 **/
 		$user_allowed = true;
 		$location_roles = ConfigurationManager::getLocationRoles();
+		$check_url = PathManager::getPath();
+
 		foreach($location_roles as $location_role) {
+
 			$search = '#^' . str_replace('#', '##', $location_role['path_regex']) . '$#';
-		
-			if (preg_match($search, $url_path, $path_matches)) {
+
+			// Check the internal and external paths for matches
+			if (preg_match($search, $url_path, $path_matches) || preg_match($search, $check_url, $path_matches)) {
+
 				if (count($location_role['roles']) > 0) {
 					$user_allowed = false;
 					foreach($location_role['roles'] as $role) {
 						if (Roles::isUserInRole($role)) {
 							$user_allowed = true;
+							break;
 						}
 					}
+					// Break out of outer $location_role loop to prevent location overlaps that might otherwise allow the user access to this page
+					if (!$user_allowed) break;
 				}
 			}
 			
@@ -406,9 +419,10 @@ class PageRequest {
 			if (substr($redirect_url, 0, 4) == 'http') {
 				$redirect_url .= '&fromdomain=' . ConfigurationManager::get('DOMAIN');
 			}
+
 			Page::redirect( $redirect_url );
 		}
-		
+
 		$internal_url = $url_path;
 		if (!empty($url_query)) $internal_url .= '?' . $url_query;
 
@@ -420,17 +434,20 @@ class PageRequest {
 		$request_handler_found = false;
 		
 		if ($request_handler = $this->getRequestHandler()) {
-		
+
 			$request_handler->setPageRequest($this);
+
 			if ($request_handler->canHandleRequest()) {
+
 				$request_handler_found = true;
 				$this->setRequestHandler($request_handler);
 			}
 		}
-		
+
 		if (!$request_handler_found) {
 
 			$request_handlers = ConfigurationManager::getRequestHandlers();
+
 			foreach($request_handlers as $request_handler) {
 				include_once($request_handler['file']);
 				$class_name = $request_handler['class'];
@@ -443,7 +460,7 @@ class PageRequest {
 			}
 			
 		}
-		
+
 		if (!$this->getRequestHandler()) die("NO HANDLER");
 
 	}
@@ -742,28 +759,15 @@ class Page {
 		$_this = Page::getInstance();
 		array_pop($_this->_pageRequests);
 	}
-	private function init($instance) {
-		
+	private function init(Page $instance) {
+
 		if ($instance->_initialized) return true;
 		$instance->_initialized = true;
-		
-		$xml_config = ConfigurationManager::getConfig();
-		
+
 		if (Page::isAdminRequest()) {
 			
-			if (Roles::isUserInRole('AdmBase')) {
-				/*
-				if ($xml_pages = $xml_config->getPath('pages')) {
-					for ($i = count($xml_pages)-1; $i >= 0; $i--) {
-						if ($admin_theme = $xml_pages[$i]->getParam('theme')) {
-							Page::setTheme($admin_theme);
-							break;
-						}
-					}
-				}
-				*/
-			} else {
-				
+			if (!Roles::isUserInRole('AdmBase')) {
+
 				if (!$user = Membership::getUser(1)) { // Make sure root user actually exists
 				
 					FrameworkManager::loadStruct('membership');
@@ -776,10 +780,10 @@ class Page {
 					$user = Membership::createUser($membership_struct);
 					
 					$role_struct = new RoleStruct();
-					$role->description = 'Admin Account';
-					$role->name = 'AdmBase';
-					$role->visible = 0;
-					RoleLogic::save($role);
+					$role_struct->description = 'Admin Account';
+					$role_struct->name = 'AdmBase';
+					$role_struct->visible = 0;
+					RoleLogic::save($role_struct);
 
 					Roles::addUserToRole('AdmBase', $user, true);
 				}
@@ -796,13 +800,7 @@ class Page {
 		}
 		
 		$instance->_parameters = new Dictionary();
-		
-		/*
-		$request_page = '';
-		if (isset($_GET['requestpage'])) $request_page = $_GET['requestpage'];
-		if ($request_page == '/index.php') $request_page = '/index.html';
-		*/
-		
+
 		$page_request = $instance->createPageRequest( PathManager::getCurrentUrl() );
 		
 		foreach($_REQUEST as $request_name=>$request_value) {
@@ -1047,7 +1045,7 @@ class Page {
 		}
 
 		if ($in_context_page_request = $_this->getCurrentPageRequest()) {
-			
+
 			if ($request_handler = $in_context_page_request->getRequestHandler()) {
 
 				if ($_this->isRootPageRequest() && $request_handler->statsEnabled() && ConfigurationManager::get('ENABLE_PAGE_STATS') == 'true') {

@@ -18,16 +18,6 @@ class EditableRegionControl extends CWI_CONTROLS_AbstractRegion {
 		
 		if ($this->isAdminRequest()) {
 			
-			$current_request = Page::getCurrentPageRequest()->getRequestHandler();
-
-			// Only allow editing if this is not an admin request handler, in turn handled by a file request handler (only database request handler's can be used in admin mode)
-			/*
-			Not working correctly
-			if (is_a($current_request, 'AdminRequestHandler')) {
-				$request_handler = $current_request->getRequestHandler();
-				if (is_a($request_handler, 'FileRequestHandler')) return;
-			}
-			*/
 			// Current context
 			FrameworkManager::loadLibrary('controls.editable.general');
 			

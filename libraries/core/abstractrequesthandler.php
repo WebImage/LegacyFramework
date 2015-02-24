@@ -1,7 +1,16 @@
 <?php
 
-class RequestHandler {
+FrameworkManager::loadLibrary('core.irequesthandler');
+
+abstract class AbstractRequestHandler implements IRequestHandler {
+	/**
+	 * @var PageRequest
+	 */
 	private $pageRequest;
+	/**
+	 * @var IServiceManager $serviceManager;
+	 */
+	private $serviceManager;
 	function __construct($page_request=null) {
 		$this->setPageRequest($page_request);
 		return true;
@@ -10,7 +19,7 @@ class RequestHandler {
 		return false;
 	}
 	public function render() {
-		return 'RequestHandler<br />';
+		return 'RequestHandler';
 	}
 	#public function getRequestedPath() { return $this->requestPath; }
 	#public function setRequestedPath($request_path) { $this->requestPath = $request_path; }
@@ -19,4 +28,10 @@ class RequestHandler {
 	public function isAdminRequest() { return false; }
 	public function getPageId() { return false; }
 	public function statsEnabled() { return true; }
+
+	public function getServiceManager() { return $this->serviceManager; }
+	public function setServiceManager(IServiceManager $service_manager) {
+		$this->serviceManager = $service_manager;
+		return $this;
+	}
 }
