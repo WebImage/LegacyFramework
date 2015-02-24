@@ -5,19 +5,14 @@
  */
 
 class RemoteRequestLogic {
-
+	const METHOD_GET='GET';
+	const METHOD_POST='POST';
 	public static function getSimpleResponse($url, $post_fields=array(), $post_method="GET") {
-		#$url = '';
-		if (strtoupper($post_method) == 'GET') {
-			/* Build Query String */
-			$posting = array();
-			foreach($post_fields as $key=>$val) {
-				$posting[] = $key.'='.urlencode($val);
-			}
-			$query_string = implode('&', $posting);
-			if (strlen($query_string) > 0) $url .= '?'.$query_string;
-		}
-		
+		/**
+		 * Convert $post_fields to string format
+		 */
+		$str_post_fields = http_build_query($post_fields);
+
 		/* Send Request */
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
@@ -26,9 +21,12 @@ class RemoteRequestLogic {
 
 		if (strtoupper($post_method) == 'POST') {
 			curl_setopt($ch, CURLOPT_POST, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $str_post_fields);
 		}
-		if (ConfigurationManager::get('REMOTEREQUEST_IGNORESSLERRORS') == 'true') {
+
+		$REMOTEREQUEST_IGNORESSLERRORS = ConfigurationManager::get('REMOTEREQUEST_IGNORESSLERRORS');
+
+		if ($REMOTEREQUEST_IGNORESSLERRORS == 'true' || $REMOTEREQUEST_IGNORESSLERRORS === true) {
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		}
