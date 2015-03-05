@@ -85,7 +85,7 @@ if ($rs_pages->getCount() == 0) {
 		echo '<pre>';
 		print_r($new_page);
 		echo '</pre>';
-		$error = mysql_error();
+		$error = mysqli_error(ConnectionManager::getConnection());
 		if (strlen($error) > 0) echo 'MySQL Error: ' . $error . '<br />';
 		exit;
 	}

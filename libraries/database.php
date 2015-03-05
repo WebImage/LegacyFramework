@@ -12,6 +12,8 @@ DAOSearchFieldRange($table_key, $field_key, $low_value=null, $high_value=null);
 09/05/2010	(Robert Jones) Moved DAOSearch functionality to db.daosearch library
 09/08/2010	(Robert Jones) Added addUpdateField() to add fields 
 */
+use Zend\Http\Header\Connection;
+
 class ResultSet extends Collection {
 	var $totalResults; // Stores the total numbers of rows returned for a SELECT query - useful when a LIMIT [start], [number_to_fetch] is used against DataAccessObject::selectQuery() because it allows you to retrieve the number of results for the entire query, as oppposed to the count returned by the query with a LIMIT
 	var $currentPage;
@@ -228,7 +230,7 @@ class DataAccessObject {
 				// Populate primary key, but only if this is not a forced inserted record
 				if (!is_array($primary_key) && !$this->isForceInsert() && !empty($primary_key)) {
 					// Make sure result is not false (failed), otherwise a primary key could be associated with this record from a previously saved record
-					if ($result !== false) $structure_object->$primary_key = mysql_insert_id();
+					if ($result !== false) $structure_object->$primary_key = mysqli_insert_id(ConnectionManager::getConnection());
 				}
 
 			} else { // UPDATE QUERY
@@ -419,8 +421,8 @@ class DataAccessObject {
 				}
 				
 			} else {
-				$total_results_query = mysql_query($sql_total_results, $db);
-				$total_results_obj = mysql_fetch_object($total_results_query);
+				$total_results_query = mysqli_query($db, $sql_total_results);
+				$total_results_obj = mysqli_fetch_object($total_results_query);
 				$result_set->setTotalResults($total_results_obj->total_results);
 			}
 			$result_set->setCurrentPage($this->_currentPage);
@@ -428,56 +430,48 @@ class DataAccessObject {
 			$sql .= ' LIMIT ' . ($this->_currentPage * $this->_resultsPerPage - $this->_resultsPerPage) . ', ' . $this->_resultsPerPage;
 		}
 				
-		if ($query = mysql_query($sql, $db)) {
-			
-			$field_names = array();
-			$field_tables = array();
-			$unique_tables = array();
-			for ($columns=0; $columns < mysql_num_fields($query); $columns++) {
-				$field_table = mysql_field_table($query, $columns);
-				
-				$field_names[] = mysql_field_name($query, $columns);
-				$field_tables[] = $field_table;
-				if (!in_array($field_table, $unique_tables)) array_push($unique_tables, $field_table);
+		if ($query = mysqli_query($db, $sql)) {
+
+			$fields = mysqli_fetch_fields($query);
+
+			while ($result = mysqli_fetch_object($query)) {
+
+				$row = ($this->separateResultTables()) ? new stdClass() : new $cast_as_class;
+
+				foreach($fields as $field_info) {
+
+					$table = $field_info->table;
+					$field = $field_info->name;
+
+					$field_context = $row;
+					if ($this->separateResultTables()) {
+						if (!isset($row->$table)) $row->$table = new stdClass();
+						$field_context = $row->$table;
+					}
+
+					$field_context->$field = $result->$field;
+
+				}
+
+				$result_set->add($row);
+
 			}
 
-			while($result = mysql_fetch_row($query)) {
-				if ($this->separateResultTables()) {
-					$row = new stdClass();
-					for ($ut=0, $ut_max=count($unique_tables); $ut < $ut_max; $ut++) {
-						$table_obj_name = $unique_tables[$ut];
-						$row->$table_obj_name = new stdClass();
-					}
-					for($f=0; $f < count($field_names); $f++) {
-						$table_alias = $field_tables[$f];
-						$field_name = $field_names[$f];
-						$row->$table_alias->$field_name = $result[$f];
-					}
-					$result_set->add($row);
-				} else {
-					$row = new $cast_as_class();
-					for($f=0; $f < count($field_names); $f++) {
-						$field_name = $field_names[$f];
-						$row->$field_name = $result[$f];
-					}
-					$result_set->add($row);
-				}
-			}
-			
 			if ($check_pagination_group) {
-				if ($query = mysql_query("SELECT FOUND_ROWS() AS total_results", $db)) {
-					$row = mysql_fetch_object($query);
+
+				if ($query = mysqli_query($db, "SELECT FOUND_ROWS() AS total_results")) {
+					$row = mysqli_fetch_object($query);
 					$result_set->setTotalResults($row->total_results);
 				}
 				
 			}
-			
+
 			if ($this->isCachingResults()) {
 				$GLOBALS[$query_key] = $result_set;
 			}
 			
 		} else {
-			$d = new Dictionary(array('sql'=>$sql, 'error'=>mysql_error()));
+			$d = new Dictionary(array('sql'=>$sql, 'error'=>mysqli_error()));
 			Custodian::log('database', 'SQL: ${sql}. Error: ${error}', $d);
 		}
 				
@@ -501,12 +495,12 @@ class DataAccessObject {
 		$start_query_time = FrameworkManager::getTime();
 		$db = ConnectionManager::getConnection();
 		
-		if (!@mysql_query($query, $db)) {
+		if (!@mysqli_query($db, $query)) {
 			// Custodian error
-			$d = new Dictionary(array('sql'=>$query, 'error'=>mysql_error()));
+			$d = new Dictionary(array('sql'=>$query, 'error'=>mysqli_error()));
 			Custodian::log('database', 'SQL: ${sql}. Error: ${error}', $d);
 			// Class error
-			$this->addError(mysql_error());
+			$this->addError(mysqli_error());
 			return false;
 		}
 
@@ -607,7 +601,8 @@ class DataAccessObject {
 		if (get_magic_quotes_gpc()) {
 			$return_string = stripslashes($return_string);
 		}
-		$return_string = mysql_real_escape_string($return_string);
+		$return_string = mysqli_real_escape_string($db, $return_string);
+
 		return $return_string;
 	}
 	
@@ -629,12 +624,12 @@ class DataAccessObject {
 		
 		$db = ConnectionManager::getConnection();
 		
-		if ($query = mysql_query($sql_select, $db)) {
+		if ($query = mysqli_query($db, $sql_select)) {
 			$field_names = array();
-			
-			if (mysql_num_fields($query) == 1) {
 
-				while($fetch_row = mysql_fetch_row($query)) {
+			if (mysqli_num_fields($query) == 1) {
+
+				while($fetch_row = mysqli_fetch_row($query)) {
 					$result = new stdClass();
 					$result->name = $fetch_row[0];
 					$rs_results->add($result);

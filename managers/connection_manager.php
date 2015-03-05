@@ -12,6 +12,7 @@
  * 05/14/2010	(Robert Jones) Added getTableKey() to lookup a table's key by its physical table name
  * 09/20/2011	(Robert Jones) Readded setTableKey() to allow programmatically overriding table prefix
  * 09/09/2012	(Robert Jones) Changed private method setTable to setTableKey
+ * 03/05/2015	(Robert Jones) Changed mysql_* implementation to mysqli_*
  */
 class DatabaseSetting {
 	private $host, $username, $password, $database;
@@ -60,11 +61,12 @@ class ConnectionManager {
 			$password = (isset($config_connection['password'])) ? $config_connection['password'] : '';
 			$database = (isset($config_connection['database'])) ? $config_connection['database'] : '';
 
-			$_this->connections[$connection_name] = mysql_connect(
+			$_this->connections[$connection_name] = mysqli_connect(
 				$host,
 				$username,
-				$password);
-			$_this->databases[$connection_name] = mysql_select_db($database, $_this->connections[$connection_name]);
+				$password,
+				$database
+			);
 
 		}
 
@@ -81,7 +83,7 @@ class ConnectionManager {
 	private static function _killConnection($connection_name) {
 		$_this = ConnectionManager::getInstance();
 		if (isset($_this->connections[$connection_name])) {
-			mysql_close($_this->connections[$connection_name]);
+			mysqli_close($_this->connections[$connection_name]);
 			unset($_this->connections[$connection_name]);
 		}
 	}

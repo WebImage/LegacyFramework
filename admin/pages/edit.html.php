@@ -97,14 +97,6 @@ if (Page::isPostBack()) {
 	
 	if (!empty($page->id)) $file_already_set = true;
 	
-/*	$debug_messages = DebugManager::getMessages();
-echo '<pre>DEBUG';
-while ($message = $debug_messages->getNext()) {
-	echo $message . '<hr />';
-}
-echo '<hr>';
-echo mysql_error();
-exit;*/
 } else {
 	
 	$action = Page::get('action');

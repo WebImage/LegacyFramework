@@ -97,7 +97,7 @@ if (Page::isPostBack()) {
 				$menu_refs[$ref] = $item;
 				echo PHP_EOL;
 				echo $item->id . ' - ' . $item->parent_id . PHP_EOL;
-				echo 'Error: ' . mysql_error();
+				echo 'Error: ' . mysqli_error(ConnectionManager::getConnection());
 			}
 			$response['message'] .= ob_get_contents();
 			ob_end_clean();
