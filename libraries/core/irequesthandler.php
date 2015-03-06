@@ -42,13 +42,5 @@ interface IRequestHandler extends IServiceManagerAware {
 	 * @return bool
 	 */
 	public function isAdminRequest();
-	/**
-	 * @return ServiceManager
-	 */
-	public function getServiceManager();
-	/**
-	 * @param ServiceManager $service_manager
-	 * @return IRequestHandler
-	 */
-	public function setServiceManager(IServiceManager $service_manager);
+
 }
