@@ -659,8 +659,8 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 		self::$isSiteInitialized = true;
 
 		$enable_error_capture = (
-			(isset($config_site['settings']['custodian']['enable']) && true === $config_site['settings']['custodian']['enable'] || 'true' == strtolower($config_site['settings']['custodian']['enable'])) ||
-			(!isset($config_site['settings']['custodian']['enable']) && isset($config['settings']['custodian']['enable']) && true === $config['settings']['custodian']['enable'] || 'true' == strtolower($config['settings']['custodian']['enable']))
+			(isset($config_site['settings']['custodian']['enable']) && (true === $config_site['settings']['custodian']['enable'] || 'true' == strtolower($config_site['settings']['custodian']['enable']))) ||
+			(!isset($config_site['settings']['custodian']['enable']) && isset($config['settings']['custodian']['enable']) && (true === $config['settings']['custodian']['enable'] || 'true' == strtolower($config['settings']['custodian']['enable'])))
 		);
 
 		if ($enable_error_capture) Custodian::enableCaptureErrors();
