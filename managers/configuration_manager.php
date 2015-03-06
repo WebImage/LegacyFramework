@@ -548,6 +548,10 @@ class ConfigurationManager {
 		}
 	}
 
+	/**
+	 * @param ConfigurationManager $_this
+	 * @param $config
+	 */
 	private static function legacyInitConfigPageSettings($_this, $config) {
 		/**
 		 * Add page settings
@@ -580,7 +584,7 @@ class ConfigurationManager {
 			$_this->addPathMapping(
 				$mapping['path'],
 				(isset($mapping['translate'])) ? $mapping['translate'] : '',
-				$mapping['requestHandler']
+				(isset($mapping['requestHandler'])) ? $mapping['requestHandler'] : null
 			);
 
 		}
@@ -823,7 +827,7 @@ class ConfigurationManager {
 	 *
 	 */
 	// DEPRECATE
-	public static function addPathMapping($path_regex, $translation, $handler) {
+	public static function addPathMapping($path_regex, $translation, $handler=null) {
 		$_this = ConfigurationManager::getInstance();//Singleton::getInstance('ConfigurationManager');
 		$_this->_pathMappings[] = array(
 			'path_regex' => $path_regex,

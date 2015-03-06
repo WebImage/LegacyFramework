@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.1.3]
 ### Fixed
 Fixed an issue with loading legacy configuration via SITE_KEY
+Fixed configuration issue with path mappings that do not have a requestHandler value
 
 ## [1.1.2]
 ### Fixed
