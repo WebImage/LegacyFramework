@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.3]
+### Fixed
+Fixed an issue with loading legacy configuration via SITE_KEY
+
 ## [1.1.2]
 ### Fixed
 Removed IRequestHandler methods that overlapped with methods in extended IServiceManagerAware

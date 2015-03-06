@@ -571,7 +571,7 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 				 * The old app directory will be under the framework sites directory ($dir_app_key), whereas newer sites will be located in a directory named for the site ($dir_app_domain)
 				 **/
 				$dir_app_domain	= $config['settings']['general']['DIR_FS_FRAMEWORK_SITES'] . $config['settings']['general']['DOMAIN'] . DIRECTORY_SEPARATOR;
-				$dir_app_key	= $config['settings']['general']['DIR_FS_FRAMEWORK_SITES'] . $config['settings']['general']['SITE_KEY'] . DIRECTORY_SEPARATOR;
+				$dir_app_key	= $config['settings']['general']['DIR_FS_FRAMEWORK_SITES'] . $config_site['settings']['general']['SITE_KEY'] . DIRECTORY_SEPARATOR;
 
 				// Assume we are using the new way of doing things, with
 				if (file_exists($dir_app_domain)) {
