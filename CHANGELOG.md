@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.5]
+### Changed
+Modified ErrorRequestHandler so that the Page Not Found message is displayed within the standard template.
+
 ## [1.1.4]
 ### Changed
 - Added new way to initialize a site with a default site configuration.  Now FrameworkManager::init(...) can also be called with FrameworkManager::init($config_site, $mode, $domain).
