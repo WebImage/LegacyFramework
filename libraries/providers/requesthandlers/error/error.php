@@ -1,12 +1,20 @@
 <?php
 
-class ErrorRequestHandler extends AbstractRequestHandler {
-	function canHandleRequest($request_path=null) {
-		return true;		
+class ErrorRequestHandler extends FileRequestHandler {
+
+	function __construct($page_request=null) {
+		parent::__construct($page_request);
+		$this->setSystemPath( parent::getSystemPath() . '/errors');
 	}
-	function render() {
+
+	public function canHandleRequest($internal_url=null) {
+		$internal_url = '/404.html';
+		if (parent::canHandleRequest($internal_url)) {}
+		return true;
+	}
+	public function render() {
 		header('HTTP/1.0 404 Not Found');
-		return 'There was a problem loading the page you requested.' . str_repeat(' ', 512) . "\r\n<!-- Page Not Found -->";
+		return parent::render();
 	}
 }
 
