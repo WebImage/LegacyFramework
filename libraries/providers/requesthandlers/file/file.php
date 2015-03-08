@@ -22,7 +22,7 @@ class FileRequestHandler extends AbstractRequestHandler {
 		if (is_null($internal_url)) {
 			$internal_url = $this->getPageRequest()->getInternalPath();
 		}
-		
+
 		$base_file_path = $this->getSystemPath() . $internal_url;
 		$check_control = PathManager::translate($base_file_path);
 		$check_control_code = PathManager::translate($base_file_path . '.php');
@@ -35,7 +35,7 @@ class FileRequestHandler extends AbstractRequestHandler {
 		return false;
 	}
 	function render() {
-		
+
 		/**
 		 * Check if this is an API request
 		 **/
@@ -46,7 +46,7 @@ class FileRequestHandler extends AbstractRequestHandler {
 			$api_request->setPageRequest( $new_page_request );
 			return $api_request->render();
 		}
-		
+
 		$control_manager = $this->getPageRequest()->getPageResponse()->getControlManager();
 		
 		/**
@@ -62,7 +62,7 @@ class FileRequestHandler extends AbstractRequestHandler {
 		 * If there is a control code class then rendering will be passed off to that class
 		 */
 		if ($this->loadControlCodeFile) { // Pass processing to 
-			
+
 			$control_manager->initialize();
 			include_once($this->loadControlCodeFile);
 			
@@ -72,37 +72,7 @@ class FileRequestHandler extends AbstractRequestHandler {
 			ob_end_clean();
 			
 			return $output;
-			
-			
-			############## From here lower to be replaced by above ##################
-			/*
-			// Create page controls
-			eval(Page::getInitCode());
-			// Reset page init code so that we can check if additional init code has been added via the include loadControlCodeFile below
-			Page::resetInitCode();
-			
-			// Include processing files, which allows created page controls to be modified via the control file
-			include_once($this->loadControlCodeFile);
-			
-			// Create page controls that might have been added by the above include (usually when that file calls Page::loadControl())
-			eval(Page::getInitCode());
-			
-			// Build hierarchy of controls
 
-			eval(Page::getAttachInitCode());
-
-// onPreProcessCode should go here
-
-			ob_start();
-			eval(Page::getRenderCode());
-			$output = ob_get_contents();
-			ob_clean();
-			$eval = eval(" ?>".$output."<?php ");
-			$output = ob_get_contents();
-			ob_end_clean();
-
-			return $output;
-			*/
 		/**
 		 * Otherwise this function will handle rendering directly
 		 */
@@ -117,28 +87,25 @@ class FileRequestHandler extends AbstractRequestHandler {
 			ob_end_clean();
 			
 			return $output;
-			
-			########### LEGACY ##########
-			/*
-			eval( Page::getInitCode() );
-			eval( Page::getAttachInitCode() );
-			ob_start();
-			eval( Page::getRenderCode() );
-			$output = ob_get_contents();
-			ob_clean();
-			$eval = eval(" ?>".$output."<?php ");
-			$output = ob_get_contents();
-			ob_end_clean();
-			return $output;
-			*/
+
 		}
 
 	}
-	
+
+	/**
+	 * Gets the path within the framework structure from which to use as the base for all files.
+	 *
+	 * @return string
+	 */
 	public function getSystemPath() {
+
 		$file_path = $this->systemPath;
+
+		// Set the default value to "~/pages" if the value is not set
 		if (is_null($file_path)) $file_path = '~/pages';
+		// Make sure the path does not have a trailing slash, since it will be prepended to the URL path by default
 		if (substr($file_path, -1) == '/') $file_path = substr($file_path, 0, -1);
+
 		return $file_path;
 	}
 	public function setSystemPath($system_path) {
