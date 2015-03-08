@@ -62,6 +62,11 @@ function handle_autoload_core_classes($class_name) {
 			$class_file = dirname(__FILE__) . '/core/' . $class_lower . '.php';
 			include($class_file);
 			break;
+
+		case 'missingconnectionexception':
+			$class_file = dirname(__FILE__) . '/db/' . $class_lower . '.php';
+			include($class_file);
+			break;
 	}
 
 }

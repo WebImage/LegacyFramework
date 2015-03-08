@@ -41,12 +41,13 @@ class ConnectionManager {
 	/**
 	 * @deprecated
 	 */
-	public static function getConnectionSettings($connection_name='default') {
+	public static function getConnectionSettings($connection_name='default') { return; }
 
-		return;
-
-	}
-	
+	/**
+	 * @param string $connection_name
+	 * @return null
+	 * @throws
+	 */
 	public static function getConnection($connection_name='default') {
 
 		$_this = ConnectionManager::getInstance();
@@ -70,7 +71,21 @@ class ConnectionManager {
 
 		}
 
+		// Make sure connection exists
+		if (!isset($_this->connections[$connection_name])) throw new MissingConnectionException(sprintf('Unable to locate database connection %s', $connection_name));
+
 		return $_this->connections[$connection_name];
+	}
+
+	public static function hasConnection($connection_name='default') {
+
+		try {
+			self::getConnection($connection_name);
+		} catch (MissingConnectionException $e) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

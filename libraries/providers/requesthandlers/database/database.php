@@ -24,6 +24,7 @@ class DatabaseRequestHandler extends AbstractRequestHandler {
 		FrameworkManager::loadBaseLogic('pagecontrol');
 
 		if ($page_struct = PageLogic::getPageByUrl($this->getPageRequest()->getInternalPath())) {
+
 			$page_struct->template_id = (empty($page_struct->template_id)) ? '' : $page_struct->template_id;
 			$this->setPageStruct($page_struct);
 			
@@ -32,6 +33,7 @@ class DatabaseRequestHandler extends AbstractRequestHandler {
 			if (!empty($this->pageStruct)) {
 	
 				if ($this->pageStruct->type == 'C') {
+
 					$this->requestHandler = null;
 					
 					FrameworkManager::loadLogic('servicehandler');

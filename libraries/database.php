@@ -12,7 +12,6 @@ DAOSearchFieldRange($table_key, $field_key, $low_value=null, $high_value=null);
 09/05/2010	(Robert Jones) Moved DAOSearch functionality to db.daosearch library
 09/08/2010	(Robert Jones) Added addUpdateField() to add fields 
 */
-use Zend\Http\Header\Connection;
 
 class ResultSet extends Collection {
 	var $totalResults; // Stores the total numbers of rows returned for a SELECT query - useful when a LIMIT [start], [number_to_fetch] is used against DataAccessObject::selectQuery() because it allows you to retrieve the number of results for the entire query, as oppposed to the count returned by the query with a LIMIT
@@ -392,17 +391,26 @@ class DataAccessObject {
 
 		$start_query_time = FrameworkManager::getTime();
 		$query_key = 'query_'.md5($sql);
+
 		if (isset($GLOBALS[$query_key]) && $this->isCachingResults()) {
+
 			$cached_result_set = $GLOBALS[$query_key];
 			$cached_result_set->resetIndex(); // Make sure that pointer is reset to the first record
 			DebugDBManager::addMessage($sql . ' (Return cached)');
 			return $cached_result_set; // Cache result set
+
 		}
-		$db = ConnectionManager::getConnection();
-		
+
 		// Initialize result_set
 		$result_set = new ResultSet();
-		
+
+		try {
+			$db = ConnectionManager::getConnection();
+		} catch (MissingConnectionException $e) {
+			$this->addError($e->getMessage());
+			return $result_set;
+		}
+
 		/**
 		 * Query Total Number of Results
 		 */
@@ -493,7 +501,13 @@ class DataAccessObject {
 		$debug_message = '';
 		
 		$start_query_time = FrameworkManager::getTime();
-		$db = ConnectionManager::getConnection();
+
+		try {
+			$db = ConnectionManager::getConnection();
+		} catch (MissingConnectionException $e) {
+			$this->addError($e->getMessage());
+			return false;
+		}
 		
 		if (!@mysqli_query($db, $query)) {
 			// Custodian error
@@ -596,12 +610,19 @@ class DataAccessObject {
 	 * @static
 	 */
 	public static function safeString($string) {
-		$db = ConnectionManager::getConnection();
+
 		$return_string = $string;
 		if (get_magic_quotes_gpc()) {
 			$return_string = stripslashes($return_string);
 		}
-		$return_string = mysqli_real_escape_string($db, $return_string);
+
+		try {
+			$db = ConnectionManager::getConnection();
+			$return_string = mysqli_real_escape_string($db, $return_string);
+		} catch (MissingConnectionException $e) {
+			// Do nothing
+		}
+
 
 		return $return_string;
 	}
