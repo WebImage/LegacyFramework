@@ -1,5 +1,4 @@
 <?php
-use Zend\ServiceManager\Exception\InvalidArgumentException;
 
 /**
  * Class ServiceManager
@@ -60,6 +59,9 @@ class ServiceManager implements IServiceManager {
 			throw new Exception(sprintf('Unable to locate service: %s', $name));
 		}
 
+		if ($instance instanceof IServiceManagerAware) {
+			$instance->setServiceManager($this);
+		}
 		$this->instances[ $name ] = $instance;
 		return $instance;
 	}

@@ -2,9 +2,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.6]
+### Fixed
+- Updated ServiceManager to inject an instance of itself in created objects that implement IServiceManagerAware.
+- Minor Control class issues.
+### Changed
+- Changed Page class so that it is injected with an instance of the ServiceManager.
+- ControlManager is now created with new ControlManager.
+- Cleaned up old commented out code.
+ 
 ## [1.1.5]
 ### Changed
-Modified ErrorRequestHandler so that the Page Not Found message is displayed within the standard template.
+- Modified ErrorRequestHandler so that the Page Not Found message is displayed within the standard template.
 
 ## [1.1.4]
 ### Changed

@@ -289,5 +289,10 @@ return array(
 				'className' => 'CWI_PROVIDER_SEARCH_ControlSearch',
 			)
 		)
+	),
+	'serviceManager' => array(
+		'factories' => array(
+			'ControlManager' => 'ControlManagerFactory'
+		)
 	)
 );

@@ -76,57 +76,7 @@ class ErrorControl extends WebControl {
 		return $this->getRenderedContent();
 		
 	}
-	
-	/*
-	function prepareContent() {
-		$output = '';
-		if (ErrorManager::anyDisplayErrors()) {
-			$errors = ErrorManager::getDisplayErrors();
-			
-			if ($errors->getCount() > ErrorControl::$lastNumErrorsDisplayed) {
-				$output .= $this->getHeaderTemplate();
-				
-				while ($error = $errors->getNext()) {
-					
-					// Only show errors that have not been shown before
-					if ($errors->getCurrentIndex() >= (ErrorControl::$lastNumErrorsDisplayed-1)) {
-						
-						$error_string = $error;
-						
-						$error_links = preg_match_all('#(<a.*?>)(.*?)(</a>)#ims', $error, $matches);
-						
-						if (count($matches) > 0) { // Found links - only escape not link HTML
-							$link_matches = array();
-							
-							// Take out link HTML so that they can be preserved and restored after all other characters have been escaped.
-							for($i=0; $i < count($matches[0]); $i++) {
-								$error_string = str_replace($matches[0][$i], '[[link'.$i.']]', $error_string);
-								$properly_escaped_link = $matches[1][$i] . htmlentities($matches[2][$i]) . $matches[3][$i];
-								$link_matches['link'.$i] = $properly_escaped_link;
-							}
-							// Escape the string without the links
-							$error_string = htmlentities($error_string);
-							
-							// Add the links back in
-							foreach($link_matches as $key=>$link) {
-								$error_string = str_replace('[[' . $key . ']]', $link, $error_string);
-							}
-							
-							$error = $error_string;
-						} else { // No links - escape whole string
-							$error_string = htmlentities($error);
-						}
-						$output .= sprintf($this->getItemTemplate(), $error_string);
-					}
-				}
-				$output .= $this->getFooterTemplate();
-				
-				ErrorControl::$lastNumErrorsDisplayed = $errors->getCount();
-			}
-		}
-		$this->setRenderedContent($output);
-	}
-	*/
+
 	function getHeaderTemplate() { return $this->m_headerTemplate; }
 	function getFooterTemplate() { return $this->m_footerTemplate; }
 	function getItemTemplate() { return $this->m_itemTemplate; }

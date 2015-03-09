@@ -44,15 +44,18 @@ class PageResponse {
 	private $title;
 	private $headers; // PageHeader
 	private $context;
-	
+	/** @var  IServiceManager $serviceManager */
+	private $serviceManager;
 	/**
 	 * Either RESPONSE_OUTPUT_TYPE_HTML, RESPONSE_OUTPUT_TYPE_XML, RESPONSE_OUTPUT_TYPE_JSON
 	 * Changes the preferred mode of output - the request handler can choose to ignore this and default to RESPONSE_OUTPUT_TYPE_HTML
 	 */
 	private $outputType;
 	
-	public function __construct() {
-		$this->controlManager = new ControlManager();
+	public function __construct(IServiceManager $serviceManager) {
+		$this->serviceManager = $serviceManager;
+
+		$this->controlManager = $serviceManager->get('ControlManager');
 		$this->regions = new Dictionary();
 		$this->headers = array(
 				       'meta' => new Collection(),
@@ -191,10 +194,12 @@ class PageRequest {
 	private $theme;
 	private $lock = false;
 	private $pageResponse; // PageResponse
-	
-	public function __construct($url, $request_type='GET') { // Request type is not actually used - not sure if we will
+	private $serviceManager;
+
+	public function __construct(IServiceManager $serviceManager, $url, $request_type='GET') { // Request type is not actually used - not sure if we will
+		$this->serviceManager = $serviceManager;
 		$this->requestedParams = new Dictionary();
-		$this->pageResponse = new PageResponse();
+		$this->pageResponse = new PageResponse($serviceManager);
 		$this->initUrl($url);
 	}
 	
@@ -249,8 +254,7 @@ class PageRequest {
 	
 	public function setRequestHandler($handler) {
 		if (class_implements($handler, 'IServiceAManagerAware')) {
-			$service_manager = FrameworkManager::getApplication()->getServiceManager();
-			$handler->setServiceManager($service_manager);
+			$handler->setServiceManager($this->serviceManager);
 		}
 		$this->requestHandler = $handler;
 	}
@@ -565,9 +569,15 @@ class Page {
 	
 	var $_requestHandler; // The process that handles the page rendering
 	var $_pageRequests = array();
-	
+
+	/**
+	 * @var ServiceManager
+	 */
+	protected $serviceManager;
+
 	public static function isSecure() { return ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ); }
 	public static function requireSecureConnection() {
+
 		if ( !Page::isSecure()) { //!isset($_SERVER['HTTPS']) || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'on') ) {
 			if (Page::isPostBack()) { // There's really no way to salvage POSTed unsecure form data - get the user out of here
 				Page::redirect('/errors/nosecureconnection.html');
@@ -577,7 +587,10 @@ class Page {
 			}
 		}
 	}
-	
+
+	/**
+	 * @return Page
+	 */
 	public static function getInstance() {
 		/*
 		static $instance;
@@ -745,7 +758,7 @@ class Page {
 	}
 	public static function createPageRequest($url) {
 		$_this = Page::getInstance();
-		$page_request = new PageRequest($url);
+		$page_request = new PageRequest($_this->getServiceManager(), $url);
 		array_push($_this->_pageRequests, $page_request);
 		return $page_request;
 	}
@@ -759,10 +772,17 @@ class Page {
 		$_this = Page::getInstance();
 		array_pop($_this->_pageRequests);
 	}
+
+	public static function getServiceManager() {
+		$_this = Page::getInstance();
+		return $_this->serviceManager;
+	}
 	private function init(Page $instance) {
 
 		if ($instance->_initialized) return true;
 		$instance->_initialized = true;
+
+		$instance->serviceManager = FrameworkManager::getApplication()->getServiceManager();
 
 		if (Page::isAdminRequest()) {
 			
