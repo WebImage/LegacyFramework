@@ -479,7 +479,7 @@ class DataAccessObject {
 			}
 			
 		} else {
-			$d = new Dictionary(array('sql'=>$sql, 'error'=>mysqli_error()));
+			$d = new Dictionary(array('sql'=>$sql, 'error'=>mysqli_error($db)));
 			Custodian::log('database', 'SQL: ${sql}. Error: ${error}', $d);
 		}
 				
@@ -511,10 +511,10 @@ class DataAccessObject {
 		
 		if (!@mysqli_query($db, $query)) {
 			// Custodian error
-			$d = new Dictionary(array('sql'=>$query, 'error'=>mysqli_error()));
+			$d = new Dictionary(array('sql'=>$query, 'error'=>mysqli_error($db)));
 			Custodian::log('database', 'SQL: ${sql}. Error: ${error}', $d);
 			// Class error
-			$this->addError(mysqli_error());
+			$this->addError(mysqli_error($db));
 			return false;
 		}
 
