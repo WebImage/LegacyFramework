@@ -16,7 +16,7 @@ class CWI_EVENT_StartupArgs extends CWI_EVENT_Args {
 	public function getMessages() { return $this->messages; }
 }
 
-function cwi_check_dir(CWI_EVENT_StartupArgs $args, $dir, $name, $desc) {
+function cwi_check_dir(CWI_EVENT_StartupArgs $args, $dir, $name, $description) {
 	
 	$format = '%s %s.  Purpose: %s.  Location: %s';
 	if (file_exists($dir)) {
@@ -29,7 +29,9 @@ function cwi_check_dir(CWI_EVENT_StartupArgs $args, $dir, $name, $desc) {
 	
 }
 function cwi_dashboard_messages(CWI_EVENT_Event $event, CWI_EVENT_StartupArgs $args) {
-	
+
+	$config = ConfigurationManager::getConfig();
+
 	/**
 	 * Check temp directory
 	 **/
