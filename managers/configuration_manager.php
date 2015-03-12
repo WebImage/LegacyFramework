@@ -1,5 +1,7 @@
 <?php
 
+use WebImage\Config\Config;
+
 /**
  * 06/10/2009	(Robert Jones) Added configuration support for pages->location for authorization
  * 01/27/2010	(Robert Jones) Modified class to take advantage of the fact that CWI_XML_Compile::compile() now throws errors
@@ -45,7 +47,7 @@ class ConfigurationManager {
 	public static function getConfig() {
 		return ConfigurationManager::getInstance()->config;
 	}
-	public static function setConfig(array $config) {
+	public static function setConfig(Config $config) {
 		ConfigurationManager::getInstance()->config = $config;
 	}
 
@@ -903,25 +905,22 @@ class ConfigurationManager {
 	/**
 	 * TODO: Finish transitioning to array based config
 	 */
-	public static function addConfigSettingsFromDb() {
+	public static function addConfigSettingsFromDb(Config $config) {
 
 		$_this = ConfigurationManager::getInstance();//Singleton::getInstance('ConfigurationManager');
 
 		FrameworkManager::loadLogic('configvalue');
 		$values = ConfigValueLogic::getConfigValues();
 
-		$config = array(
-			'settings' => array()
-		);
-
 		while ($value = $values->getNext()) {
 
 			$group = (empty($value->group_key)) ? 'general' : $value->group_key;
+			if (!isset($config['settings'][$group])) $config['settings'][$group] = new Config();
+
 			$config['settings'][$group][$value->field] = $value->value;
 
 		}
 
-		#$_this->set($value->field, $value->value, (empty($value->group_key) ? 'general' : $value->group_key), ($value->locked==1));
 		$locked = false;
 		foreach($config['settings'] as $group => $settings) {
 

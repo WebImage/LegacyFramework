@@ -1,5 +1,7 @@
 <?php
 
+use WebImage\Config\Config;
+
 /**
  * 01/27/2010	(Robert Jones) Added new second parameter "tag" to all instances of ConfigurationManager::addConfigFile()
  * 02/02/2010	(Robert Jones) Added isSiteInitialized() to determine whether the site/app is ready to run.  This was primarily added for the CWI_MANAGER_CacheManager so that it will not store certain initialization values permanently until the site is up
@@ -143,18 +145,18 @@ class FrameworkManager {
 	/**
 	 * Initialize framework.
 	 *
-	 * Can be called in one of two flavors: [NEW/PREFERRED] init(array $site_config, $mode, $domain='') -- OR -- [legacy] init($mode, $domain='')
-	 * @param array $site_config An array with values to use for site configuration
+	 * Can be called in one of two flavors: [NEW/PREFERRED] init(array $config_site, $mode, $domain='') -- OR -- [legacy] init($mode, $domain='')
+	 * @param array $config_site An array with values to use for site configuration
 	 * @param string $mode How the framework is being run - typically FRAMEWORK_MODE_WEB or FRAMEWORK_MODE_CLI (command line interface)
 	 * @param string $domain The domain to use, by default this will be filled from the webs
 	 */
 	public static function init($param1=null, $param2=null, $param3=null) {
 
 		$mode = null;
-		$site_config = null;
+		$config_site = null;
 		$domain = '';
-		if (is_array($param1)) { // init(array $site_config, $mode=FRAMEWORK_MODE_WEB, $domain='')
-			$site_config = $param1;
+		if (is_array($param1)) { // init(array $config_site, $mode=FRAMEWORK_MODE_WEB, $domain='')
+			$config_site = $param1;
 			$mode = $param2;
 			$domain = $param3;
 		} else { // init($mode=FRAMEWOKR_MODE_WEB, $domain)
@@ -166,13 +168,8 @@ class FrameworkManager {
 
 		self::$startTime = FrameworkManager::getTime();
 		$time0 = $_SERVER['REQUEST_TIME'];
-		$config = array(
-			'settings' => array(
-				'general' => array()
-			)
-		);
 
-FrameworkManager::markTime(__class__ . '->init() begin usage');
+		FrameworkManager::markTime(__class__ . '->init() begin usage');
 
 		$start_time = FrameworkManager::getTime();
 		
@@ -241,9 +238,14 @@ FrameworkManager::markTime(__class__ . '->init() begin usage');
 		FrameworkManager::markTime(__class__ . '->init() after library usage');
 
 		FrameworkManager::loadBaseLibrary('xml.xml');
-		
-		$config['settings']['general']['DOMAIN'] = $domain;
 
+		$config = new Config(array(
+			'settings' => array(
+				'general' => array()
+			)
+		));
+
+		$config['settings']['general']['DOMAIN'] = $domain;
 		$config['settings']['general']['DIR_FS_FRAMEWORK'] = $dir_fs_framework;
 		$config['settings']['general']['DIR_FS_FRAMEWORK_BASE'] = DIR_FS_FRAMEWORK_BASE;
 		$config['settings']['general']['DIR_FS_FRAMEWORK_SITES'] = $dir_fs_framework_sites;
@@ -316,20 +318,22 @@ FrameworkManager::markTime(__class__ . '->init() before is_framework_caching_ena
 
 FrameworkManager::markTime(__class__ . '->init() before configs (active_cache_configs=' . ($active_cached_configs ? 'Yes':'No') . ')');
 
-		$config = array_replace_recursive($config, (require $file_config_base));
+		// Merge base config
+		$config->merge(new Config(require $file_config_base));
+
 		$config_global = null;
 
 		if ($active_cached_configs) {
 			/**
 			 * A cached copy of config_global would indicate that the global config file is in the old XML format, convert it to the array format here
 			 */
-			$config_global = ConfigurationManager::convertConfigXmlToArray($config_global);
+			$config_global = new Config( ConfigurationManager::convertConfigXmlToArray($config_global) );
 
 		} else {
 
 			if (file_exists($file_config_global)) {
 
-				$config_global = require($file_config_global);
+				$config_global = new Config( require($file_config_global) );
 
 			} else if (file_exists($file_config_global_alt)) {
 
@@ -337,14 +341,14 @@ FrameworkManager::markTime(__class__ . '->init() before configs (active_cache_co
 
 				if (null !== $xml_global_config) {
 
-					$config_global = ConfigurationManager::convertConfigXmlToArray($xml_global_config);
+					$config_global = new Config( ConfigurationManager::convertConfigXmlToArray($xml_global_config) );
 
 				}
 
 			}
 		}
 
-		if (null !== $config_global) $config = array_replace_recursive($config, $config_global);
+		if (null !== $config_global) $config->merge($config_global);
 
 		ConfigurationManager::setConfig($config);
 
@@ -370,14 +374,16 @@ FrameworkManager::markTime(__class__ . '->init() before initializeSite usage');
 
 		if ($mode == FRAMEWORK_MODE_WEB || ($mode == FRAMEWORK_MODE_CLI && !empty($domain))) {
 
-			$config_site = FrameworkManager::initializeSite($site_config);
+			// Convert site config into an array
+			if (null !== $config_site) {
+				$config_site = new Config($config_site);
+				$config->merge($config_site);
+			}
+			#$config_site =
+			FrameworkManager::initializeSite($config);
 
-			$config = array_replace_recursive(
-				$config,
-				$config_site
-			);
-			ConfigurationManager::setConfig($config);
-
+			#$config->merge($config_site);
+			#ConfigurationManager::setConfig($config);
 		}
 
 FrameworkManager::markTime(__class__ . '->init() end usage');
@@ -391,7 +397,8 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 		ConfigurationManager::legacyInitConfig();
 
 		$end_time = FrameworkManager::getTime();
-
+		ini_set('display_errors', 1);
+		error_reporting(E_ALL);
 		FrameworkManager::getInstance()->app = Application::create($config);
 		
 	}
@@ -542,24 +549,14 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 
 	/**
 	 * Initialize a site
-	 * @return array $config
+	 * @param Config $config
+	 * @return Config $config
 	 */
-	private static function initializeSite(array $config_site=null) {
+	private static function initializeSite(Config $config) {
 
 		FrameworkManager::markTime(__class__ . '->initializeSite() before loadSiteLogic');
 		
 		FrameworkManager::loadBaseLogic('site');
-
-		/**
-		 * Site is considered valid by default if $config_site is set,
-		 * otherwise we'll assume that this is not a valid site and
-		 * perform further checks below
-		 */
-		$valid_site = (null !== $config_site);
-
-		$config_site = (null === $config_site) ? array() : $config_site;
-
-		$config = ConfigurationManager::getConfig();
 
 		$domain = $config['settings']['general']['DOMAIN'];
 
@@ -571,11 +568,11 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 
 		if (file_exists($dir_app)) {
 
-			$config_site['settings']['general']['SITE_ID'] = 0; // Legacy
-			$config_site['settings']['general']['SITE_KEY'] = ''; // Legacy
-			$config_site['settings']['general']['SITE_NAME'] = ''; // Legacy
-			$config_site['settings']['general']['SITE_ENVIRONMENT'] = 'production'; // Generally production, staging, or development
-			$config_site['settings']['general']['DIR_FS_FRAMEWORK_APP'] = $config['settings']['general']['DIR_FS_FRAMEWORK_SITES'] . $config['settings']['general']['DOMAIN'] . DIRECTORY_SEPARATOR;
+			$config['settings']['general']['SITE_ID'] = 0; // Legacy
+			$config['settings']['general']['SITE_KEY'] = ''; // Legacy
+			$config['settings']['general']['SITE_NAME'] = ''; // Legacy
+			$config['settings']['general']['SITE_ENVIRONMENT'] = 'production'; // Generally production, staging, or development
+			$config['settings']['general']['DIR_FS_FRAMEWORK_APP'] = $config['settings']['general']['DIR_FS_FRAMEWORK_SITES'] . $config['settings']['general']['DOMAIN'] . DIRECTORY_SEPARATOR;
 
 			$valid_site = true;
 
@@ -585,26 +582,26 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 
 				$valid_site = true;
 				// Site Values
-				$config_site['settings']['general']['SITE_ID'] = $site->id;
-				$config_site['settings']['general']['SITE_KEY'] = strtolower($site->key);
-				$config_site['settings']['general']['SITE_NAME'] = $site->name;
-				$config_site['settings']['general']['SITE_ENVIRONMENT'] = $site->environment; // Generally production, staging, or development
+				$config['settings']['general']['SITE_ID'] = $site->id;
+				$config['settings']['general']['SITE_KEY'] = strtolower($site->key);
+				$config['settings']['general']['SITE_NAME'] = $site->name;
+				$config['settings']['general']['SITE_ENVIRONMENT'] = $site->environment; // Generally production, staging, or development
 
 				/**
 				 * The old app directory will be under the framework sites directory ($dir_app_key), whereas newer sites will be located in a directory named for the site ($dir_app_domain)
 				 **/
 				$dir_app_domain	= $config['settings']['general']['DIR_FS_FRAMEWORK_SITES'] . $config['settings']['general']['DOMAIN'] . DIRECTORY_SEPARATOR;
-				$dir_app_key	= $config['settings']['general']['DIR_FS_FRAMEWORK_SITES'] . $config_site['settings']['general']['SITE_KEY'] . DIRECTORY_SEPARATOR;
+				$dir_app_key	= $config['settings']['general']['DIR_FS_FRAMEWORK_SITES'] . $config['settings']['general']['SITE_KEY'] . DIRECTORY_SEPARATOR;
 
 				// Assume we are using the new way of doing things, with
 				if (file_exists($dir_app_domain)) {
 
-					$config_site['settings']['general']['DIR_FS_FRAMEWORK_APP'] = $dir_app_domain;
+					$config['settings']['general']['DIR_FS_FRAMEWORK_APP'] = $dir_app_domain;
 
 					// Fall back to app key directory
 				} else {
 
-					$config_site['settings']['general']['DIR_FS_FRAMEWORK_APP'] = $dir_app_key;
+					$config['settings']['general']['DIR_FS_FRAMEWORK_APP'] = $dir_app_key;
 
 				}
 
@@ -613,10 +610,8 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 		}
 
 		FrameworkManager::markTime(__class__ . '->initializeSite() after domain check');
-				
-		if (!$valid_site) die("We'll be right back!\n<!-- // Error: Unable to Initialize Site.  " . $domain . " was not found. // -->");
 
-		if (isset($config_site['settings']['general']['SITE_ENVIRONMENT']) && in_array($config_site['settings']['general']['SITE_ENVIRONMENT'], array('staging','development'))) {
+		if (isset($config['settings']['general']['SITE_ENVIRONMENT']) && in_array($config['settings']['general']['SITE_ENVIRONMENT'], array('staging','development'))) {
 			ini_set('display_errors', 1);
 			error_reporting(E_ALL);
 		} else {
@@ -624,11 +619,11 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 		}
 		
 		//if (!ConfigurationManager::addConfigFile(ConfigurationManager::get('DIR_FS_FRAMEWORK_APP') . 'config/config.xml', 'app')) die("We'll be right back!\n<!-- // Error: Unable to Load Site Configuration // -->");
-		$dir_fs_framework_app = (isset($config_site['settings']['general']['DIR_FS_FRAMEWORK_APP'])) ? $config_site['settings']['general']['DIR_FS_FRAMEWORK_APP'] : null;
+		$dir_fs_framework_app = (isset($config['settings']['general']['DIR_FS_FRAMEWORK_APP'])) ? $config['settings']['general']['DIR_FS_FRAMEWORK_APP'] : null;
 
 		if (file_exists($dir_fs_framework_app)) {
 
-			 PathManager::addFirst($config_site['settings']['general']['DIR_FS_FRAMEWORK_APP']);
+			 PathManager::addFirst($config['settings']['general']['DIR_FS_FRAMEWORK_APP']);
 
 			// File path for site configuration
 			$file_config_site = $dir_fs_framework_app . 'config' . DIRECTORY_SEPARATOR . 'config.php';
@@ -651,7 +646,7 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 			 */
 			if (file_exists($file_config_site)) {
 
-				$config_site = array_replace_recursive( $config_site, include($file_config_site) );
+				$config->merge( new Config(include $file_config_site) );
 
 				/**
 				 * Check whether old configuration format exists for legacy sites
@@ -660,7 +655,7 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 
 				$xml_config_site = ConfigurationManager::getConfigFileXml($file_config_site_alt);
 
-				$config_site = array_replace_recursive($config_site, ConfigurationManager::convertConfigXmlToArray($xml_config_site));
+				$config->merge( new Config(   ConfigurationManager::convertConfigXmlToArray($xml_config_site)   ));
 
 			}
 
@@ -673,16 +668,11 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 		// Load additional configuration settings directly from the database
 		if (ConnectionManager::hasConnection()) {
 
-			$config_db = ConfigurationManager::addConfigSettingsFromDb();
-
-			$config_site = array_replace_recursive($config_site, $config_db);
+			ConfigurationManager::addConfigSettingsFromDb($config);
 
 			FrameworkManager::markTime(__class__ . '->initializeSite() after loading site db config');
 
-			$enable_error_capture = (
-				(isset($config_site['settings']['custodian']['enable']) && (true === $config_site['settings']['custodian']['enable'] || 'true' == strtolower($config_site['settings']['custodian']['enable']))) ||
-				(!isset($config_site['settings']['custodian']['enable']) && isset($config['settings']['custodian']['enable']) && (true === $config['settings']['custodian']['enable'] || 'true' == strtolower($config['settings']['custodian']['enable'])))
-			);
+			$enable_error_capture = (isset($config['settings']['custodian']['enable']) && true === $config['settings']['custodian']['enable'] || 'true' == strtolower($config['settings']['custodian']['enable']));
 
 			if ($enable_error_capture) Custodian::enableCaptureErrors();
 
@@ -692,7 +682,6 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 
 		self::$isSiteInitialized = true;
 
-		return $config_site;
 	}
 	/**
 	 * Logs a message to a framework temp log (possibly phasing out in favor of Custodian::log())

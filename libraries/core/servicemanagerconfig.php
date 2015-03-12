@@ -1,12 +1,15 @@
 <?php
 
+use WebImage\Config\Config;
+
 class ServiceManagerConfig implements IServiceManagerConfig {
 	/**
-	 * @var array
+	 * @var Config
 	 */
-	protected $config = array();
+	protected $config;
 
-	public function __construct($config = array()) {
+	public function __construct(Config $config = null) {
+		if (null === $config) $config = new Config(array());
 		$this->config = $config;
 	}
 

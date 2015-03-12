@@ -1,15 +1,15 @@
 <?php
 
-use Zend\Json\Server\Smd\Service;
+use WebImage\Config\Config;
 
 class Application implements IServiceManagerAware {
 
 	private $serviceManager;
 
 	/**
-	 * @param array $config
+	 * @param Config $config
 	 */
-	function __construct(array $config, ServiceManager $service_manager) {
+	function __construct(Config $config, ServiceManager $service_manager) {
 		$this->config = $config;
 		$this->serviceManager = $service_manager;
 	}
@@ -22,7 +22,11 @@ class Application implements IServiceManagerAware {
 		$this->serviceManager = $sm;
 	}
 
-	public static function create(array $config = array()) {
+	/**
+	 * @param Config $config
+	 * @return Application
+	 */
+	public static function create(Config $config) {
 
 		$service_manager_config = isset($config['serviceManager']) ? $config['serviceManager'] : array();
 		$service_manager = new ServiceManager( new ServiceManagerConfig($service_manager_config) );

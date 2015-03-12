@@ -12,7 +12,7 @@
  * Core classes that were part of the framework when it was first built have all been moved to libraries/core/[class_name].php
  **/
 function handle_autoload_core_classes($class_name) {
-	
+
 	$class_lower = strtolower($class_name);
 	
 	switch ($class_lower) {
@@ -67,6 +67,12 @@ function handle_autoload_core_classes($class_name) {
 			$class_file = dirname(__FILE__) . '/db/' . $class_lower . '.php';
 			include($class_file);
 			break;
+	}
+
+	if (substr($class_name, 0, 8) == 'WebImage') {
+		$path = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $class_name) . '.php';
+
+		if (file_exists($path)) require_once($path);
 	}
 
 }
