@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.0]
+### Added
+- New WebImage\Config\Config for better configuration merging capabilities.
+### Changed
+- Changed application configuration from being an array to being of the new type WebImage\Config\Config
+- Moved several Application related classes out of the root namespace and into their own.
+### Fixed
+- Fixed minor admin home page bug.
+
 ## [1.1.7]
 ### Fixed
 - Added database handle reference to mysqli_error(...) calls in database library

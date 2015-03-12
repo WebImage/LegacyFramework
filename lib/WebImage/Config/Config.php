@@ -80,7 +80,7 @@ class Config implements Countable, Iterator, ArrayAccess {
 	 * @return void Any returned value is ignored.
 	 */
 	public function next() {
-		return next($this->data);
+		next($this->data);
 	}
 
 	/**
@@ -185,6 +185,9 @@ class Config implements Countable, Iterator, ArrayAccess {
 		return $this->count;
 	}
 
+	public function __unset($name) {
+		unset($this->data[$name]);
+	}
 	public function __get($name) {
 		return $this->get($name);
 	}

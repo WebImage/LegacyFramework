@@ -8,7 +8,7 @@ abstract class AbstractRequestHandler implements IRequestHandler {
 	 */
 	private $pageRequest;
 	/**
-	 * @var IServiceManager $serviceManager;
+	 * @var WebImage\ServiceManager\IServiceManager $serviceManager;
 	 */
 	private $serviceManager;
 	function __construct($page_request=null) {
@@ -30,7 +30,7 @@ abstract class AbstractRequestHandler implements IRequestHandler {
 	public function statsEnabled() { return true; }
 
 	public function getServiceManager() { return $this->serviceManager; }
-	public function setServiceManager(IServiceManager $service_manager) {
+	public function setServiceManager(\WebImage\ServiceManager\IServiceManager $service_manager) {
 		$this->serviceManager = $service_manager;
 		return $this;
 	}

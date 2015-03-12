@@ -1,5 +1,10 @@
 <?php
 
+namespace WebImage\ServiceManager;
+
+use Exception;
+use InvalidArgumentException;
+
 /**
  * Class ServiceManager
  * Borrowed heavily from ZF2
@@ -105,6 +110,7 @@ class ServiceManager implements IServiceManager {
 	 * @param mixed $factory
 	 * @param bool $shared Whether the factory is shared
 	 * @return ServiceManager
+	 * @throws InvalidArgumentException
 	 */
 	public function setFactory($name, $factory, $shared = null) {
 

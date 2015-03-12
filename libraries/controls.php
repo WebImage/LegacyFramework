@@ -823,12 +823,12 @@ class ControlCollection extends Collection {
 /** 
  * Manages a collection of controls, allowing new controls to be built from files or text.  Also acts as a threat that permeates all controls that are loaded via a ControlManager instances
  **/
-class ControlManagerFactory implements IFactory {
-	public function createService(IServiceManager $serviceManager) {
+class ControlManagerFactory implements \WebImage\ServiceManager\IFactory {
+	public function createService(\WebImage\ServiceManager\IServiceManager $serviceManager) {
 		return new ControlManager();
 	}
 }
-class ControlManager implements IServiceManagerAware {
+class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 	private $compiledResults;
 	private $controls, $controlAddedEventListeners;
 	private $controlCount=0; // Keep track of # of controls being added
@@ -840,7 +840,7 @@ class ControlManager implements IServiceManagerAware {
 	private $serviceManager;
 
 	public function getServiceManager() { return $this->serviceManager; }
-	public function setServiceManager(IServiceManager $service_manager) {
+	public function setServiceManager(\WebImage\ServiceManager\IServiceManager $service_manager) {
 		$this->serviceManager = $service_manager;
 	}
 	/**

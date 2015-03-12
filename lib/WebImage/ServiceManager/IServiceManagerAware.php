@@ -1,5 +1,9 @@
 <?php
 
+namespace WebImage\ServiceManager;
+
+use WebImage\ServiceManager\IServiceManager;
+
 interface IServiceManagerAware {
 	/**
 	 * @return IServiceManager

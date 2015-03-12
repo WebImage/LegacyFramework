@@ -17,22 +17,15 @@ function handle_autoload_core_classes($class_name) {
 	
 	switch ($class_lower) {
 		case 'abstractrequesthandler':
-		case 'application':
-		case 'applicationconfig':
 		case 'collection':
 		case 'configdictionary':
 		case 'dictionaryfield':
 		case 'dictionaryfieldcollection':
 		case 'dictionary':
 		case 'dictionaryhierarchy':
-		case 'factory':
 		case 'icollection':
-		case 'ifactory':
 		case 'imembership':
 		case 'irequesthandler':
-		case 'iservicemanager':
-		case 'iservicemanageraware':
-		case 'iservicemanagerconfig':
 		case 'lazyproviderdictionary':
 		case 'lazyprovider':
 		case 'logging':
@@ -53,8 +46,6 @@ function handle_autoload_core_classes($class_name) {
 		case 'providermanager':
 		case 'roleprovider':
 		case 'roles':
-		case 'servicemanager':
-		case 'servicemanagerconfig':
 		case 'singleton':
 		case 'sqlloggingprovider':
 		case 'ixmlobject':

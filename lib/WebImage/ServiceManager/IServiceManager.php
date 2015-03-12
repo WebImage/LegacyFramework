@@ -1,5 +1,7 @@
 <?php
 
+namespace WebImage\ServiceManager;
+
 interface IServiceManager {
 	/**
 	 * Whether the named service exists

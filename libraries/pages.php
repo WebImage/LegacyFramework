@@ -52,7 +52,7 @@ class PageResponse {
 	 */
 	private $outputType;
 	
-	public function __construct(IServiceManager $serviceManager) {
+	public function __construct(WebImage\ServiceManager\IServiceManager $serviceManager) {
 		$this->serviceManager = $serviceManager;
 
 		$this->controlManager = $serviceManager->get('ControlManager');
@@ -196,7 +196,7 @@ class PageRequest {
 	private $pageResponse; // PageResponse
 	private $serviceManager;
 
-	public function __construct(IServiceManager $serviceManager, $url, $request_type='GET') { // Request type is not actually used - not sure if we will
+	public function __construct(WebImage\ServiceManager\IServiceManager $serviceManager, $url, $request_type='GET') { // Request type is not actually used - not sure if we will
 		$this->serviceManager = $serviceManager;
 		$this->requestedParams = new Dictionary();
 		$this->pageResponse = new PageResponse($serviceManager);

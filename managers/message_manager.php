@@ -45,7 +45,7 @@ class Custodian {
 	 **/
 	public static function log($type, $message, Dictionary $variables=null, $severity=CUSTODIAN_NOTICE, $location=null) {
 		static $is_logging = false; // Make sure we do not cause an infinite loop if PHP errors are being captured via set_error_handler and set_exception_handler
-		
+
 		if (!is_a($variables, 'ConfigDictionary')) $variables = new ConfigDictionary($variables);// Make sure this is a dictionary object that can be stored in the database
 		if (is_null($variables)) $variables = new ConfigDictionary();
 		if (is_null($severity)) $severity = CUSTODIAN_NOTICE;

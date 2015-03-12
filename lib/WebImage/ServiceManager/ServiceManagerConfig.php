@@ -1,5 +1,7 @@
 <?php
 
+namespace WebImage\ServiceManager;
+
 use WebImage\Config\Config;
 
 class ServiceManagerConfig implements IServiceManagerConfig {

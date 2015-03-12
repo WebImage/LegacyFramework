@@ -1,6 +1,12 @@
 <?php
 
+namespace WebImage\Application;
+
 use WebImage\Config\Config;
+use WebImage\ServiceManager\IServiceManagerAware;
+use WebImage\ServiceManager\ServiceManager;
+use WebImage\ServiceManager\IServiceManager;
+use WebImage\ServiceManager\ServiceManagerConfig;
 
 class Application implements IServiceManagerAware {
 

@@ -1,6 +1,7 @@
 <?php
 
 use WebImage\Config\Config;
+use WebImage\Application\Application;
 
 /**
  * 01/27/2010	(Robert Jones) Added new second parameter "tag" to all instances of ConfigurationManager::addConfigFile()
@@ -397,8 +398,7 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 		ConfigurationManager::legacyInitConfig();
 
 		$end_time = FrameworkManager::getTime();
-		ini_set('display_errors', 1);
-		error_reporting(E_ALL);
+
 		FrameworkManager::getInstance()->app = Application::create($config);
 		
 	}

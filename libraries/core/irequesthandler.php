@@ -1,6 +1,6 @@
 <?php
 
-interface IRequestHandler extends IServiceManagerAware {
+interface IRequestHandler extends \WebImage\ServiceManager\IServiceManagerAware {
 
 	/**
 	 * Check whether this request handler can handle the path requested
