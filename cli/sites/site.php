@@ -13,29 +13,21 @@ define('SITE_MODE_UPDATE', 'update');
 $args = new ArgumentParser($argv);
 
 $possible_flags = array(
-	's'		=> array(
-				'help_text' => 'Domain name (e.g. domain.com)'
-				),
-	'n'		=> array(
-				'help_text' => 'Website name'
-				),
-	'e'		=> array(
-				'help_text' => 'Environment Possible values = development, staging, production'
-				),
-	'r'		=> array(
-				'help_text' => 'Is remote? Possible values = y | n'
-				),
-	'p' 		=> array(
-				'help_text' => 'Table prefix'
+	'a'	=> array(
+		'help_text' => 'Path to app directory base'
+		),
+	'e'	=> array(
+		'help_text' => 'Environment Possible values = development, staging, production'
+		),
+	'p' 	=> array(
+		'help_text' => 'Table prefix'
 	)
 	/*'sync-db'	=> false, 		'Sync database (only works if using --update)'*/
 	);
 
-$site_domain	= $args->getFlag('s');
-$site_name		= $args->getFlag('n', $site_domain);
+$app_dir 		= $args->getFlag('a');
 $site_environment	= $args->getFlag('e', 'production');
-$site_is_remote	= ($args->getFlag('r') == 'y');
-$table_prefix	= $args->getFlag('p');
+$table_prefix		= $args->getFlag('p');
 
 $valid_request = true;
 $help_text = '';
@@ -47,15 +39,12 @@ $help_text .= 'Creates or updates a content management system website.' . PHP_EO
 $help_text .= 'Arguments: ' . PHP_EOL;
 
 foreach($possible_flags as $possible_flag=>$flag_info) {
-	
-	##if ($valid_request && $required) if (!$args->isFlagSet($possible_flag)) $valid_request = false;//die("Missing flag -$possible_flag - $description\n");
-	#if (!$args->isFlagSet($possible_flag)) $valid_request = false;//die("Missing flag -$possible_flag - $description\n");
 	$help_text .= str_repeat(' ', 2) . '-' . str_pad($possible_flag, 8) . '   ' . $flag_info['help_text'] . PHP_EOL;
 	
 }
 $help_text .= PHP_EOL;
 
-if (empty($site_domain)) $valid_request = false;
+if (empty($app_dir)) $valid_request = false;
 
 if (!$valid_request) {
 	echo $help_text;
@@ -64,19 +53,32 @@ if (!$valid_request) {
 $rows = array(
 	array(
 		'Command' => $args->getCommand(),
-		'Domain' => $args->getFlag('s', '(not set)'),
-		'Name' => $args->getFlag('n', '(not set)'),
-		/*'Key' => $args->getFlag('k', '(not set)'),*/
+		'App Path' => $args->getFlag('a', '(not set)'),
 		'Environment' => $args->getFlag('e', '(not set)'),
-		'Is Remote' => $args->getFlag('r', '(not set)')
+		'Table prefix' => $args->getFlag('r', '(not set)')
 	)
 );
 echo table_format_rows($rows);
 
 
 if ($valid_request) {
+
+	$app_dir = realpath(preg_replace('#/#', DIRECTORY_SEPARATOR, $app_dir));
+
+	if (substr($app_dir, -1) != DIRECTORY_SEPARATOR) $app_dir .= DIRECTORY_SEPARATOR;
+
 	require(FILE_FRAMEWORK);
-	
+
+	if (!file_exists($app_dir)) if (!mkdir($app_dir)) die('Unable to create app directory: ' . $app_dir);
+
+	$init_directories = array('config', 'lib', 'models', 'pages', 'templates');
+
+	foreach($init_directories as $directory) {
+
+		echo 'Create directories: ' . $app_dir . $directory .
+
+	}
+
 	FrameworkManager::init(FRAMEWORK_MODE_CLI);
 	
 	// Check if site already exists

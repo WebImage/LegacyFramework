@@ -11,10 +11,11 @@ class EditableElementControl extends WebControl {
 	#var $m_defaultContent = 'Click to edit';
 	#var $m_editFieldType;
 	#var $m_submitId;
-	var $m_renderNoContent = true;
 	#var $m_enableEditing = false;
 	
 	public function init() {
+		$this->setInitParam('renderNoContent', true);
+
 		parent::init();
 		if (!$this->getParams()->isDefined('defaultContent')) $this->setParam('defaultContent', 'Click to edit');
 		if (!$this->getParams()->isDefined('enableEditing')) $this->setParam('enableEditing', 'false');

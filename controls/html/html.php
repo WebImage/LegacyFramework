@@ -8,7 +8,6 @@
  */
 class HtmlControl extends WebControl {
 	var $m_tagName;
-	var $m_renderNoContent = true;
 	var $m_struct; // Associate control to a specific data structure at /data/[m_struct]/[m_struct]_strucutre.php
 	var $m_structKey; // Use only when "id"s might conflict on the page
 
@@ -16,7 +15,11 @@ class HtmlControl extends WebControl {
 		parent::__construct($init);
 		$this->addPassThru('name');
 	}
-	
+
+	public function init() {
+		$this->setInitParam('renderNoContent', true);
+		parent::init();
+	}
 	function prepareHtmlTagFormat() { return true; }
 	function prepareHtmlTagAttributes() { return true; }
 	function prepareHtmlTagContent() { return true; }

@@ -8,8 +8,7 @@
 FrameworkManager::loadLibrary('controls.editable.abstracteditinplacecontrol');
  
 class PageControlControl extends CWI_CONTROLS_EDITABLE_AbstractEditInPlaceControl {
-	var $m_renderNoContent = true;
-	
+
 	/**
 	 * Configuration variables, used by PageControls to display control/window
 	 */
@@ -76,7 +75,11 @@ class PageControlControl extends CWI_CONTROLS_EDITABLE_AbstractEditInPlaceContro
 		$this->m_childControl = new $class_name($this->m_config);
 		if (strlen($this->m_childControl->getId()) == 0) $this->m_childControl->setId($this->getPlaceholder().'_'.$this->getPageControlId());
 	}
-	
+
+	public function init() {
+		$this->setInitParam('renderNoContent', true);
+		parent::init();
+	}
 	function prepareContent() {
 		if ($this->getEditMode() == 'Admin') {
 			$this->updateControlConfig();

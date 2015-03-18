@@ -7,7 +7,7 @@ FrameworkManager::loadLibrary('json.encodable');
 FrameworkManager::loadLibrary('controls.abstractpagecontrol');
 
 abstract class CWI_CONTROLS_EDITABLE_AbstractEditInPlaceControl extends CWI_CONTROLS_AbstractPageControl implements CWI_CONTROLS_IPageControl {
-	var $m_renderNoContent = true;
+
 	private $errors = array();
 	private $monitoredFields = array(); // Keep track of editable fields that might be changed
 	
@@ -54,7 +54,12 @@ abstract class CWI_CONTROLS_EDITABLE_AbstractEditInPlaceControl extends CWI_CONT
 		
 		$this->editInPlaceControlManager = new ControlManager();
 	}
-	
+
+	public function init() {
+		$this->setInitParam('renderNoContent', true);
+		parent::init();
+	}
+
 	public function isNew() {
 		return strlen($this->getPageControlId() == 0);
 	}

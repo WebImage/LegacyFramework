@@ -1,18 +1,18 @@
 #!/usr/local/php5/bin/php
 <?php
 
-require(dirname(dirname(__FILE__)) . '/lib/config.php');
+require(dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'config.php');
 require(DIR_FS_CLI_LIB . 'argumentparser.php');
 require(FILE_FRAMEWORK);
 
 $args = new ArgumentParser($argv);
 
 if (!$args->isFlagSet('config-file') || !$args->isFlagSet('table-prefix')) {
-	die("Error: Missing -config-file and -table-prefix\n");
+	die('Error: Missing -config-file and -table-prefix' . PHP_EOL);
 }
 
 $config_path = $args->getFlag('config-file');
-$config_dir = dirname($config_path) . '/';
+$config_dir = dirname($config_path) . DIRECTORY_SEPARATOR;
 
 if (file_exists($config_dir)) {
 	if (!is_writable($config_dir)) die("Error: $config_dir is not writable\n");

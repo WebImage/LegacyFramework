@@ -9,7 +9,6 @@ FrameworkManager::loadLibrary('string.urlmanipulator');
 class PagingControl extends WebControl {
 	var $m_processInternal = false; // Disable internal processing so that we can process template xml
 	
-	var $m_renderNoContent = false;
 	// Template
 	var $m_layoutTemplate = '<div class="paging-number-set">Results Pages: <Data field="prev_page_nav" /><Data field="page_numbers" /><Data field="next_page_nav" /></div>';
 	var $m_pageNumTemplate = '<span class="paging-item"><a href="<Data field="page_num_link" />"><Data field="page_num" /></a></span>';
@@ -61,9 +60,13 @@ class PagingControl extends WebControl {
 	 * [NOTE] If the number of pages is less than maxPagePositions then weightType will not matter
 	 */
 	var $m_weightType = 'CENTER';
-	
+
 	#var $m_forControlId; // Use specified page control for result set
-	
+
+	public function init() {
+		$this->setInitParam('renderNoContent', true);
+		parent::init();
+	}
 	function getMaxPagePositions() { return $this->m_maxPagePositions; }
 	function getForControlId() { return $this->getParam('forControlId'); }
 	function getScrollType() { return strtoupper($this->m_scrollType); }

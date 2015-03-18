@@ -7,9 +7,12 @@
 FrameworkManager::loadLibrary('controls.abstractregion');
 
 class EditableRegionControl extends CWI_CONTROLS_AbstractRegion {
-	var $m_renderNoContent = true;
 
-	function prepareContent() {
+	public function init() {
+		$this->setInitParam('renderNoContent', true);
+		parent::init();
+	}
+	public function prepareContent() {
 		
 		$child_controls = $this->getRegionControls();
 		while ($child_control = $child_controls->getNext()) {

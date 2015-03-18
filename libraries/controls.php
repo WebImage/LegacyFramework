@@ -11,6 +11,7 @@ FrameworkManager::loadLibrary('event.args');
  * 05/13/2010	Modified Control::wrapOutput() to not run if the wrapOutput value is "false"
  * 04/27/2012	Changed old parameter structure to use Dictionary (instead of array); Added event support Control::addControl() - primarily for use in the ControlManager so that it can be notified when objects under it's control are modified
  * 06/07/2012	Moved Control::render() functionality to Control::finalizeContent() to allow content to be generated in advance of render() being called.  This allows other code/controls to perform additional operations once all content has been generated.  For example, ErrorControl and HeaderControl rely on all content processing to be completed before they are able to ouput their final results (using an overridden render() method)
+ * 03/18/2014	Changed Control::$renderNoContent from a property to a parameter so that it can be changed on the control tag, e.g. <cms:Control renderNoContent="true|false" />
  */
 class CWI_EVENT_ControlAddedArgs extends CWI_EVENT_Args {
 	private $addedControl;
@@ -34,7 +35,6 @@ class ControlConfigDictionary extends ConfigDictionary implements ArrayAccess { 
 	public function offsetUnset($key) { $this->del($key); }
 }
 class Control extends Object {
-	var $m_renderNoContent = false;
 	var $m_renderedContent;
 	private $contentFinalized = false; // Whether the content has already been rendered for this control (ensures that prepareContent() is only called once)
 	
@@ -148,6 +148,11 @@ class Control extends Object {
 	}
 	
 	public function getControls() { return $this->controls; }
+
+	public function getBoolParam($name) {
+		$value = $this->getParam($name);
+		return (true === $value || (is_string($value) && strtolower($value) == 'true'));
+	}
 	public function getParam($name) { 
 		if (!is_a($this->parameters, 'Dictionary')) {
 			#echo 'Invalid<pre>';print_r($this);exit;
@@ -259,6 +264,9 @@ class Control extends Object {
 	
 	protected function init() {
 		$this->visible = !($this->getParam('visible') == 'false');
+
+		// Make sure renderNoContent is a bool
+		$this->setInitParam('renderNoContent', $this->getBoolParam('renderNoContent'));
 		$this->_inited = true;
 	}
 	/**
@@ -343,8 +351,8 @@ class Control extends Object {
 
 #echo 'Should Wrap: ' . $this->getWrapOutput() . PHP_EOL . PHP_EOL;
 #return $output;
-		#Removed in favor of checking $output string length: if ($should_wrap_output && ( (strlen($this->getWrapOutput()) > 0 && strlen($this->getRenderedContent()) > 0) || $this->m_renderNoContent)) {	
-		if ($should_wrap_output && ( (strlen($this->getWrapOutput()) > 0 && strlen($output) > 0) || $this->m_renderNoContent)) {	
+		#Removed in favor of checking $output string length: if ($should_wrap_output && ( (strlen($this->getWrapOutput()) > 0 && strlen($this->getRenderedContent()) > 0) || $this->getParam('renderNoContent'))) {
+		if ($should_wrap_output && ( (strlen($this->getWrapOutput()) > 0 && strlen($output) > 0) || $this->getParam('renderNoContent'))) {
 			// Get the wrap format for the sprintf statement below
 			$wrap_output_format = $this->getWrapOutput();
 			
@@ -451,7 +459,7 @@ class Control extends Object {
 	protected function parent() {} // Return parent
 
 	public function setRenderNoContent($true_false) {
-		$this->m_renderNoContent = $true_false;
+		$this->setParam('renderNoContent', $true_false);
 	}
 	#function render($auto_init=true) {
 		
@@ -1151,7 +1159,7 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 		return $output;
 			
 	}
-	
+
 	public function getParam($name) { return $this->params->get($name); }
 	public function getParams() { return $this->params; }
 	public function setParam($name, $value) { $this->params->set($name, $value); }
