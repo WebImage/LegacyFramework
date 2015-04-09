@@ -16,7 +16,7 @@ class HtmlControl extends WebControl {
 		$this->addPassThru('name');
 	}
 
-	public function init() {
+	protected function init() {
 		$this->setInitParam('renderNoContent', true);
 		parent::init();
 	}
