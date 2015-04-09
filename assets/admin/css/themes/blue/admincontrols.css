@@ -20,14 +20,19 @@
  */
 .editable-region {
   /* Entire Region */ }
+  .editable-region .editable-region-bar:before, .editable-region .editable-region-bar:after {
+    content: " ";
+    display: table; }
+  .editable-region .editable-region-bar:after {
+    clear: both; }
   .editable-region .editable-region-bar {
     background: #0277bd;
-    color: white;
+    color: #fff;
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     -ms-border-radius: 0px;
     border-radius: 0px;
-    height: 24px;
+    /*height:24px;*/
     margin-bottom: 10px;
     padding: 5px 5px 5px 14px; }
     .editable-region .editable-region-bar .editable-region-title {
@@ -82,7 +87,7 @@
           font-size: 1.2em; }
   .editable-region .editable-region-body .editable-control-bar .editable-control-toolbar {
     background-color: #039be5;
-    color: white;
+    color: #fff;
     padding: 8px;
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
@@ -91,7 +96,7 @@
     .editable-region .editable-region-body .editable-control-bar .editable-control-toolbar .left {
       float: left; }
     .editable-region .editable-region-body .editable-control-bar .editable-control-toolbar .editable-toolbar-title {
-      color: white;
+      color: #fff;
       display: inline-block;
       font-size: 14px;
       font-weight: bold;
@@ -100,7 +105,7 @@
   .editable-region .editable-region-body .editable-control-bar .editable-control-waiting, .editable-region .editable-region-body .editable-control-bar .editable-control-actionbar {
     background-color: #039be5;
     padding: 8px;
-    color: white;
+    color: #fff;
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     -ms-border-radius: 0px;
@@ -128,17 +133,20 @@
  */
 .admin-header-controls {
   background-color: #0277bd;
-  color: white;
+  color: #fff;
   padding: 0;
   text-align: center;
-  height: 46px;
+  height: 10px;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  z-index: 100;
   /*@include opacity(.8);*/ }
   .admin-header-controls img {
     border: 0; }
+  .admin-header-controls .admin-header-controls-left, .admin-header-controls .admin-header-controls-right {
+    display: none; }
   .admin-header-controls .admin-header-controls-left {
     float: left;
     height: 37px;
@@ -157,3 +165,12 @@
     float: right;
     padding-right: 10px;
     padding-top: 4px; }
+
+.admin-header-controls:hover {
+  height: auto; }
+  .admin-header-controls:hover .admin-header-controls-left {
+    display: block; }
+  .admin-header-controls:hover .admin-header-controls-right {
+    display: block; }
+
+/*# sourceMappingURL=admincontrols.css.map */

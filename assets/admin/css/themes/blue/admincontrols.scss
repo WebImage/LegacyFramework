@@ -59,12 +59,13 @@ $standard-radius:0px;
  */
 
 .editable-region { /* Entire Region */
-	
+	.editable-region-bar:before, .editable-region-bar:after { content:" "; display:table; }
+	.editable-region-bar:after { clear:both; }
 	.editable-region-bar {
 		background:$region-bar-bg;
 		color:$region-bar-fg;
 		@include border-radius($standard-radius);
-		height:24px;
+		/*height:24px;*/
 		margin-bottom:10px;
 		padding:5px 5px 5px 14px;
 		
@@ -189,15 +190,16 @@ $standard-radius:0px;
 	color:$admin-header-fg;
 	padding:0;
 	text-align:center;
-	height:46px;
+	height:10px;
 	position:fixed;
 	top:0;
 	left:0;
 	right:0;
+	z-index:100;
 	/*@include opacity(.8);*/
-		
-	img { border:0; }
 
+	img { border:0; }
+	.admin-header-controls-left, .admin-header-controls-right { display:none; }
 	.admin-header-controls-left {
 		float:left;
 		height:37px;
@@ -225,3 +227,8 @@ $standard-radius:0px;
 		padding-top:4px;
 	}
 }
+.admin-header-controls:hover {
+	height:auto;
+	.admin-header-controls-left { display:block; }
+	.admin-header-controls-right { display:block; }
+	}
