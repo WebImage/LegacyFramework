@@ -97,7 +97,12 @@ class CWI_DB_DatabaseHelper {
 		
 		return $model;
 	}
-	
+
+	/**
+	 * @param $xml_traversal_model
+	 * @return CWI_DB_Model
+	 * @throws CWI_SYNC_DatabaseConversionException
+	 */
 	public static function convertXmlToModel($xml_traversal_model) {
 		
 		FrameworkManager::loadLibrary('db.model');
