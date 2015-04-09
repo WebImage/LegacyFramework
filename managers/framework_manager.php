@@ -156,6 +156,7 @@ class FrameworkManager {
 		$mode = null;
 		$config_site = null;
 		$domain = '';
+		$require_domain = false;
 		if (is_array($param1)) { // init(array $config_site, $mode=FRAMEWORK_MODE_WEB, $domain='')
 			$config_site = $param1;
 			$mode = $param2;
@@ -373,7 +374,12 @@ FrameworkManager::markTime(__class__ . '->init() after configs');
 
 FrameworkManager::markTime(__class__ . '->init() before initializeSite usage');
 
-		if ($mode == FRAMEWORK_MODE_WEB || ($mode == FRAMEWORK_MODE_CLI && !empty($domain))) {
+		if (
+			$mode == FRAMEWORK_MODE_WEB ||
+			($mode == FRAMEWORK_MODE_CLI &&
+				(!empty($domain) || null !== $config_site)
+			)
+		) {
 
 			// Convert site config into an array
 			if (null !== $config_site) {

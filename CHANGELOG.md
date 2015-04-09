@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.2]
+### Changed
+- Updated site creation process so that cli\sites\create.php is called from the "app" directory in order for the new app to be created.
+### Fixed
+- Fixed control header bar CSS floating issue
+- Correct HtmlControl::init(), which was marked as public instead of protected
 ## [1.2.1]
 ### Changed
 - Changed Control class property renderNoContent to be an init parameter so that it can be modified as a tag attribute, e.g. <cms:Content renderNoContent="true|false" />
