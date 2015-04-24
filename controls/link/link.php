@@ -5,6 +5,8 @@ FrameworkManager::loadControl('html');
 class LinkControl extends WebControl {
 	
 	protected function init() {
+		parent::init();
+
 		$href = $this->getParam('href');
 		if (substr($href, 0, 2) == '~/') {
 			if (Page::isAdminRequest()) {
@@ -17,12 +19,9 @@ class LinkControl extends WebControl {
 			'wrapOutput' => '<a%s>%s</a>',
 			'href' => $href
 		));
+		#$this->setWrapOutput('<a href="' . str_replace('%', '%%', $this->getHref()) . '"%s>%s</a>');
 	}
-	function init() {
-		parent::init();
-		$this->setWrapOutput('<a href="' . str_replace('%', '%%', $this->getHref()) . '"%s>%s</a>');
-	}
-	
+
 	function getHrefRaw() {
 		return $this->getParam('href');
 	}
