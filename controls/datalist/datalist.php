@@ -48,6 +48,7 @@ class DataListControl extends DataWebControl {
 	function prepareContent() {
 
 		if ($this->prepareInternal()) {
+
 			$templates = $this->getItemTemplates();
 		
 			$data = $this->getData();
@@ -178,11 +179,13 @@ class DataListControl extends DataWebControl {
 			}
 		}
 	}
-	
+
 	function prepareInternal() {
 
 		try {
-			$xml = CWI_XML_Compile::compile($this->getInnerCode());
+			#$xml = CWI_XML_Compile::compile($this->getInnerCode());
+			$xml = CWI_XML_Compile::compile($this->renderChildren());
+
 		} catch (CWI_XML_CompileException $e) {
 			die('Could not prepare internal: ' . $e->getMessage());
 			return false;
@@ -202,26 +205,26 @@ class DataListControl extends DataWebControl {
 
 			if ($header_template = $object_template->getPathSingle('HeaderTemplate')) $this->setHeaderTemplate($header_template->getData());
 			if ($empty_item_template = $object_template->getPathSingle('EmptyItemTemplate')) $this->setEmptyItemTemplate($empty_item_template->getData());
-			if ($group_item_template = $object_template->getPathSingle('GroupItemTemplate')) {				
+			if ($group_item_template = $object_template->getPathSingle('GroupItemTemplate')) {
 				$group_data = ControlTemplateHelper::parseTemplate($group_item_template->getData());
-				
+
 				if ($group_by = $group_item_template->getParam('groupBy')) {
 					$this->addGroupBy($group_by);
 				} else if ($items_per_group = $group_item_template->getParam('itemsPerGroup')) $this->setItemsPerGroup($items_per_group);
 				$this->setGroupItemTemplate($group_data);
 			}
-			
+
 			if ($item_template = $object_template->getPath('ItemTemplate')) {
 
 				foreach($item_template as $it) {
 					$this->addItemTemplateByHtml($it->getData());
 				}
 			}
-			
+
 			if ($footerTemplate = $object_template->getPathSingle('FooterTemplate')) $this->setFooterTemplate($footerTemplate->getData());
 			if ($emptyTemplate = $object_template->getPathSingle('EmptyTemplate')) $this->setEmptyTemplate($emptyTemplate->getData());
 		}
-		
+
 		return true;
 	}
 	

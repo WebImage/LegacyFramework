@@ -592,6 +592,32 @@ var ControlContainer = Class.extend({
 	
 });
 
+/**
+ * A control class to manage an individual control and to allow it to communicate back with the PHP control class
+ *
+ * The most important methods are those that handle the control events: onConfigValueChanged(...), onSaving(...), and onSaved(...).  When these are overridden by an overriding class the method should always call this._parent(...) to make sure that parent class methods are executed
+ * Called when a config value has changed in real-time.
+ * @var jQueryEvent event
+ * @var object data {
+ * 	@var string configName The config value key for the value that has changed
+ *	@var string oldValue The value before the change
+ * 	@var string newValue The value now that it has changed
+ * }
+ onConfigValueChanged(event, data);
+ * Not fully implemented.  Currently called when Control::sendForm() is called
+ * @var jQueryEvent event
+ * @var object data {
+ * 	@var object submitValues An object of values to be saved
+ *	@var bool save Whether the object should be saved or not
+ * }
+ onSaving(event, data);
+ * Called after a control's form data is saved.
+ * @var jQueryEvent event
+ * @var object data {
+ *	@var object data An object as returned by PHP
+ * }
+ */
+onSaved(event, data);
 var Control = Class.extend({
 	__construct : function(control_id, page_control_id, edit_mode, edit_context, window_mode, control_type) {
 		
@@ -627,14 +653,29 @@ var Control = Class.extend({
 	
 	// Overridden to provide any require functionality at startup
 	init : function() {},
-	
+	/**
+	 * Allows communication with the PHP control class
+	 * @param string action An action to be called on the PHP control class
+	 * @param object valueObj An object full of values to be communicated back to the PHP control class
+	 * @param function success_callback What to do when the call is successful
+	 * @param function failed_callback What to do if the call fails
+	 */
 	callAction : function(action, valueObj, success_callback, failed_callback) {
 		var responseType = Control.RESPONSE_TYPE_JSON;
 		if (!success_callback) success_callback = function() {};
 		if (!failed_callback) failed_callback = function() { alert('There was a problem processing your request.  Please contact support if you continue to experience problems.'); }
 		if (!valueObj) valueObj = {};
-		var values = jQuery.extend({'callaction':action, 'responsetype':responseType}, this.getControlFields(), valueObj);
-		
+		/**
+		 * Combine all values that are required to be posted back to the control class
+		 */
+		var values = jQuery.extend(
+			{
+				'callaction':action,
+				'responsetype':responseType
+			},
+			this.getControlFields(),
+			valueObj
+		);
 		/*
 		var control_fields = this.getControlFields();
 		var form_fields = this.getFormFields(document.getElementById(this.getObjName('form')));
@@ -682,7 +723,7 @@ var Control = Class.extend({
 	
 	getConfig : function() { return this.config; },
 	getConfigValue : function(name) { return this.config[name]; },
-	initConfigValue : function(name, value) { // samne as setConfigValue except that it won't trigger a change event
+	initConfigValue : function(name, value) { // same as setConfigValue except that it won't trigger a change event
 		this.origConfig[name] = value;
 		this.config[name] = value;
 	},
@@ -900,7 +941,17 @@ var Control = Class.extend({
 	/**
 	 * Called after a config value has been changed
 	 **/
-	onConfigValueChanged : function(ev, data) {},
+	onConfigValueChanged : function(ev, data) {
+		switch (data.configName) {
+			case 'class':
+				oldValue = data.oldValue;
+				newValue = data.newValue;
+
+				if (oldValue) this.getObj().removeClass(oldValue);
+				this.getObj().addClass(newValue);
+				break;
+		}
+	},
 	
 	sendForm : function() {
 		this.commitAllEditableFields();
@@ -993,7 +1044,9 @@ var Control = Class.extend({
 	
 	},
 	getObjName : function(name) {
-		return this.getControlId() + '_' + name;
+		var objName = this.getControlId();
+		if (name) objName += '_' + name;
+		return objName;
 	},
 	getObj : function(name) {
 	//	alert('#' + this.getControlId() + '-' + name);

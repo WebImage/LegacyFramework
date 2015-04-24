@@ -1,6 +1,8 @@
 <?php
 
 // Load required event libraries
+use WebImage\ControlCompiler\Result\ControlAttachment;
+
 FrameworkManager::loadLibrary('event.manager');
 FrameworkManager::loadLibrary('event.args');
 /**
@@ -476,7 +478,7 @@ class Control extends Object {
 
 			$this->prepareContent(); // Override to set content
 			$this->preRender(); // Run after content is set for this control only, but before content is returned
-			$this->renderChildren(); // Get content for children controls
+			if ($this->m_processInternal) $this->renderChildren(); // Get content for children controls
 			
 			#$output = $this->getRenderedContent();
 
@@ -494,8 +496,10 @@ class Control extends Object {
 		#$this->setRenderedContent($content);
 		
 		#$this->wrapOutput();
-		
-		return $this->wrapOutput($this->getRenderedContent() . $this->getRenderedChildContent());
+
+		$output = $this->getRenderedContent();
+		if ($this->m_processInternal) $output .= $this->getRenderedChildContent();
+		return $this->wrapOutput($output);
 		
 	}
 	public function renderDirect() { //  Allows direct rendering of tree of controls
@@ -590,6 +594,7 @@ class Control extends Object {
 	
 	#function renderChildren($auto_init=true) {
 	public function renderChildren() {
+
 		$children = $this->getControls();
 		$children->sort();
 		#if ($children->getCount() > 0) {
@@ -608,7 +613,7 @@ class Control extends Object {
 			// False
 		}
 		$this->setRenderedChildContent($tmp_content);
-		return $this->m_renderedChildContent;
+		return $this->getRenderedChildContent();
 	}
 	
 	protected function getControlsByType($type) {}
@@ -837,14 +842,41 @@ class ControlManagerFactory implements \WebImage\ServiceManager\IFactory {
 	}
 }
 class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
+	/**
+	 * @var \WebImage\ControlCompiler\Result
+	 */
 	private $compiledResults;
-	private $controls, $controlAddedEventListeners;
+	/**
+	 * @var Dictionary
+	 */
+	private $controls;
+	/**
+	 * @var Dictionary
+	 */
+	private $controlAddedEventListeners;
+	/**
+	 * @var int
+	 */
 	private $controlCount=0; // Keep track of # of controls being added
+	/**
+	 * @var bool
+	 */
 	private $initializationStarted = false;
-	#private $inits;
+	/**
+	 * @var Dictionary
+	 */
 	private $attachments;
+	/**
+	 * @var Dictionary
+	 */
 	private $params;
+	/**
+	 * @var Collection
+	 */
 	private $log;
+	/**
+	 * @var WebImage\ServiceManager\ServiceManager
+	 */
 	private $serviceManager;
 
 	public function getServiceManager() { return $this->serviceManager; }
@@ -856,13 +888,13 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 	 **/
 	private $locked = false;
 	function __construct() {
-		$this->compiledResults = new CompileControlResult();
+		$this->compiledResults = new \WebImage\ControlCompiler\Result();
+		#$this->compiledResults = new CompileControlResult();
 		$this->controls = new Dictionary();
 		$this->attachments = new Dictionary();
 		$this->controlAddedEventListeners = new Dictionary();
 		$this->params = new Dictionary();
 		$this->log = new Collection();
-		#$this->inits = new Collection();
 	}
 	
 	private function log($entry) {
@@ -871,19 +903,15 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 	public function getLog() { return $this->log; }
 	
 	public function loadControlsFromText($text) {
+
 		$this->log('loadControlsFromText');
-		#echo 'ControlManager::loadControlsFromText('.strlen($text) . ')<br />';
-		// Get current compile mode so that it can be restored
-		$restore = CM::get('CONTROL_COMPILE_MODE');
-		// Change compile mode so that it returns an CompileControlResult object
-		CM::set('CONTROL_COMPILE_MODE', 'CompileControlResult');
-		$result = CompileControl::compile($text);
-		#echo '<pre>loadControlsFromText Result: ';print_r($result);exit;
+
+		$result = \WebImage\ControlCompiler\Parser::parse($text);
+
 		// Merge the results with the current set
 		$this->compiledResults->merge($result);
 		$this->params->mergeDictionary($result->getParams());
-		// Restore compile mode
-		CM::set('CONTROL_COMPILE_MODE', $restore);
+
 	}
 	
 	public function loadControlsFromFile($file) {
@@ -920,7 +948,7 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 		$child = $args->getAddedControl(); // Child
 		
 		// Remove attachment reference since the child object has already been hard-added to the parent object
-		$this->attachments->del($child->getId());
+		$this->compiledResults->getAttachments()->del($child->getId());
 		
 		/*
 		$child_sortorder
@@ -941,7 +969,7 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 	 * Initialize controls
 	 **/
 	public function initialize() {
-		
+
 		/**
 		 * Initiate event for controlsInitiating, but only the first time this method is called
 		 **/
@@ -951,32 +979,32 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 			
 			CWI_EVENT_Manager::trigger($this, 'controlsInitializing');
 			
-			#$this->inits->merge($this->compiledResults->getInitializations());
-			#echo '<pre>';print_r($this->compiledResults->getInitializations());exit;
-			
-			
+
 		}
-		
+
 		// Create local version of required attachments (so that they can be manipulated independently of the original attachment objects) <!--- NOT SURE IF THIS IS TRUE ANY MORE
 		if (is_null($this->attachments)) $this->attachments = new Dictionary();
-		
+
 		$compiled_attachments = $this->compiledResults->getAttachments()->getAll();
 		while ($attachment_field = $compiled_attachments->getNext()) {
-			
+
 			// Make sure attachment has not already been initialized
 			if (!$attachment_field->getDefinition()->isInitialized()) {
 				// Set local copy of attachment
 				$this->attachments->set($attachment_field->getKey(), $attachment_field->getDefinition());
 				// Mark attachment as initialized
 				$attachment_field->getDefinition()->isInitialized(true);
-				
+
 			}
-			
+
 		}
-		
+
 		$this->log('initialize()');
 		$this->initializationStarted = true;
-		
+
+		/**
+		 * TODO: Possibly move to render()
+		 */
 		// Auto load additional control files
 		if ($auto_load_control_files = $this->compiledResults->getParams()->get('auto_load_control_files')) {
 			// Remove auto_load_control_files so that they do not get stuck in an infinite loop
@@ -991,7 +1019,9 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 			}
 			
 		}
-		
+		/**
+		 * TODO: Possibly move to render()
+		 */
 		if ($auto_load_template_ids = $this->compiledResults->getParams()->get('auto_load_template_ids')) {
 			
 			// Remove auto_load_template_ids so that they do not get stuck in an infinite loop
@@ -1023,15 +1053,33 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 			
 		}
 		// Iterate through initializations
+		/**
+		 * @var WebImage\ControlCompiler\Result\ControlInitializer $init
+		 */
 		while ($init = $this->compiledResults->getInitializations()->getNext()) {
 
 			$instance_name = $init->getInstanceName();
-			$class_name = $init->getControlClassName();
+			$control_name = $init->getControlName();
+
+			/**
+			 * Simple way of getting class name for now is to simply append "Control" to the end of the $control_name.
+			 * TODO: Allow creating controls from a new control service plugin
+			 **/
+			$class_name = $control_name . 'Control';
+
+			if (!class_exists($class_name)) FrameworkManager::loadControl(strtolower($control_name));
+			if (!class_exists($class_name)) {
+				FrameworkManager::loadLogic('control');
+				if ($struct = ControlLogic::getControlByClassName($class_name)) include_once(PathManager::translate($struct->file_src));
+			}
+			// Last resort
+			if (!class_exists($class_name)) $class_name = 'WebControl';
+
 			$this->log('Initialize: Class: ' . $class_name . '; Instance Name: ' . $instance_name . '; Already initialized: ' . ($init->isInitialized() ? 'Yes':'No'));
 			
 			// If the init has not already been initialized then initialize it now
 			if (!$init->isInitialized()) {
-				
+
 				if (!class_exists($class_name)) {
 
 					$class_key = strtolower($class_name);
@@ -1039,6 +1087,7 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 					FrameworkManager::loadControl($class_key);
 					
 				}
+
 				$params = $init->getParams();
 				
 				// Add value to params to keep track of the order in which controls were added
@@ -1046,12 +1095,12 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 				
 				// Initialize object
 				$obj = new $class_name($params);
-				#echo 'Initializing: ' . $class_name . ' (' . $params->get('id') . ', ' . $params->get('order') . ')<br />';
+
 				// Listen for any time this control has controls manually added to it so that we can update the ControlManager structure accordingly
-				#$this->controlAddedEventListener = 
 				$this->controlAddedEventListeners->set($obj->getId(), CWI_EVENT_Manager::listenFor($obj, 'controlAdded', array($this, '_handledControlAdded')));
-				$this->log('this->controls->set('.  $instance_name . ')');
+
 				// Add instance of control
+				$this->log('this->controls->set('.  $instance_name . ')');
 				$this->controls->set($instance_name, $obj);
 				
 				// Mark control as initialized
@@ -1060,7 +1109,7 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 				
 			}
 		}
-		
+
 	}
 	
 	public function getControls() { 
@@ -1068,7 +1117,47 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 	}
 	
 	private function attach() {
-		#echo 'Attachments<br />';
+
+		$controls = $this->getControls()->getAll();
+
+		/**
+		 * Check to see if any attachments need to be changed or added based on each control's parameters
+		 * @var $control_def DictionaryField
+		 */
+		while ($control_def = $controls->getNext()) {
+
+			/**
+			 * @var WebControl $control
+			 */
+			$control = $control_def->getDefinition();
+			/**
+			 * @var ControlAttachment $attachment
+			 */
+			$attachment = $this->attachments->get($control->getId());
+			// Attachments can be reassigned to a new parent id if they have parentId or placeHolderId attribute
+			$parent_id = $control->getParam('parentId');
+			$place_holder_id = $control->getParam('placeHolderId');
+			if (!empty($place_holder_id)) $parent_id = $place_holder_id;
+
+
+			// If $parent_id is set then update the attachment
+			if ($parent_id) {
+
+				// Remove existing attachment
+				if ($attachment) {
+					$this->log(sprintf('Detaching %s from %s', $control->getId(), $attachment->getParentName()));
+					$this->attachments->del($control->getId());
+				}
+
+				// Create new attachment
+				$this->log(sprintf('Attaching %s control to %s', $control->getId(), $parent_id));
+				$attachment = new ControlAttachment($control->getId(), $parent_id);
+
+				$this->attachments->set($control->getId(), $attachment);
+
+			}
+
+		}
 
 		// Grab all attachment specifications
 		$attachments = $this->attachments->getAll();
@@ -1079,25 +1168,22 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 			$attach = $attachment->getDefinition();
 			// Child object
 			$child = $this->getControls()->get($attach->getChildName());
-			
+
 			$this->log('<span style="background-color:#ff0;">Attach ' . $attach->getChildName() . ' to '. $attach->getParentName() . '; Parent Exists: ' . (($this->getControls()->get($attach->getParentName()) !== false) ? 'Yes':'No') . '</span>');
-			
+
 			if ($parent = $this->getControls()->get($attach->getParentName())) {
-				
+
 				$this->log('Successfully added to parent');
 				$parent->addControl($child);
-				
+
 			} else {
-				
+
 				$d = new ConfigDictionary();
 				$d->set('parent_name', $attach->getParentName());
 				$d->set('child_name', $attach->getChildName());
-				
+
 				Custodian::log('ControlManager', 'Unable to attach control ${child_name} to ${parent_name}', $d);
-				#echo 'Could not attach: ';
-				#echo '<pre>';
-				#print_r($attachment);
-				#exit;
+
 			}
 		}
 
@@ -1111,15 +1197,15 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 		$this->log('render() => initialize()');
 		
 		$this->initialize();
-		
+
 		CWI_EVENT_Manager::trigger($this, 'controlsInitialized');
-		
+
 		$controls = $this->getControls()->getAll();
 		
 		CWI_EVENT_Manager::trigger($this, 'controlsAttaching');
 		
 		$this->log('render() => attach()');
-		
+
 		$this->attach();
 		
 		CWI_EVENT_Manager::trigger($this, 'controlsAttached');
@@ -1127,23 +1213,30 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 		$output = '';
 		
 		$root_controls = new ControlCollection();
+
 		/**
 		 * Get the root controls, since all children controls are rendered automatically
+		 * @var DictionaryField
 		 **/
-		while ($control = $controls->getNext()) {
-			
-			$control_obj = $control->getDefinition();
-			
+		#echo '<pre>';print_r($this->attachments);exit;
+		while ($control_def = $controls->getNext()) {
+
+			/**
+			 * @var WebControl $control
+			 */
+			$control = $control_def->getDefinition();
+
 			// Whether the control is at the root of the control structure (i.e. it does not have a parent object
-			$is_root_level = ($this->compiledResults->getAttachments()->get($control_obj->getId()) === false);
-			
+			#$is_root_level = ($this->compiledResults->getAttachments()->get($control->getId()) === false);
+			$is_root_level = ($this->attachments->get($control->getId()) === false);
+			#echo $control->getId() . ' - Root: ' . ($is_root_level?'Yes':'No') . '/' . ($is_root_level2?'Yes':'No') . '<br />';
 			if ($is_root_level) {
-				
-				$root_controls->add($control_obj);
+				#echo $control->getId() . ' - ' . get_class($control) . '<br />';
+				$root_controls->add($control);
 				
 			}
 		}
-		
+
 		$root_controls->sort();
 
 		$this->log('render() finalizeContent');

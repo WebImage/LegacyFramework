@@ -260,13 +260,7 @@ class CompileControl {
 		
 		$params = null; // Needed for tag parameters
 		#echo 'CompileControl::_compile(strlen($text)=' . strlen($text) . ', $start: ' . $start . ', $current_position: ' . $current_position . ')<br />';
-#
-# Figure out how to remove:
-# $object
-# $this_object 
-# $this_object->m_processInternal
-# isset($object->m_params['id']
-#
+
 		$CONTROL_COMPILE_MODE = ConfigurationManager::get('CONTROL_COMPILE_MODE'); // CompileControlResult | WebControl
 		
 		if (!isset($options['build_for_page'])) $options['build_for_page'] = true;
@@ -315,29 +309,29 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 			$current_position = $i;
 			
 			if ($text[$i] == '<') {
-				
+
 				$is_close_tag = ($text[$i+1] == '/');
-				
+
 				$outer_tag_start = $i;
 				$outer_tag_length = strpos($text, '>', $i) - $outer_tag_start + 1;
 				$outer_tag = substr($text, $outer_tag_start, $outer_tag_length);
-				
+
 				$xml_tag = CWI_XML_Tag::parseTag($outer_tag);
-				
+
 				if (strlen($xml_tag->getNamespace()) == 0) {
-					
+
 					if (substr($outer_tag, 0, 6) == '<@Page') {
 						$i += $outer_tag_length - 1;
 						#
 						# MOVE SOMEWHERE?
 						#
-						
+
 						$object->master_page_file = $xml_tag->getParam('masterPageFile');
 						$object->template_id = $xml_tag->getParam('templateId');
 						#
 						# END MOVE SOMEWHERE?
 						#
-						
+
 						#
 						# MOVE SOMEWHERE?
 						#
@@ -346,20 +340,20 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 						#
 						# END MOVE SOMEWHERE?
 						#
-						
+
 						#
 						# BEGIN ADD
 						#
 						#if ($master_page_file = $xml_tag->getParam('masterPageFile')) $result->setParam('masterPageFile', $master_page_file);
 						if ($master_page_file = $xml_tag->getParam('masterPageFile')) {
-							
+
 							$result->addAutoLoadControlFile($master_page_file);
-							
+
 							/*
 							$get_id = &CompileControl::getGenericControlId();
 							$include_control_name = 'tc1_' . $get_id; // tc = text control
 							$include_control_name = uniqid($include_control_name);
-							
+
 							$params = new ControlConfigDictionary(array('file'=>$master_page_file, 'id'=>$include_control_name));
 							$result->createInitialization('IncludeControl', $include_control_name, $params);
 							*/
@@ -368,54 +362,54 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 						if ($template_id = $xml_tag->getParam('templateId')) {
 							$result->addAutoLoadTemplate($template_id);
 						}
-						
+
 						if ($page_title = $xml_tag->getParam('title')) $result->setParam('pageTitle', $page_title);
-						if ($meta_tag_description = $xml_tag->getParam('metaTagDescription')) $result->setParam('pageMetaDescription', $meta_tag_description);						
+						if ($meta_tag_description = $xml_tag->getParam('metaTagDescription')) $result->setParam('pageMetaDescription', $meta_tag_description);
 						#
 						# END ADD
 						#
-						
+
 						continue;
 					}
-					
+
 				} else { //
 					// Process any text in the buffer and add it to the structure
 					#
 					# FIGURE OUT HOW TO REMOVE ->hold_for_tag
 					#
-					
-					
+
+
 					if (!empty($text_buffer) && !isset($object->hold_for_tag)) {
-						
+
 						$get_id = &CompileControl::getGenericControlId();
 						$text_control_name = 'tc1_' . $get_id; // tc = text control
 						$text_control_name = uniqid($text_control_name);
-						
+
 						$params = new ControlConfigDictionary(array('text'=>$text_buffer, 'id'=>$text_control_name));
-						
+
 						#
 						# BEGIN ADD
 						#
-						
+
 						// Add attachment code for parent hierarchy
 						$result->createInitialization('LiteralControl', $text_control_name, $params, $object->getId());
-						
+
 						# Figure out how to remove $object
 						#if (strlen($object->getId()) > 0) {
 						#	$result->createAttachment($text_control_name, $object->getId());
 						#}
-						
+
 						#
 						# END ADD
 						#
-						
-						# 
+
+						#
 						# BEGIN REMOVE
 						#
 						$this_object = new LiteralControl();
 						$this_object->objectType = 'LiteralControl';
 						$this_object->setParams(array('text'=>$text_buffer, 'id'=>$text_control_name));
-						
+
 						$this_object->setId($text_control_name);
 						if (strlen($object->getId()) > 0) {
 							$this_object->parentControl = $object->getId();
@@ -430,31 +424,31 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 						if (isset($object->attach_init_code)) $attach_init_code .= $object->attach_init_code;
 						if (isset($this_object->attach_init_code)) $attach_init_code .= $this_object->attach_init_code;
 						$object->attach_init_code = $attach_init_code;
-						
+
 						#
 						# END REMOVE
 						#
-						
+
 						$text_buffer = '';
-						
+
 						#
 						# BEGIN REMOVE
 						#
 						unset($this_object->init_code);
 						unset($this_object->attach_init_code);
-						
+
 						$object->addControl($this_object);
 						#
 						# END REMOVE
 						#
 					}
-					
+
 					// Begin Processing Current Tag
-	
+
 					$is_text = false;
-					
+
 					$i += $outer_tag_length;
-					
+
 					if ( ($xml_tag->getType() == 'Open' || $xml_tag->getType() == 'OpenClose') ) {
 
 						$class_name = $xml_tag->getName() . 'Control';
@@ -466,16 +460,16 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 						}
 						// Last resort
 						if (!class_exists($class_name)) $class_name = 'WebControl';
-						
+
 						#
 						# BEGIN ADD
 						#
 						$params = new ControlConfigDictionary($xml_tag->getParams());
-						
+
 						#
 						# END ADD
 						#
-						
+
 						# BEGIN REMOVE
 						#
 						// Setup this child and get all of its grandchildren
@@ -483,29 +477,29 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 						$this_object->objectType = $class_name;
 						$this_object->setParams($xml_tag->getParams());
 						#$this_object->tagStack = array();
-						# 
+						#
 						# END REMOVE
 						#
 						if (strlen($this_object->getParam('id')) == 0) {
-							
+
 							$get_id = &CompileControl::getGenericControlId();
 							// gc = generic_control
 							$generic_control_name = 'gc_' . $get_id;
 							$generic_control_name = uniqid($generic_control_name);
-							
-							# 
+
+							#
 							# BEGIN ADD
 							#
 							$params->set('id', $generic_control_name);
-							# 
+							#
 							# END ADD
 							#
-							
-							# 
+
+							#
 							# BEGIN REMOVE
 							#
 							$this_object->setParam('id', $generic_control_name);
-							# 
+							#
 							# END REMOVE
 							#
 						} else {
@@ -517,8 +511,8 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 							#
 							# END ADD
 							#
-							
-							# 
+
+							#
 							# BEGIN REMOVE
 							#
 							$this_object->setParam('id', $prepend_ids . $this_object->getParam('id'));
@@ -526,30 +520,30 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 							# END REMOVE
 							#
 						}
-						
+
 						#
 						# BEGIN ADD
 						#
 						$parent_name_candidates = array($object->getId(), $params->get('placeHolderId'), $params->get('parentId'));
 						$parent_name = null;
-						
+
 
 						foreach($parent_name_candidates as $candidate) {
-							
+
 							if (!empty($candidate)) {
-								
+
 								$parent_name = $candidate;
 								break;
-								
+
 							}
-							
+
 						}
-						
+
 						$result->createInitialization($class_name, $params->get('id'), $params, $parent_name);
 						#
 						# END ADD
 						#
-						
+
 						#
 						# BEGIN REMOVE
 						#
@@ -560,22 +554,22 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 						// Set parent id
 						if (strlen($object->getId()) > 0) {
 						//if (isset($object->m_params['id'])) {
-							
-							# 
+
+							#
 							# BEGIN ADD
 							#
 							# Figure out how to get rid of $object
 							#$result->createAttachment($params->get('id'), $object->getId());
-							
-							# 
+
+							#
 							# END ADD
 							#
-							
-							# 
+
+							#
 							# BEGIN REMOVE
 							#
 							$this_object->parentControl = $object->m_params['id'];
-							# 
+							#
 							# END REMOVE
 							#
 						}
@@ -585,22 +579,22 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 						// Kept for legacy attachment
 						/*
 						if ($place_holder_id = $params->get('placeHolderId')) {
-						
+
 							$result->createAttachment($params->get('id'), $place_holder_id);
-						
+
 						}
 						*/
 						// New way of attaching (so that any control can be re-attached to any other control
 						/*
 						if ($parent_id = $params->get('parentId')) {
-							
+
 							$result->createAttachment($params->get('id'), $parent_id);
-							
+
 						}*/
 						#
 						# END ADD
 						#
-						
+
 						#
 						# Check how to get rid of m_processInternal
 						#
@@ -608,25 +602,25 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 
 							$close_tag = $xml_tag;
 							$close_tag->setType('Close');
-							
+
 							$children = CompileControl::_loopCompile($text, $options, $i, $this_object, $result, $current_position, $prepend_ids);
-							
+
 							#
 							# Check how to remove m_innerCode
 							#
 							if (!isset($object->m_innerCode)) $object->m_innerCode = '';
-							
+
 							#REMOVING.... NO NEED FOR THIS?
 							$object->m_innerCode = $code_buffer . $outer_tag . $object->m_innerCode . $children->m_innerCode . $close_tag->render();
-							
+
 							$code_buffer = '';
-							
+
 							$children->getInitCode($options['build_for_page']);
-							
+
 							#
 							# Check how to remove hold_for_tag
 							#
-							
+
 							#
 							# BEGIN ADD
 							#
@@ -636,39 +630,39 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 							#
 							# END ADD
 							#
-							
+
 							#
 							# BEGIN REMOVE
 							#
 							if (!isset($object->hold_for_tag)) {
-								
+
 								$object_init_code = '';
 								if (isset($object->init_code)) $object_init_code .= $object->init_code;
 								if (isset($children->init_code)) $object_init_code .= $children->init_code;
 								$object->init_code = $object_init_code;
-								
+
 								$attach_init_code = '';
 								if (isset($object->attach_init_code)) $attach_init_code .= $object->attach_init_code;
 								if (isset($children->attach_init_code)) $attach_init_code .= $children->attach_init_code;
 								$object->attach_init_code = $attach_init_code;
-								
+
 								// Remove init code from children, as only the root should maintain this information
 								unset($children->init_code);
 								unset($children->attach_init_code);
-								
+
 								$object->addControl($children);
 							}
 							#
 							# END REMOVE
 							#
-							
+
 							#if (isset($children->pos)) {
 								#$i=$children->pos-1;
-								
+
 								$i = $current_position - 1;
-								
+
 							#}
-						
+
 						#
 						# Check how to get rid of m_processInternal
 						#
@@ -685,7 +679,7 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 									$close_tag_rendered	= $close_tag->render();
 									$close_tag_length	= strlen($close_tag_rendered);
 									$close_tag_pos		= strpos($text, $close_tag_rendered, $i);
-	
+
 									$literal_content = substr($text, $i, $close_tag_pos-$i);
 									#
 									# Check how to remove
@@ -699,44 +693,44 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 									# END ADD
 									#
 									$new_start = $close_tag_pos + $close_tag_length;
-	
+
 									$i = $new_start;
 								}
 							}
-							
+
 							#
 							# Check how to remove
 							#
 							$this_object->getInitCode($options['build_for_page']);
-							
+
 							$i -= 1;
-							
+
 							#
 							# BEGIN REMOVE (possibly)
 							$object_init_code = '';
 							if (isset($object->init_code)) $object_init_code .= $object->init_code;
 							if (isset($this_object->init_code)) $object_init_code .= $this_object->init_code;
 							$object->init_code = $object_init_code;
-							
+
 							$attach_init_code = '';
 							if (isset($object->attach_init_code)) $attach_init_code .= $object->attach_init_code;
 							if (isset($this_object->attach_init_code)) $attach_init_code .= $this_object->attach_init_code;
 							$object->attach_init_code = $attach_init_code;
-							
+
 							unset($this_object->init_code);
 							unset($this_object->attach_init_code);
-							
+
 							$object->addControl($this_object);
 							#
 							# END REMOVE (possibly)
 							#
 						}
 					} else { // Close Tag
-					
+
 						#
 						# Check how to remove m_innerCode
 						#
-						
+
 						#
 						# BEGIN REMOVE
 						#
@@ -748,59 +742,59 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 						#
 						# BEGIN ADD
 						#
-						
+
 						if (null !== $params) $params->set('innerCode', $params->get('innerCode') . $code_buffer);
-						
+
 						#
 						# END ADD
 						#
 						#echo 'Code Buffer: ' . strlen($code_buffer) . '<br />';
 						$code_buffer = '';
-						
+
 						#
 						# Check how to remove hold_for_tag
 						#
 						if (isset($object->hold_for_tag) && $object->hold_for_tag == $xml_tag->getName()) { // If processing text as literal, end literal processing
-						
+
 							unset($object->hold_for_tag);
 							$text_buffer = '';
-						
+
 						#
 						# Check how to remove hold_for_tag
-						#	
+						#
 						} else if (isset($object->hold_for_tag)) { // If processing text as literal, comparing tags do not match.  Continue processing as literal
-						
+
 							$text_buffer = '';
-							
+
 						} else {
 							// Not processing as literal
 						}
-						
-						
+
+
 						#$object->pos = $i;
 						$current_position = $i;
-						
+
 						#
 						# Check how to remove $object
 						#
 						return $object;
 					}
-					
+
 				}
 			}
-			
+
 			if ($is_text) {
 				$text_buffer .= $text[$i];
 				$code_buffer .= $text[$i];
 			}
-			
+
 		}
 
 		if (!empty($text_buffer)) {
-			
+
 			#die('text buffer: ' . strlen($text_buffer));
 			$get_id = &CompileControl::getGenericControlId();
-			$text_control_name = 'tc2_' . $get_id; // tc = text control 
+			$text_control_name = 'tc2_' . $get_id; // tc = text control
 			$text_control_name = uniqid($text_control_name);
 			
 			#

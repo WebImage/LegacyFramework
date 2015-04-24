@@ -627,7 +627,7 @@ abstract class CWI_CONTROLS_EDITABLE_AbstractEditInPlaceControl extends CWI_CONT
 						
 						$update_bar = '<div class="editable-control-waiting" id="' . $this->getJsId() . '_waiting" align="center" style="display:none;">';
 							$update_bar .= '<strong><span id="' . $this->getJsId() . '_message"></span></strong><br />';
-							$update_bar .= '<img src="' . ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_IMG') . 'busyanim/loadingbar_145x13.gif" width="145" height="13" border="0" align="absmiddle" />';
+							#$update_bar .= '<img src="' . ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_IMG') . 'busyanim/loadingbar_145x13.gif" width="145" height="13" border="0" align="absmiddle" />';
 						$update_bar .= '</div>';
 						#$update_bar = CWI_MANAGER_ThemeManager::wrapWithWrapClassId(Page::getTheme(), $update_bar, 'editable-control-waiting');				
 						$output .= $update_bar;

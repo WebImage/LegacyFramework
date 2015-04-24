@@ -42,14 +42,12 @@ class DataGridControl extends DataListControl {
 	function setBorder($border) { $this->m_border = $border; }
 	
 	function prepareInternal() {
-		
+
 		try {
-			$xml = CWI_XML_Compile::compile($this->getInnerCode());
+			$xml = CWI_XML_Compile::compile($this->renderChildren());
 		} catch (CWI_XML_CompileException $e) {
 			return false;
 		}
-
-
 
 		if ($template = $xml->getPathSingle('/Columns')) {
 			$table_attributes = '';
@@ -102,7 +100,7 @@ class DataGridControl extends DataListControl {
 					if ($column->getParam('align')) $cell_attributes .= ' align="' . $column->getParam('align') . '"';
 					if ($column->getParam('vAlign')) $cell_attributes .= ' valign="' . $column->getParam('valign') . '"';
 					if ($column->getParam('class')) $cell_attributes .= ' class="' . $column->getParam('class') . '"';
-					
+
 					if ($column->getParam('field')) {
 						$format = '';
 						if ($column->getParam('format')) $format = ' format="' . $column->getParam('format') . '"';
