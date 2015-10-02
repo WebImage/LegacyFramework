@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.4]
+### Changed
+- Changed autoloader to load from any path returned by PathManager::getPaths(), rather than just the framework "base" directory.
+- Changed the autoloader to potentially load any namespace, not just "WebImage"
+
 ## [1.2.3]
 ### Fixed
 - Consolidated duplicate LinkControl::init() methods
