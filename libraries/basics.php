@@ -60,12 +60,16 @@ function handle_autoload_core_classes($class_name) {
 			break;
 	}
 
-	if (substr($class_name, 0, 8) == 'WebImage') {
-		$path = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $class_name) . '.php';
-
-		if (file_exists($path)) require_once($path);
+	// Check library paths
+	$paths = PathManager::getPaths();
+	foreach($paths as $base_path) {
+		$check_path = $base_path . 'lib' . DIRECTORY_SEPARATOR .  str_replace('\\', DIRECTORY_SEPARATOR, $class_name) . '.php';
+		if (file_exists($check_path)) {
+			require_once($check_path);
+			break;
+		}
 	}
-
+	
 }
 spl_autoload_register('handle_autoload_core_classes');
 
