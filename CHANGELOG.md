@@ -2,6 +2,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.5]
+### Fixed
+- Issue where call to ServiceManager::get(...) with an anonymous function would fail
+
+### Added
+- Class WebImage\Core\Collection
+- Class WebImage\Core\Dictionary
+- Class WebImage\Core\DictionaryField
+- Class WebImage\Core\DictionaryFieldCollection
+- Interface WebImage\Core\ICollection
+- Class WebImage\String\Url
+
 ## [1.2.4]
 ### Changed
 - Changed autoloader to load from any path returned by PathManager::getPaths(), rather than just the framework "base" directory.
