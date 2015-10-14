@@ -54,8 +54,7 @@ class ServiceManager implements IServiceManager {
 			if ($factory instanceof IFactory) {
 				$instance = $this->createServiceViaCallback(array($factory, 'createService'), $name);
 			} else if (is_callable($factory)) {
-				$instance = $this->createServiceViaCallback(array($factory, $name), $name);
-
+				$instance = $this->createServiceViaCallback($factory, $name);
 			}
 
 		}
