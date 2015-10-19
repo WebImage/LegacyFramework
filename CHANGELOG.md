@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.6]
+### Changed
+- Changed WebImage\Core\Dictionary::get(...) signature to add default value when a value cannot be found
+### Fixed
+- Allow configured pages/pathMappings to match and rewrite multiple paths. Previously matching would stop on first match found, even if the first match did not do anything functional, e.g. map to a specific request handler
+
 ## [1.2.5]
 ### Fixed
 - Issue where call to ServiceManager::get(...) with an anonymous function would fail
