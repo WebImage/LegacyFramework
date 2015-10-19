@@ -17,9 +17,9 @@ class Dictionary implements ArrayAccess { // extends  IDictionary {
 	function set($key, $value) {
 		$this->lst[$key] = $value;
 	}
-	function get($key) {
+	function get($key, $default=null) {
 		if ($this->isDefined($key)) return $this->lst[$key];
-		else return false;
+		else return $default;
 	}
 	function del($key) {
 		unset($this->lst[$key]);
