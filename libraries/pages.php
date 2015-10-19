@@ -327,9 +327,9 @@ class PageRequest {
 			if (preg_match($search, $url_path, $path_matches)) {
 
 				if (count($path_matches) > 0) {
-					
+
 					$translated_path = $mapping['translate'];
-					
+
 					if (!empty($translated_path)) {
 				
 						for ($i=count($path_matches)-1; $i > 0; $i--) {
@@ -375,9 +375,11 @@ class PageRequest {
 							}
 						}
 
+
+						break;
+
 					}
-					
-					break;
+
 				}
 			}
 			
