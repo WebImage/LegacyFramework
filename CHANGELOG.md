@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3.0]
+### Added
+- Added autoload feature to FrameworkManager::init() where any files located in the app directory at /config/autoload/*.php are automatically loaded.
+
 ## [1.2.6]
 ### Changed
 - Changed WebImage\Core\Dictionary::get(...) signature to add default value when a value cannot be found
