@@ -406,9 +406,27 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 		$end_time = FrameworkManager::getTime();
 
 		FrameworkManager::getInstance()->app = Application::create($config);
-		
+
+		FrameworkManager::autoload();
 	}
 
+	/**
+	 * Automatically load files in APP_DIR/config/autoload/
+	 */
+	protected static function autoload() {
+
+		$app_dir = ConfigurationManager::get('DIR_FS_FRAMEWORK_APP');
+		if (!empty($app_dir)) {
+			$autoload_dir = $app_dir . 'config' . DIRECTORY_SEPARATOR . 'autoload' . DIRECTORY_SEPARATOR;
+			if (file_exists($autoload_dir)) {
+				$autoload = glob($autoload_dir . '*.php');
+				foreach($autoload as $file) {
+					include_once($file);
+				}
+			}
+		}
+
+	}
 	public static function getApplication() {
 		return FrameworkManager::getInstance()->app;
 	}
