@@ -37,13 +37,12 @@ function handle_autoload_core_classes($class_name) {
 		case 'membershipproviderconfiguration':
 		case 'membershipuser':
 		case 'permission':
-		case 'profileprovider':
-		case 'profiles':
-		case 'providerconfiguration':
-		case 'providerbase':
-		case 'providercollection':
-		case 'providerdictionary':
-		case 'providermanager':
+		case 'profileprovider': // @deprecated
+		case 'profiles': // @deprecated
+		case 'providerconfiguration': // @deprecated
+		case 'providerbase': // @deprecated
+		case 'providercollection': // @deprecated
+		case 'providerdictionary': // @deprecated
 		case 'roleprovider':
 		case 'roles':
 		case 'singleton':

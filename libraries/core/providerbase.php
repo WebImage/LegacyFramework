@@ -1,5 +1,7 @@
 <?php
 
+use WebImage\Core\Dictionary;
+
 class ProviderBase {
 	private $name; // String
 	private $config; // ProviderDictionary
@@ -19,13 +21,14 @@ class ProviderBase {
 	 *		$this->m_applicationName = $application_name;
 	 *	}
 	 */
-	function init($name, $config=null) {
+	public function init($name, Dictionary $config=null) {
 		$this->name = $name;
-		if (is_null($config) || (is_object($config) && is_a($config, 'ProviderDictionary'))) $config = new ProviderDictionary();
+		if (null === $config) $config = new Dictionary();
 		$this->config = $config;
 		return true;
 	}
-	function getName() { return $this->name; }
+	public function getName() { return $this->name; }
+	public function setName($name) { $this->name = $name; }
 	public function getConfigValue($name) { return $this->config->get($name); }
 	public function setConfigValue($name, $value) { $this->config->set($name, $value); }
 }

@@ -35,7 +35,7 @@ class Dictionary implements ArrayAccess { // extends  IDictionary {
 	function mergeDictionary($dictionary_or_array) {
 		if (is_a($dictionary_or_array, 'Dictionary')) {
 			$array = $dictionary_or_array->lst;
-		} else if (is_array($dictionary_or_array)) {
+		} else if (is_array($dictionary_or_array) || $dictionary_or_array instanceof \Traversable) {
 			$array = $dictionary_or_array;
 		} else {
 			return false;

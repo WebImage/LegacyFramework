@@ -225,16 +225,14 @@ return array(
 	'profile' => array(
 		'providers' => array(
 			'iPhone' => array(
-				'classFile' => '~/libraries/providers/profiles/iphone.php',
-				'className' => 'IPhoneProfileProvider',
+				'className' => '\WebImage\ExperienceProfile\IPhoneProfile',
+				'supportedProfiles' => array('Mobile')
 				),
 			'Mobile' => array(
-				'classFile' => '~/libraries/providers/profiles/mobile.php',
-				'className' => 'MobileProfileProvider',
+				'className' => '\WebImage\ExperienceProfile\MobileProfile'
 				),
 			'Default' => array(
-				'classFile' => '~/libraries/providers/profiles/default.php',
-				'className' => 'DefaultProfileProvider',
+				'className' => '\WebImage\ExperienceProfile\DefaultProfile',
 			)
 		)
 	),
@@ -292,7 +290,11 @@ return array(
 	),
 	'serviceManager' => array(
 		'factories' => array(
-			'ControlManager' => 'ControlManagerFactory'
+			'ControlManager' => 'ControlManagerFactory',
+			'WebImage\ExperienceProfile\ProfileManager' => 'WebImage\ExperienceProfile\ProfileManagerFactory'
+		),
+		'aliases' => array(
+			'ExperienceProfileManager' => 'WebImage\ExperienceProfile\ProfileManager'
 		)
 	)
 );
