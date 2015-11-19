@@ -2,6 +2,21 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.4.0]
+### Changed
+- Profile related functionality has been renamed/moved to WebImage\ExperienceManager\ProfileManager
+
+### Added
+- Added ProviderBase::setName(...)
+
+### Fixed 
+- Modified Dictionary to support instances of Traversable classes, in addition to arrays
+- Added missing "public" keyword to ProviderBase methods init(...) and getName()
+
+### Removed
+- Legacy calls to ConfigurationManager::legacyInitConfigProfiles(...) and ConfigurationManager::legacyInitConfigDatabase(...)
+- Removed old profile classes under libraries\providers\profiles\... Moved to WebImage\ExperienceManager namespace under lib\WebImage\ExperienceManager\...
+
 ## [1.3.0]
 ### Added
 - Added autoload feature to FrameworkManager::init() where any files located in the app directory at /config/autoload/*.php are automatically loaded.
