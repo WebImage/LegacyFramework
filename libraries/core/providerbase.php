@@ -21,7 +21,7 @@ class ProviderBase {
 	 *		$this->m_applicationName = $application_name;
 	 *	}
 	 */
-	public function init($name, Dictionary $config=null) {
+	public function init($name, $config=null) {
 		$this->name = $name;
 		if (null === $config) $config = new Dictionary();
 		$this->config = $config;
