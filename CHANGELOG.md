@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.4.1]
+### Added
+- Added support for profile priorities
+- Added support for profile domain mapping and domain association
+### Changed
+- Changed IProfile so that they now have access to the profile manager that is managing them
+ 
 ## [1.4.0]
 ### Changed
 - Profile related functionality has been renamed/moved to WebImage\ExperienceManager\ProfileManager
