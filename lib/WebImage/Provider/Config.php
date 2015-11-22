@@ -55,6 +55,6 @@ class Config {
 	 * @param $name
 	 * @return mixed (probably string)
 	 */
-	public function getMetaValue($name) { return $this->meta->get($name); }
+	public function getMetaValue($name, $default=null) { return $this->meta->get($name, $default); }
 
 }
