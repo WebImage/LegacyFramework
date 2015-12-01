@@ -400,7 +400,25 @@ class Control extends Object {
 		}
 		return $output;
 	}
-	
+
+	/**
+	 * Get the value for a specified parameter
+	 * @param $param_name
+	 * @return string
+	 */
+	protected function getValueForParamString($param_name) {
+
+		$legacy_param = sprintf('m_' . $param_name);
+		$value = $this->getParam($param_name);
+
+		if ($value) return $value;
+		else {
+			// Legacy parameter value support
+			if (isset($this->$legacy_param)) return $this->legacy_param;
+		}
+
+	}
+
 	/**
 	 * Returns a space concatenated string of parameters and their values in the format name="value"
 	 **/
@@ -409,49 +427,13 @@ class Control extends Object {
 		$s_params = '';
 		
 		$pass_thrus = $this->getPassThrus();
-		$pass_thrus_used = array(); // Keep track of pass thru values for legacy support
-		$params = $this->getParams()->getAll();
-		
-		// Iterate through list of parameters...
-		while ($param_def = $params->getNext()) {
-			
-			$name = $param_def->getKey();
-			$value = $param_def->getDefinition();
-			
-			// ... check whether the parameter is in the list of parameters to be output
-			if (in_array($name, $pass_thrus)) {
-				
-				$s_params .= ' ' . $name . '="' . $value . '"';
-				$pass_thrus_used[] = $name;
-				
-			}
-			
-		}
-		/**
-		 * Begin legacy support
-		 **/
-		// Legacy support - need to phase this out
-		$legacy_fields = array();
-		foreach($pass_thrus as $pass_thru) {
-			
-			$param_name = 'm_'.$pass_thru;
-			
-			// Make sure this pass through field has not already been added in the new version above
-			if (!in_array($pass_thru, $pass_thrus_used)) {
-				
-				if (isset($this->$param_name)) {
-				
-					$s_params .= ' ' . $pass_thru . '="' . $this->$param_name . '"';
-					
-				}
-				
-				array_push($legacy_fields, $param_name);
+
+		foreach($pass_thrus as $param) {
+			$value = $this->getValueForParamString($param);
+			if ($value) {
+				$s_params .= sprintf(' %s="%s"', $param, $value);
 			}
 		}
-		
-		/**
-		 * End legacy support
-		 **/
 		return $s_params;
 	}
 	
