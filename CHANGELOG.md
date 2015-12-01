@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.0]
+### Added
+- Ability to specify a callable for configuration values so that the configured valuable can be calculated at runtime
+
 ## [1.4.3]
 ### Added
 - Added Controls::addText(...) as a shortcut to having to call Controls::addControl(new Literal(array('text' => 'the text'))) to add simple text to page.
