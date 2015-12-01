@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.4.2]
+### Fixed
+- Issues with LinkControl where "href" parameter value was not being exported to the parameter string correctly.
+### Added
+- Control::getValueForParamString(...) to allow inheriting classes to override a value that is exported as a parameter string.    
 ## [1.4.1]
 ### Added
 - Added support for profile priorities
