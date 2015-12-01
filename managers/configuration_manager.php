@@ -100,8 +100,12 @@ class ConfigurationManager {
 		$_this = ConfigurationManager::getInstance();//Singleton::getInstance('ConfigurationManager');
 
 		if ($var_value_obj = ConfigurationManager::getRaw($name, $group)) {
-			
+
 			$var_value = $var_value_obj->getValue();
+
+			if (is_callable($var_value)) {
+				$var_value = call_user_func($var_value, sprintf('%s.%s', $group, $name));
+			}
 			
 			return ConfigurationManager::getValueFromString($var_value);
 			
