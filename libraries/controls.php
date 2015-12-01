@@ -143,6 +143,10 @@ class Control extends Object {
 		// Inform listeners that a control has been added
 		CWI_EVENT_Manager::trigger($this, 'controlAdded', $event_args); 
 	}
+	public function addText($text) {
+		$l = new LiteralControl(array('text' => $text));
+		return $this->addControl($l);
+	}
 	public function resetControls() { 
 		$this->controls->reset();
 	}
