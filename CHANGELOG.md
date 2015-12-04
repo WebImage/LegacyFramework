@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.3]
+### Fixed
+- Escape incoming query string values for Url
+
 ## [1.5.2]
 ### Fixed
 - SessionManager::delCookie(...) was not correctly "appizing" name variable, which was causing it not to actually delete the cookie
