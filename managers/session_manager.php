@@ -79,6 +79,7 @@ class SessionManager {
 	}
 	
 	public static function delCookie($name) {
+		$name = self::_appizeSessionVar($name);
 		setcookie($name, '', time()-(25*3600));
 		unset($_COOKIE[$name]);
 	}
