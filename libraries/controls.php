@@ -287,32 +287,37 @@ class Control extends Object {
 	 * An old version of init() that sets objects directly... this is being phased out in favor of using the parameter Dictionary
 	 **/
 	protected function _legacyInit($params=array()) { // First step is lifecycle
-	
+
 		$legacy_fields = array(); // Keep track of legacy fields
-		
+		$object_vars = array_keys(get_object_vars($this));
 		if (is_array($params)) { // Prepare for transition into making params Dictionary object instead of array
 
 			foreach($params as $attr_name=>$attr_val) {
 				if (!empty($attr_name)) {
 					$var_name = 'm_'.$attr_name;
-					if (isset($this->$var_name)) array_push($legacy_fields, $var_name); // If this field already exists then it is a legacy field.... trying to phase out all $m_[varname] variables
-					$this->$var_name = $attr_val;
+					// If this field already exists then it is a legacy field.... trying to phase out all $m_[varname] variables
+					if (in_array($var_name, $object_vars)) {
+						array_push($legacy_fields, $var_name);
+						$this->$var_name = $attr_val;
+					}
 				}
 			}
 			
 		} else if (is_a($params, 'Dictionary')) { // If params is passed as a Dictionary, then work backwords to temporarily create property values
-			
+
 			$fields = $params->getAll();
 			while ($field = $fields->getNext()) {
 				$attr_name = $field->getKey();
 				$attr_val = $field->getDefinition();
 				
 				$var_name = 'm_' . $attr_name;
-				if (isset($this->$var_name)) array_push($legacy_fields, $var_name); // If this field already exists then it is a legacy field.... trying to phase out all $m_[varname] variables
-				$this->$var_name = $attr_val;				
-				
-			}			
-			
+				// If this field already exists then it is a legacy field.... trying to phase out all $m_[varname] variables
+				if (in_array($var_name, $object_vars)) {
+					array_push($legacy_fields, $var_name);
+					$this->$var_name = $attr_val;
+				}
+			}
+
 		}
 		
 		/**
@@ -823,6 +828,7 @@ class ControlManagerFactory implements \WebImage\ServiceManager\IFactory {
 	}
 }
 class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
+
 	private $compiledResults;
 	private $controls, $controlAddedEventListeners;
 	private $controlCount=0; // Keep track of # of controls being added
@@ -857,6 +863,7 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 	public function getLog() { return $this->log; }
 	
 	public function loadControlsFromText($text) {
+		
 		$this->log('loadControlsFromText');
 		#echo 'ControlManager::loadControlsFromText('.strlen($text) . ')<br />';
 		// Get current compile mode so that it can be restored
@@ -883,7 +890,7 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 			return $this->loadControlsFromText(file_get_contents($file_path));
 			
 		} else {
-			
+
 			$this->log('loadControlsFromFile: unable to loadControlsFromFile(' . $file . ')');
 			
 			$d = new Dictionary();
@@ -943,23 +950,6 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 			
 		}
 		
-		// Create local version of required attachments (so that they can be manipulated independently of the original attachment objects) <!--- NOT SURE IF THIS IS TRUE ANY MORE
-		if (is_null($this->attachments)) $this->attachments = new Dictionary();
-		
-		$compiled_attachments = $this->compiledResults->getAttachments()->getAll();
-		while ($attachment_field = $compiled_attachments->getNext()) {
-			
-			// Make sure attachment has not already been initialized
-			if (!$attachment_field->getDefinition()->isInitialized()) {
-				// Set local copy of attachment
-				$this->attachments->set($attachment_field->getKey(), $attachment_field->getDefinition());
-				// Mark attachment as initialized
-				$attachment_field->getDefinition()->isInitialized(true);
-				
-			}
-			
-		}
-		
 		$this->log('initialize()');
 		$this->initializationStarted = true;
 		
@@ -967,13 +957,13 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 		if ($auto_load_control_files = $this->compiledResults->getParams()->get('auto_load_control_files')) {
 			// Remove auto_load_control_files so that they do not get stuck in an infinite loop
 			$this->compiledResults->getParams()->del('auto_load_control_files');
-			
+
 			while ($file = $auto_load_control_files->getNext()) {
-				
+
 				$this->log('Auto Load Control File: ' . $file);
-				
+
 				$this->loadControlsFromFile($file);
-				
+
 			}
 			
 		}
@@ -994,7 +984,7 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 					$this->log('Auto Load Template ID: ' . $template_id . ': Found');
 					
 					$this->loadControlsFromFile($template->getTemplateFile());
-					
+
 					$template_stylesheets = $template->getStylesheets();
 					
 					while ($stylesheet = $template_stylesheets->getNext()) {
@@ -1008,6 +998,24 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 			}
 			
 		}
+
+		// Create local version of required attachments (so that they can be manipulated independently of the original attachment objects) <!--- NOT SURE IF THIS IS TRUE ANY MORE
+		if (is_null($this->attachments)) $this->attachments = new Dictionary();
+
+		$compiled_attachments = $this->compiledResults->getAttachments()->getAll();
+		while ($attachment_field = $compiled_attachments->getNext()) {
+
+			// Make sure attachment has not already been initialized
+			if (!$attachment_field->getDefinition()->isInitialized()) {
+				// Set local copy of attachment
+				$this->attachments->set($attachment_field->getKey(), $attachment_field->getDefinition());
+				// Mark attachment as initialized
+				$attachment_field->getDefinition()->isInitialized(true);
+
+			}
+
+		}
+		
 		// Iterate through initializations
 		while ($init = $this->compiledResults->getInitializations()->getNext()) {
 
@@ -1122,14 +1130,14 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 			
 			// Whether the control is at the root of the control structure (i.e. it does not have a parent object
 			$is_root_level = ($this->compiledResults->getAttachments()->get($control_obj->getId()) === false);
-			
+
 			if ($is_root_level) {
-				
+
 				$root_controls->add($control_obj);
 				
 			}
 		}
-		
+
 		$root_controls->sort();
 
 		$this->log('render() finalizeContent');
