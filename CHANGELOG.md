@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.1]
+### Fixed
+- Issue with Control::_legacyInit(...) where old m_* properties were
+not being set correctly because isset($this->$var_name) would return
+false, even if the object property were defined.
+- ControlManager::initialize() to initialize all auto loaded files
+before beginning the control attachment process.  Otherwise nested auto loaded files were not being initialized correctly.
+
 ## [1.5.0]
 ### Added
 - Ability to specify a callable for configuration values so that the configured valuable can be calculated at runtime
