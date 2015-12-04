@@ -41,9 +41,9 @@ class Profiles {
 		return static::getInstance()->getProvider($provider_name);
 	}
 
-	private static function getCurrentProfile() {
-		return static::getInstance()->getCurrentProfileName();
-	}
+	#private static function getCurrentProfile() {
+	#	return static::getInstance()->getCurrentProfileName();
+	#}
 	private static function setCurrentProfile($profile_name) {
 		return static::getInstance()->setCurrentProfileByName($profile_name);
 	}
@@ -53,7 +53,7 @@ class Profiles {
 	}
 	// Profiles specific methods
 	public static function getCurrentProfileName() {
-		return static::getInstance()->getProviders();
+		return static::getInstance()->getCurrentProfileName();
 	}
 	
 	public static function setCurrentProfileByName($profile_name) {
