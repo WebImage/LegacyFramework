@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.5.3]
+### Changed
+- Removed m_ vars from BreadCrumbControl, ContentControl, DataGridControl, ErrorControl
+
+## [1.5.3]
 ### Fixed
 - Escape incoming query string values for Url
 
