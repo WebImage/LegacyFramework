@@ -77,9 +77,7 @@ class ErrorControl extends WebControl {
 		
 	}
 
-	function getHeaderTemplate() { return $this->m_headerTemplate; }
-	function getFooterTemplate() { return $this->m_footerTemplate; }
-	function getItemTemplate() { return $this->m_itemTemplate; }
+	function getHeaderTemplate() { return $this->getParam('headerTemplate'); }
+	function getFooterTemplate() { return $this->getParam('footerTemplate'); }
+	function getItemTemplate() { return $this->getParam('itemTemplate'); }
 }
-
-?>
