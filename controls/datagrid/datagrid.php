@@ -20,27 +20,42 @@ class DataGridControl extends DataListControl {
 	 * 	</Columns>
 	 * </cms:DataGrid>
 	 */
-	var $m_columns = array();
-	var $m_formatRowClass = array();
-	var $m_formatHeaderClass = '';
-	
-	// Table Attributes
-	var $m_width = '', $m_border = '', $m_cellSpacing = '', $m_cellPadding = '';
-	
-	function __construct($init=array()) {
-		parent::__construct($init);
+	protected function init() {
+		parent::init();
+		$this->setInitParams(array(
+			// Table attributes
+			'width' => '',
+			'border' => '',
+			'cellSpacing' => '',
+			'cellPadding' => '',
+			'formatHeaderClass' => '',
+			'formatRowClass' => array()
+		));
 	}
 	
-	function getWidth() { return $this->m_width; }
-	function getCellSpacing() { return $this->m_cellSpacing; }
-	function getCellPadding() { return $this->m_cellPadding; }
-	function getBorder() { return $this->m_border; }
-	
-	function setWidth($width) { $this->m_width = $width; }
-	function setCellSpacing($cell_spacing) { $this->m_cellSpacing = $cell_spacing; }
-	function setCellPadding($cell_padding) { $this->m_cellPadding = $cell_padding; }
-	function setBorder($border) { $this->m_border = $border; }
-	
+	public function getWidth() { return $this->getParam('width'); }
+	public function getCellSpacing() { return $this->getParam('cellSpacing'); }
+	public function getCellPadding() { return $this->getParam('cellPadding'); }
+	public function getBorder() { return $this->getParam('border'); }
+	public function getFormatHeaderClass() { return $this->getParam('formatHeaderClass'); }
+	public function getFormatRowClass() {
+		$row_class = $this->getParam('formatRowClass');
+		if (empty($row_class)) $row_class = array();
+		return $row_class;
+	}
+
+	public function setWidth($width) { $this->setParam('width', $width); }
+	public function setCellSpacing($cell_spacing) { $this->setParam('cellSpacing', $cell_spacing); }
+	public function setCellPadding($cell_padding) { $this->setParam('cellPadding', $cell_padding); }
+	public function setBorder($border) { $this->setParam('border', $border); }
+	public function setFormatHeaderClass($class) { return $this->setParam('formatHeaderClass', $class); }
+	public function setFormatRowClass($class) { return $this->setParam('formatRowClass', $class); }
+
+	/**
+	 * @return bool
+	 * @access protected?
+	 * @throws Exception
+	 */
 	function prepareInternal() {
 		
 		try {
@@ -48,8 +63,6 @@ class DataGridControl extends DataListControl {
 		} catch (CWI_XML_CompileException $e) {
 			return false;
 		}
-
-
 
 		if ($template = $xml->getPathSingle('/Columns')) {
 			$table_attributes = '';
@@ -70,11 +83,11 @@ class DataGridControl extends DataListControl {
 			$footer_template = '</table>';
 
 			// Table Formating
-			if ($template->getParam('rowClass')) $this->m_formatRowClass = explode(',', $template->getParam('rowClass'));
-			if ($template->getParam('headerClass')) $this->m_formatHeaderClass = $template->getParam('headerClass');
+			if ($template->getParam('rowClass')) $this->setFormatRowClass( explode(',', $template->getParam('rowClass')) );
+			if ($template->getParam('headerClass')) $this->setFormatHeaderClass( $template->getParam('headerClass') );
 			
-			$header_class = (!empty($this->m_formatHeaderClass)) ? ' class="'.$this->m_formatHeaderClass.'"' : '';
-			
+			$header_class = $this->getFormatHeaderClass();
+
 			$item_template = '';
 			
 			// Define formats
@@ -116,12 +129,13 @@ class DataGridControl extends DataListControl {
 				}
 			}
 
-			if (count($this->m_formatRowClass) > 0) {
-				foreach($this->m_formatRowClass as $row_class) {
-					$this->addItemTemplateByHtml('<tr class="' . $row_class . '">'.$item_template.'</tr>');
+			$row_classes = $this->getFormatRowClass();
+			if (count($row_classes) > 0) {
+				foreach($row_classes as $row_class) {
+					$this->addItemTemplateByHtml('<tr class="' . $row_class . '">' . $item_template . '</tr>');
 				}
 			} else {
-				$this->addItemTemplateByHtml('<tr>'.$item_template.'</tr>');
+				$this->addItemTemplateByHtml('<tr>' . $item_template . '</tr>');
 			}
 			
 			
@@ -149,5 +163,3 @@ class DataGridControl extends DataListControl {
 	}
 	
 }
-
-?>

@@ -17,9 +17,9 @@ class Dictionary implements ArrayAccess { // extends  IDictionary {
 	function set($key, $value) {
 		$this->lst[$key] = $value;
 	}
-	function get($key) {
+	function get($key, $default=null) {
 		if ($this->isDefined($key)) return $this->lst[$key];
-		else return false;
+		else return $default;
 	}
 	function del($key) {
 		unset($this->lst[$key]);
@@ -35,7 +35,7 @@ class Dictionary implements ArrayAccess { // extends  IDictionary {
 	function mergeDictionary($dictionary_or_array) {
 		if (is_a($dictionary_or_array, Dictionary::class)) {
 			$array = $dictionary_or_array->lst;
-		} else if (is_array($dictionary_or_array)) {
+		} else if (is_array($dictionary_or_array) || $dictionary_or_array instanceof \Traversable) {
 			$array = $dictionary_or_array;
 		} else {
 			return false;

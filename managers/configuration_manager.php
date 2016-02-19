@@ -100,8 +100,12 @@ class ConfigurationManager {
 		$_this = ConfigurationManager::getInstance();//Singleton::getInstance('ConfigurationManager');
 
 		if ($var_value_obj = ConfigurationManager::getRaw($name, $group)) {
-			
+
 			$var_value = $var_value_obj->getValue();
+
+			if (is_callable($var_value)) {
+				$var_value = call_user_func($var_value, sprintf('%s.%s', $group, $name));
+			}
 			
 			return ConfigurationManager::getValueFromString($var_value);
 			
@@ -439,7 +443,7 @@ class ConfigurationManager {
 	
 			// Profiles
 			if ($xml_config_profiles = $xml_config_obj->getPathSingle('profile')) {
-	
+
 				$config['profile'] = array(
 					'defaultProvider' => null,
 					'providers' => array()
@@ -466,6 +470,7 @@ class ConfigurationManager {
 							if ($param_key != 'name') $config['profile']['providers'][$provider_name][$param_key] = $param_value;
 ##########################################$provider_config->set($param_key, $param_value);
 						}
+
 ####################################Profiles::addProvider($provider_config);
 					}
 				}
@@ -524,11 +529,8 @@ class ConfigurationManager {
 
 		self::legacyInitConfigSettings($_this, $config);
 		self::legacyInitConfigPageSettings($_this, $config);
-		self::legacyInitConfigDatabase($_this, $config);
 		self::legacyInitConfigMembership($_this, $config);
 		self::legacyInitConfigRoles($_this, $config);
-		self::legacyInitConfigProfiles($_this, $config);
-
 	}
 	/**
 	 * Add settings
@@ -628,39 +630,6 @@ class ConfigurationManager {
 		}
 	}
 
-	private static function legacyInitConfigDatabase($_this, $config) {
-
-		return;
-		/*
-
-		$config_database = (isset($config['database'])) ? $config['database'] : array();
-		$config_connections = (isset($config_database['connections'])) ? $config_database['connections'] : array();
-
-		foreach ($config_connections as $name => $info) {
-
-		}
-		// Retrieve Database Settings
-		if ($config_database = $xml_config_obj->getPathSingle('database')) {
-
-			if ($connections = $config_database->getPath('databaseConnections/add')) {
-
-				// Add each database connection
-				foreach ($connections as $connection) {
-					$key_name = $connection->getParam('name');
-					$server = $connection->getParam('server');
-					$username = $connection->getParam('username');
-					$password = $connection->getParam('password');
-					$database = $connection->getParam('database');
-
-					ConnectionManager::addConnection($key_name, new DatabaseSetting($server, $username, $password, $database));
-				}
-
-			}
-
-		}
-		*/
-	}
-
 	// Membership
 	private static function legacyInitConfigMembership($_this, $config) {
 
@@ -719,37 +688,6 @@ class ConfigurationManager {
 
 			Roles::addProvider($provider_config);
 		}
-	}
-
-	private static function legacyInitConfigProfiles($_this, $config) {
-
-		$config_profile = (isset($config['profile'])) ? $config['profile'] : array();
-		$providers = (isset($config_profile['providers'])) ? $config_profile['providers'] : array();
-
-		$default_provider = (isset($config_profile['defaultProvider'])) ? $config_profile['defaultProvider'] : null;
-
-		if (null !== $default_provider) {
-			Profiles::setDefaultProvider($default_provider);
-		}
-
-		// Add Profile Profiles to Application
-		foreach($providers as $name => $info) {
-
-			$info['classFile'] = PathManager::translate($info['classFile']);
-
-			$provider_config = new Dictionary(array(
-				'name' => $name,
-			));
-
-			foreach($info as $param_key=>$param_value) {
-				$provider_config->set($param_key, $param_value);
-			}
-			if ($info['classFile']) {
-				Profiles::addProvider($provider_config);
-			}
-
-		}
-
 	}
 
 	/**

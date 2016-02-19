@@ -256,6 +256,7 @@ class Url {
 			foreach($url_parts as $url_part) {
 
 				@list($name, $value) = explode('=', $url_part, 2);
+				$value = urldecode($value);
 
 				$is_array = false;
 				if (substr($name, -2) == '[]') {

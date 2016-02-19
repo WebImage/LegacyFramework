@@ -223,20 +223,29 @@ return array(
 		)
 	),
 	'profile' => array(
+		'defaultProvider' => 'Default',
 		'providers' => array(
-			'iPhone' => array(
-				'classFile' => '~/libraries/providers/profiles/iphone.php',
-				'className' => 'IPhoneProfileProvider',
-				),
-			'Mobile' => array(
-				'classFile' => '~/libraries/providers/profiles/mobile.php',
-				'className' => 'MobileProfileProvider',
-				),
 			'Default' => array(
-				'classFile' => '~/libraries/providers/profiles/default.php',
-				'className' => 'DefaultProfileProvider',
+				'className' => '\WebImage\ExperienceProfile\DefaultProfile',
+				'priority' => -100
+			),
+			'Mobile' => array(
+				'className' => '\WebImage\ExperienceProfile\MobileProfile',
+				'priority' => -10
+				),
+			'iPhone' => array(
+				'className' => '\WebImage\ExperienceProfile\IPhoneProfile',
+				'supportedProfiles' => array('Mobile'),
+				'priority' => -9
+				/* limit the domains that this profile supports */
+				/*'supportedDomains' => array('domain.com', 'www.domain.com')*/
 			)
+
 		)
+		/* 'domainMapping' => array(
+		 * 	'profile-name' => array('domain1.com', 'domain2'.com') // www.domain.com and domain.com must be explicitly set
+		 * )
+		 */
 	),
 	'cacheManager' => array(
 		'defaultProvider' => '',
@@ -292,7 +301,11 @@ return array(
 	),
 	'serviceManager' => array(
 		'factories' => array(
-			'ControlManager' => 'ControlManagerFactory'
+			'ControlManager' => 'ControlManagerFactory',
+			'WebImage\ExperienceProfile\ProfileManager' => 'WebImage\ExperienceProfile\ProfileManagerFactory'
+		),
+		'aliases' => array(
+			'ExperienceProfileManager' => 'WebImage\ExperienceProfile\ProfileManager'
 		)
 	)
 );

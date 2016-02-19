@@ -1,5 +1,12 @@
 <?php
 class ContentControl extends WebControl {
-	var $m_text, $m_placeHolderId;
+
 	var $renderOnRoot = false;
+	protected function init() {
+		parent::init();
+		$this->setInitParams(array(
+			'text' => '',
+			'placeHolderId' => ''
+		));
+	}
 }

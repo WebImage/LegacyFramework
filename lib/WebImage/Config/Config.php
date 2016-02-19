@@ -186,7 +186,10 @@ class Config implements Countable, Iterator, ArrayAccess {
 	}
 
 	public function __unset($name) {
-		unset($this->data[$name]);
+		if (isset($this->data[$name])) {
+			unset($this->data[ $name ]);
+			$this->count --;
+		}
 	}
 	public function __get($name) {
 		return $this->get($name);
@@ -218,6 +221,10 @@ class Config implements Countable, Iterator, ArrayAccess {
 
 		$this->count++;
 
+	}
+
+	public function del($name) {
+		return $this->__unset($name);
 	}
 
 	/**

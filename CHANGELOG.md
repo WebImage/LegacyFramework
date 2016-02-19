@@ -2,8 +2,73 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.2.6]
+## [1.5.5]
 - Fixed Dictionary::mergeDictionary issue
+
+## [1.5.4]
+### Changed
+- Removed m_ vars from BreadCrumbControl, ContentControl, DataGridControl, ErrorControl
+
+## [1.5.3]
+### Fixed
+- Escape incoming query string values for Url
+
+## [1.5.2]
+### Fixed
+- SessionManager::delCookie(...) was not correctly "appizing" name variable, which was causing it not to actually delete the cookie
+- Removed unnecessary Profiles::getCurrentProfile(), which is redundant Profiles::getProvider()
+- Profiles::getCurrentProfileName() was incorrectly calling the provider's getProviders() method instead of getCurrentProfileName()
+## [1.5.1]
+### Fixed
+- Issue with Control::_legacyInit(...) where old m_* properties were
+not being set correctly because isset($this->$var_name) would return
+false, even if the object property were defined.
+- ControlManager::initialize() to initialize all auto loaded files
+before beginning the control attachment process.  Otherwise nested auto loaded files were not being initialized correctly.
+
+## [1.5.0]
+### Added
+- Ability to specify a callable for configuration values so that the configured valuable can be calculated at runtime
+
+## [1.4.3]
+### Added
+- Added Controls::addText(...) as a shortcut to having to call Controls::addControl(new Literal(array('text' => 'the text'))) to add simple text to page.
+## [1.4.2]
+### Fixed
+- Issues with LinkControl where "href" parameter value was not being exported to the parameter string correctly.
+### Added
+- Control::getValueForParamString(...) to allow inheriting classes to override a value that is exported as a parameter string.    
+## [1.4.1]
+### Added
+- Added support for profile priorities
+- Added support for profile domain mapping and domain association
+### Changed
+- Changed IProfile so that they now have access to the profile manager that is managing them
+ 
+## [1.4.0]
+### Changed
+- Profile related functionality has been renamed/moved to WebImage\ExperienceManager\ProfileManager
+
+### Added
+- Added ProviderBase::setName(...)
+
+### Fixed 
+- Modified Dictionary to support instances of Traversable classes, in addition to arrays
+- Added missing "public" keyword to ProviderBase methods init(...) and getName()
+
+### Removed
+- Legacy calls to ConfigurationManager::legacyInitConfigProfiles(...) and ConfigurationManager::legacyInitConfigDatabase(...)
+- Removed old profile classes under libraries\providers\profiles\... Moved to WebImage\ExperienceManager namespace under lib\WebImage\ExperienceManager\...
+
+## [1.3.0]
+### Added
+- Added autoload feature to FrameworkManager::init() where any files located in the app directory at /config/autoload/*.php are automatically loaded.
+
+## [1.2.6]
+### Changed
+- Changed WebImage\Core\Dictionary::get(...) signature to add default value when a value cannot be found
+### Fixed
+- Allow configured pages/pathMappings to match and rewrite multiple paths. Previously matching would stop on first match found, even if the first match did not do anything functional, e.g. map to a specific request handler
 
 ## [1.2.5]
 ### Fixed
