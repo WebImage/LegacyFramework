@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.6]
+- Fixed Dictionary::mergeDictionary issue
+
 ## [1.2.5]
 ### Fixed
 - Issue where call to ServiceManager::get(...) with an anonymous function would fail
