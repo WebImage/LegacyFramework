@@ -119,10 +119,10 @@ return array(
 				'classFile' => '~base/libraries/providers/requesthandlers/admin/admin.php',
 				'className' => 'AdminRequestHandler'
 			),
-			'Blog' => array(
-				'classFile' => '~base/libraries/providers/requesthandlers/blog/blog.php',
-				'className' => 'BlogRequestHandler'
-			),
+			#'Blog' => array(
+			#	'classFile' => '~base/libraries/providers/requesthandlers/blog/blog.php',
+			#	'className' => 'BlogRequestHandler'
+			#),
 		),
 		'pathMappings' => array(
 			array(
