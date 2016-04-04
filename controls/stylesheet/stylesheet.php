@@ -8,12 +8,6 @@
  */
 class StylesheetControl extends WebControl {
 	
-	var $m_file;
-	var $m_media = 'all';
-	var $m_type = 'text/css';
-	var $m_rel = 'stylesheet';
-	var $m_addToTop = false;
-	
 	protected function init() {
 		parent::init();
 		$this->setInitParam('wrapOutput', false);
@@ -27,11 +21,11 @@ class StylesheetControl extends WebControl {
 				    $this->shouldAddToTop()
 				    );
 	}
-	private function getFile() { return $this->m_file; }
-	private function getMedia() { return $this->m_media; }
-	private function getType() { return $this->m_type; }
-	private function getRel() { return $this->m_rel; }
-	private function shouldAddToTop() { $this->m_addToTop; }
+	private function getFile() { return $this->getParam('file'); }
+	private function getMedia() { return $this->getParam('media'); }
+	private function getType() { return $this->getParam('type'); }
+	private function getRel() { return $this->getParam('rel'); }
+	private function shouldAddToTop() { $this->getBoolParam('addToTop'); }
 	
 	public function getTranslatedFile() {
 		$file = ConfigurationManager::getValueFromString($this->getFile());

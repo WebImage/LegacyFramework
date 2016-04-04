@@ -32,18 +32,16 @@ class DataListControl extends DataWebControl {
 	 *
 	 */
 	var $m_processInternal = false;
-	var $m_groupItemTemplate;
-	var $m_itemsPerGroup = 1;
+
 	private $groupBy = array();
-	var $m_itemTemplates;
-	var $m_bodyContent;
-	var $m_summaryTemplate;
-	var $m_footerTemplate;
+	private $_itemTemplates;
 	
-	var $m_emptyItemTemplate;
 	var $m_emptyTemplate;
-	var $m_emptyTemplateClass;
-	var $m_emptyTemplateWrapClassId;
+	
+	protected function init() {
+		parent::init();
+		$this->setInitParam('itemsPerGroup', 1);
+	}
 	
 	function prepareContent() {
 
@@ -232,36 +230,36 @@ class DataListControl extends DataWebControl {
 	}
 	
 	function addItemTemplate($data_tag_template) {
-		$this->m_itemTemplates[] = $data_tag_template;
+		$this->_itemTemplates[] = $data_tag_template;
 	}
 
 	function getHeaderTemplate() { return $this->getParam('headerTemplate'); }
-	function getGroupItemTemplate() { if (!empty($this->m_groupItemTemplate)) return $this->m_groupItemTemplate; else return false; }
-	function getItemTemplates() { return $this->m_itemTemplates; }
-	function getBodyContent() { return $this->m_bodyContent; } 
-	function getSummaryTemplate() { return $this->m_summaryTemplate; }
-	function getFooterTemplate() { return $this->m_footerTemplate; }
-	function getItemsPerGroup() { return $this->m_itemsPerGroup; }
-	function getEmptyItemTemplate() { if (!empty($this->m_emptyItemTemplate)) return $this->m_emptyItemTemplate; else return false; }
-	function getEmptyTemplate() { if (!empty($this->m_emptyTemplate)) return $this->m_emptyTemplate; else return false; }
-	function getEmptyTemplateClass() { return $this->m_emptyTemplateClass; }
-	function getEmptyTemplateWrapClassId() { return $this->m_emptyTemplateWrapClassId; }
+	function getGroupItemTemplate() { return $this->getParam('groupItemTemplate'); }
+	function getItemTemplates() { return $this->_itemTemplates; }
+	function getBodyContent() { return $this->getParam('bodyContent'); } 
+	function getSummaryTemplate() { return $this->getParam('summaryTemplate'); }
+	function getFooterTemplate() { return $this->getParam('m_footerTemplate'); }
+	function getItemsPerGroup() { return $this->getParam('itemsPerGroup'); }
+	function getEmptyItemTemplate() { return $this->getParam('emptyItemTemplate'); }
+	function getEmptyTemplate() { return $this->getParam('emptyTemplate'); }
+	function getEmptyTemplateClass() { return $this->getParam('emptyTemplateClass'); }
+	function getEmptyTemplateWrapClassId() { return $this->getParam('emptyTemplateWrapClassId'); }
 	
 	function setHeaderTemplate($header_template) { $this->setParam('headerTemplate', $header_template); }
-	function setGroupItemTemplate($group_item_template) { $this->m_groupItemTemplate = $group_item_template; }
+	function setGroupItemTemplate($group_item_template) { $this->setParam('groupItemTemplate', $group_item_template); }
 	function setGroupItemTemplateByHtml($html_template) {
 		if ($group_template = ControlTemplateHelper::parseTemplate($html_template)) {
 			$this->setGroupItemTemplate($group_template);
 		}
 	}
-	function setBodyContent($item_template_content) { $this->m_bodyContent = $item_template_content; }
-	function setSummaryTemplate($summary_template) { $this->m_summaryTemplate = $summary_template; }
-	function setFooterTemplate($footer_template) { $this->m_footerTemplate = $footer_template; }
-	function setItemsPerGroup($items_per_group) { $this->m_itemsPerGroup = $items_per_group; }
-	function setEmptyItemTemplate($empty_item_template) { $this->m_emptyItemTemplate = $empty_item_template; }
-	function setEmptyTemplate($empty_template) { $this->m_emptyTemplate = $empty_template; }
-	function setEmptyTemplateClass($class) { $this->m_emptyTemplateClass = $class; }
-	function setEmptyTemplateWrapClassId($wrap_class_id) { $this->m_emptyTemplateWrapClassId = $wrap_class_id; }
+	function setBodyContent($item_template_content) { $this->setParam('bodyContent', $item_template_content); }
+	function setSummaryTemplate($summary_template) { $this->setParam('summaryTemplate', $summary_template); }
+	function setFooterTemplate($footer_template) { $this->setParam('footerTemplate', $footer_template); }
+	function setItemsPerGroup($items_per_group) { $this->setParam('itemsPerGroup', $items_per_group); }
+	function setEmptyItemTemplate($empty_item_template) { $this->setParam('emptyItemTemplate', $empty_item_template); }
+	function setEmptyTemplate($empty_template) { $this->setParam('emptyTemplate', $empty_template); }
+	function setEmptyTemplateClass($class) { $this->setParam('emptyTemplateClass', $class); }
+	function setEmptyTemplateWrapClassId($wrap_class_id) { $this->setParam('emptyTemplateWrapClassId', $wrap_class_id); }
 	/**
 	 * Groups item templates by specific fields - still working on this...
 	 */
