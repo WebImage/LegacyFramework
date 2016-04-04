@@ -32,17 +32,13 @@ class DataListControl extends DataWebControl {
 	 *
 	 */
 	var $m_processInternal = false;
-
 	private $groupBy = array();
-	private $_itemTemplates;
-	
-	var $m_emptyTemplate;
+	private $_itemTemplates = array();
 	
 	protected function init() {
 		parent::init();
 		$this->setInitParam('itemsPerGroup', 1);
 	}
-	
 	function prepareContent() {
 
 		if ($this->prepareInternal()) {
@@ -238,7 +234,7 @@ class DataListControl extends DataWebControl {
 	function getItemTemplates() { return $this->_itemTemplates; }
 	function getBodyContent() { return $this->getParam('bodyContent'); } 
 	function getSummaryTemplate() { return $this->getParam('summaryTemplate'); }
-	function getFooterTemplate() { return $this->getParam('m_footerTemplate'); }
+	function getFooterTemplate() { return $this->getParam('footerTemplate'); }
 	function getItemsPerGroup() { return $this->getParam('itemsPerGroup'); }
 	function getEmptyItemTemplate() { return $this->getParam('emptyItemTemplate'); }
 	function getEmptyTemplate() { return $this->getParam('emptyTemplate'); }
