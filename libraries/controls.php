@@ -297,7 +297,8 @@ class Control extends Object {
 					$var_name = 'm_'.$attr_name;
 					// If this field already exists then it is a legacy field.... trying to phase out all $m_[varname] variables
 					if (in_array($var_name, $object_vars)) {
-						array_push($legacy_fields, $var_name);
+						// Ignore m_innerCode which may still be used for compilation purposes
+						if ($var_name != 'm_innerCode') array_push($legacy_fields, $var_name);
 						$this->$var_name = $attr_val;
 					}
 				}
@@ -312,7 +313,8 @@ class Control extends Object {
 				
 				$var_name = 'm_' . $attr_name;
 				// If this field already exists then it is a legacy field.... trying to phase out all $m_[varname] variables
-				if (in_array($var_name, $object_vars)) {
+				// Ignore m_innerCode which may still be used for compilation purposes
+				if (in_array($var_name, $object_vars) && $var_name != 'm_innerCode') {
 					array_push($legacy_fields, $var_name);
 					$this->$var_name = $attr_val;
 				}

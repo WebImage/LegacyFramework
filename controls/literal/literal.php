@@ -1,8 +1,7 @@
 <?php
 
 class LiteralControl extends WebControl {
-	var $m_text;
-	var $m_for; // render as label instead of text, i.e. <label for="firstname">First Name</label>
+
 	var $m_processInternal = false;
 	
 	var $m_struct; // Only used if used in form - uses content from Page::getStruct
@@ -28,7 +27,6 @@ class LiteralControl extends WebControl {
 			
 	function getFor() { 
 		if ($for = $this->getParam('for')) return $for; # New
-		if (!empty($this->m_for)) return $this->m_for; # Legacy
 		return false; # New & Legacy
 	}
 	function getStruct() { if (!empty($this->m_struct)) return $this->m_struct; else return false; }
@@ -41,15 +39,12 @@ class LiteralControl extends WebControl {
 	}
 	function getText() {
 		if ($text = $this->getParam('text')) return $text; # New
-		return $this->m_text; # Legacy
 	}
 	function setFor($control_id) {
 		$this->setParam('for', $control_id); # New
-		$this->m_for = $control_id; # Legacy
 	}
 	function setText($text) {
 		$this->setParam('text', $text); # New
-		$this->m_text = $text; # Legacy
 	}
 	function setStruct($struct) { $this->m_struct = $struct; }
 	

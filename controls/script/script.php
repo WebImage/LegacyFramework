@@ -7,9 +7,6 @@
  * 04/26/2010	(Robert Jones) Created file
  */
 class ScriptControl extends WebControl {
-	var $m_file;
-	var $m_type = 'text/javascript';
-	var $m_addToTop = false;
 	
 	protected function init() {
 		parent::init();
@@ -22,9 +19,9 @@ class ScriptControl extends WebControl {
 				$this->shouldAddToTop()
 				);
 	}
-	private function getFile() { return $this->m_file; }
-	private function getType() { return $this->m_type; }
-	private function shouldAddToTop() { $this->m_addToTop; }
+	private function getFile() { return $this->getParam('file'); }
+	private function getType() { return $this->getParam('type'); }
+	private function shouldAddToTop() { $this->getBoolParam('addToTop'); }
 	
 	public function getTranslatedFile() {
 		$file = ConfigurationManager::getValueFromString($this->getFile());
