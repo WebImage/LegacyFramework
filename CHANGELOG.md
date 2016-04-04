@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.5.5]
 ### Fixed
 - Fixed cache manager and configuration issue
+- Fixed Dictionary::mergeDictionary issue
 
 ## [1.5.4]
 ### Changed
