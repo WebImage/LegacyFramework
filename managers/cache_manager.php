@@ -40,11 +40,15 @@ class CWI_MANAGER_CacheManager {
 			$_this->cacheProviders = new ProviderDictionary();
 			if ($config = ConfigurationManager::getConfig()) {
 				
-				if ($cache_providers = $config->getPath('cacheManager/providers/add')) {
-					foreach($cache_providers as $cache_provider) {
-						if ($class_file = PathManager::translate($cache_provider->getParam('classFile'))) {
-							$provider = new CWI_PROVIDER_ClassFileHolder($cache_provider->getParam('name'), $class_file, $cache_provider->getParam('className'));
-							$_this->cacheProviders->set($cache_provider->getParam('name'), $provider);
+				if (isset($config['cacheManager']['providers'])) {
+					
+					foreach($config['cacheManager']['providers'] as $key => $provider_config) {
+						if ($class_file = PathManager::translate($provider_config['classFile'])) {
+							
+							$provider = new CWI_PROVIDER_ClassFileHolder($provider_config['name'], $class_file, $provider_config['className']);
+							$provider_name = isset($provider_config['name']) ? $provider_config['name'] : $key;
+
+							$_this->cacheProviders->set($provider_name, $provider);
 						}
 					}
 				}

@@ -606,7 +606,7 @@ class ConfigurationManager {
 
 				if (is_numeric($sortorder)) {
 
-					if ($sortorder > $highest_sortorder) $highest_sortorder = $sortorder;
+					#CAUSING ERRORS: if ($sortorder > $highest_sortorder) $highest_sortorder = $sortorder;
 
 				} else {
 
