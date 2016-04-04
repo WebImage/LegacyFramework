@@ -11,6 +11,10 @@ class StylesheetControl extends WebControl {
 	protected function init() {
 		parent::init();
 		$this->setInitParam('wrapOutput', false);
+		$this->setInitParam('media', 'all');
+		$this->setInitParam('type', 'text/css');
+		$this->setInitParam('rel', 'stylesheet');
+		$this->setInitParam('addToTop', false);
 	}
 	public function prepareContent() {
 		Page::addStyleSheet(

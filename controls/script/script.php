@@ -11,6 +11,9 @@ class ScriptControl extends WebControl {
 	protected function init() {
 		parent::init();
 		$this->setInitParam('wrapOutput', false);
+		$this->setInitParam('file', '');
+		$this->setInitParam('type', 'text/javascript');
+		$this->setInitParam('addToTop', false);
 	}
 	public function prepareContent() {
 		Page::addScript(
