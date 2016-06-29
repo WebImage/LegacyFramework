@@ -362,11 +362,8 @@ FrameworkManager::markTime(__class__ . '->init() after configs');
 		if ($is_framework_caching_enabled && !$active_cached_configs) {
 			@file_put_contents($cache_config_global, serialize($config_global));
 		}
-		// Initialized Session Manager
+		// Make SessionManager available by default
 		FrameworkManager::loadBaseManager('session');
-		if ($mode == FRAMEWORK_MODE_WEB) {
-			SessionManager::init();
-		}
 		
 		// Initialize Message Manager
 		FrameworkManager::loadBaseManager('message');

@@ -2,34 +2,31 @@
 /**
  * 02/02/2010	(Robert Jones) Added $default_value parameter to SessionManager::get($name, $default_value)
  * 07/28/2010	(Robert Jones) Added getCookie(), setCookie(), delCookie()
+ * 06/28/2016	(Robert Jones) Modified how SessionManager is instantiated so that it is not actually initiated until required
  */
 class SessionManager {
 	var $vars;
-	
+	private $isInitialized = false;
 	public static function getInstance() {
-		/*
-		static $instances;
-		if (!isset($instances[0])) {
-			$instances[0] = new SessionManager();
+		$instance = Singleton::getInstance('SessionManager');
+
+		if (!$instance->isInitialized) {
+			#ini_set('display_errors', 1);error_reporting(E_ALL);
+			#throw new Exception('Session start');
+			session_start();
+			foreach($_SESSION as $key=>$val) {
+				$instance->vars[$key] = $val;
+			}
+			$instance->isInitialized = true;
 		}
-		return $instances[0];
-		*/
 		return Singleton::getInstance('SessionManager');
-	}
-	
-	public static function init() {
-		session_start();
-		$session_manager = SessionManager::getInstance();
-		foreach($_SESSION as $key=>$val) {
-			$session_manager->vars[$key] = $val;
-		}
 	}
 	
 	public static function set($name, $value, $serialize=false) {
 		// Prepare for $serialize later
-		$_SESSION[SessionManager::_appizeSessionVar($name)] = $value;
 		$session_manager = SessionManager::getInstance();
 		$session_manager->vars[SessionManager::_appizeSessionVar($name)] = $value;
+		$_SESSION[SessionManager::_appizeSessionVar($name)] = $value;
 	}
 	
 	public static function get($name, $default=false) {
@@ -43,15 +40,14 @@ class SessionManager {
 	}
 	
 	public static function del($name) {
-		unset($_SESSION[SessionManager::_appizeSessionVar($name)]);
 		$session_manager = SessionManager::getInstance();
+		unset($_SESSION[SessionManager::_appizeSessionVar($name)]);
 		unset($session_manager->vars[SessionManager::_appizeSessionVar($name)]);
 	}
 	
 	public static function destroy() {
-		session_start(); // Ensures that a session is in existence so that session_destroy does not throw an error
-		$_SESSION = array();
-		$session_manager = SessionManager::getInstance();
+		$session_manager = SessionManager::getInstance(); // Ensures that a session is in existence so that session_destroy does not throw an error
+		$_SESSION = array();		
 		$session_manager->vars = array();
 		session_destroy();
 	}
@@ -84,5 +80,3 @@ class SessionManager {
 		unset($_COOKIE[$name]);
 	}
 }
-
-?>

@@ -259,7 +259,7 @@ class ProfileManager {
 
 	public function setCurrentProfileByName($profile_name) {
 		if ($provider = $this->getProvider($profile_name, false)) {
-			SessionManager::set('current_profile', $profile_name);
+			# Removed to allow caching // SessionManager::set('current_profile', $profile_name);
 			SessionManager::setCookie('current_profile', $profile_name);
 			$this->setCurrentProfile($provider);
 		} else {
@@ -270,7 +270,7 @@ class ProfileManager {
 	}
 
 	public function resetCurrentProfile() {
-		SessionManager::del('current_profile');
+		# Removed to allow caching // SessionManager::del('current_profile');
 		SessionManager::delCookie('current_profile');
 	}
 
@@ -279,13 +279,14 @@ class ProfileManager {
 		$profile = null;
 
 		/**
-		 * Check session for current_profile
+		 * REMOVED TO ALLOW CACHING // Check session for current_profile
 		 */
-		if ($session_current_profile = SessionManager::get('current_profile')) {
+		/**
+		 if ($session_current_profile = SessionManager::get('current_profile')) {
 			$profile = $this->getProvider($session_current_profile);
 		}
 		if (null !== $profile) return $profile;
-
+		*/
 		/**
 		 * Check cookie for current profile
 		 */
