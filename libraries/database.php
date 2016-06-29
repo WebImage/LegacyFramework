@@ -6,6 +6,7 @@ DAOSearch()
 DAOSearchField($table_key, $field_key, $value=null);
 DAOSearchFieldWildcard($table_key, $field_key, $value, $wildcard=false);
 DAOSearchFieldRange($table_key, $field_key, $low_value=null, $high_value=null);
+06/29/2016	(Robert Jones) Changed ResultSet::getTotalResults() to return getCount() when $totalResults has not been manually specified
 01/20/2010	(Robert Jones) Added DAOSearchFieldNull and DAOSearchFieldNotNull
 08/03/2010	(Robert Jones) Added extra code to pagination result count to remove "ORDER BY" clauses from the query string
 08/03/2010	(Robert Jones) Added extra code to do special calculation on GROUP BY pagination calculations
@@ -22,7 +23,10 @@ class ResultSet extends Collection {
 	function setCurrentPage($current_page) { $this->currentPage = $current_page; }
 	function setResultsPerPage($results_per_page) { $this->resultsPerPage = $results_per_page; }
 		
-	function getTotalResults() { return $this->totalResults; }
+	function getTotalResults() {
+		if (null == $this->totalResults) return $this->getCount();
+		return $this->totalResults;
+	}
 	function getCurrentPage() { return $this->currentPage; }
 	function getResultsPerPage() { return $this->resultsPerPage; }
 	function getTotalPages() {
