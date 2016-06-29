@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.8]
+### Changed
+- Removed SessionManager initialization from FrameworkManager to allow caching
+- Changed ResultSet::getTotalResults() to return getCount() when $totalResults has not been manually specified
+
 ## [1.5.7]
 ### Fixed
 - Fixed DataListControl template parameters
