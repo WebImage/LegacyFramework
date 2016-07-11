@@ -118,31 +118,13 @@ class DatabaseRequestHandler extends AbstractRequestHandler {
 		$control_manager->initialize();
 			
 		ob_start();
-		/*
+	
 		echo eval(" ?>" . $control_manager->render() . "<?php ");
-		*/
-		echo $control_manager->render();
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;
-		/*
-		$time = FrameworkManager::getTime();
 		
-		ob_start();
-		eval( Page::getRenderCode() );
-		$output = ob_get_contents();
-		ob_clean();
-		$output = eval(" ?>" . $output . "<?php ");
 		$output = ob_get_contents();
 		ob_end_clean();
 		return $output;
 		
-		DebugManager::addMessage('after render  = '. (FrameworkManager::getTime()-$time));
-		$time = FrameworkManager::getTime();
-		return $output;
-
-		return 'Database';
-		*/
 	}
 	function getPageId() {
 		if (is_object($this->pageStruct)) return $this->pageStruct->id; 
