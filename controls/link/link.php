@@ -4,11 +4,14 @@ FrameworkManager::loadControl('html');
 
 class LinkControl extends WebControl {
 	const PARAM_HREF = 'href';
+	const PARAM_ONCLICK = 'onclick';
+	
 	protected function init() {
 
 		parent::init();
 
 		$this->addPassThru(self::PARAM_HREF);
+		$this->addPassThru(self::PARAM_ONCLICK);
 
 		$this->setInitParam('wrapOutput', '<a%s>%s</a>');
 	}
