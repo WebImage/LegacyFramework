@@ -10,7 +10,7 @@
 		<field name="enable" type="tinyint" required="true" default="1" />
 		<field name="failed_login_attempts" />
 		<field name="id" />
-		<field name="last_activity" type="datetime" />
+		<field name="last_activity" type="datetime" default="1000-01-01 00:00:00" />
 		<field name="last_login" type="datetime" />
 		<field name="last_password_changed" type="datetime" />
 		<field name="login_key" type="varchar" length="50" required="true" default="" />
