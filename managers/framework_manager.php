@@ -246,7 +246,7 @@ class FrameworkManager {
 				'general' => array()
 			)
 		));
-
+		$config['settings']['general']['FRAMEWORK_MODE'] = $mode;
 		$config['settings']['general']['DOMAIN'] = $domain;
 		$config['settings']['general']['DIR_FS_FRAMEWORK'] = $dir_fs_framework;
 		$config['settings']['general']['DIR_FS_FRAMEWORK_BASE'] = DIR_FS_FRAMEWORK_BASE;

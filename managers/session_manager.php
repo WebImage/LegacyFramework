@@ -13,20 +13,29 @@ class SessionManager {
 		if (!$instance->isInitialized) {
 			#ini_set('display_errors', 1);error_reporting(E_ALL);
 			#throw new Exception('Session start');
-			session_start();
-			foreach($_SESSION as $key=>$val) {
-				$instance->vars[$key] = $val;
+			if (static::isSessionEnabled()) {
+				session_start();
+				foreach ($_SESSION as $key => $val) {
+					$instance->vars[$key] = $val;
+				}
 			}
 			$instance->isInitialized = true;
 		}
 		return Singleton::getInstance('SessionManager');
 	}
 	
+	private static function isSessionEnabled() {
+		return (ConfigurationManager::get('FRAMEWORK_MODE') != FRAMEWORK_MODE_CLI);
+	}
+	
 	public static function set($name, $value, $serialize=false) {
 		// Prepare for $serialize later
 		$session_manager = SessionManager::getInstance();
 		$session_manager->vars[SessionManager::_appizeSessionVar($name)] = $value;
-		$_SESSION[SessionManager::_appizeSessionVar($name)] = $value;
+		
+		if (static::isSessionEnabled()) {
+			$_SESSION[SessionManager::_appizeSessionVar($name)] = $value;
+		}
 	}
 	
 	public static function get($name, $default=false) {
@@ -41,19 +50,26 @@ class SessionManager {
 	
 	public static function del($name) {
 		$session_manager = SessionManager::getInstance();
-		unset($_SESSION[SessionManager::_appizeSessionVar($name)]);
+		
+		if (static::isSessionEnabled()) {
+			unset($_SESSION[SessionManager::_appizeSessionVar($name)]);
+		}
+		
 		unset($session_manager->vars[SessionManager::_appizeSessionVar($name)]);
 	}
 	
 	public static function destroy() {
 		$session_manager = SessionManager::getInstance(); // Ensures that a session is in existence so that session_destroy does not throw an error
-		$_SESSION = array();		
 		$session_manager->vars = array();
-		session_destroy();
+		
+		if (static::isSessionEnabled()) {
+			$_SESSION = array();
+			session_destroy();
+		}
 	}
 	
 	public static function getId() {
-		return session_id();
+		return (static::isSessionEnabled()) ? session_id() : 0;
 	}
 	
 	private static function _appizeSessionVar($name) {
