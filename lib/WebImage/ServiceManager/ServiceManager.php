@@ -40,7 +40,15 @@ class ServiceManager implements IServiceManager {
 			// Check if this instance has already been established
 		} else if (isset($this->instances[ $name ]) && $use_shared) {
 
-			$instance = $this->instances[ $name ];
+            $instance = $this->instances[$name];
+
+        } else if (isset($this->invokableClasses[ $name ])) {
+
+            $invokable = $this->invokableClasses[ $name ];
+
+            if (class_exists($invokable)) {
+                $instance = new $invokable;
+            }
 
 		} else if (isset($this->factories[ $name ])) {
 
@@ -122,6 +130,14 @@ class ServiceManager implements IServiceManager {
 
 		return $this;
 	}
+
+	public function setInvokable($name, $class, $shared = null) {
+
+        $this->invokableClasses[$name] = $class;
+        $this->shared[$name] = (bool) $shared;
+
+        return $this;
+    }
 
 	public function setShared($name, $isShared) {
 		$this->shared[$name] = $isShared;
