@@ -65,6 +65,11 @@ class ServiceManager implements IServiceManager {
 				$instance = $this->createServiceViaCallback($factory, $name);
 			}
 
+		} else if (isset($this->invokableClasses[ $name ])) {
+
+		    $class = $this->invokableClasses[ $name ];
+			$instance = new $class;
+
 		}
 
 		if (null === $instance) {
@@ -126,18 +131,24 @@ class ServiceManager implements IServiceManager {
 		}
 
 		$this->factories[$name] = $factory;
-		$this->shared[$name] = $shared;
+		$this->shared[$name] = (bool) $shared;
 
 		return $this;
 	}
 
+    /**
+     * @param $name
+     * @param $class
+     * @param bool $shared Whether the invokable is shared
+     * @return $this
+     */
 	public function setInvokable($name, $class, $shared = null) {
 
-        $this->invokableClasses[$name] = $class;
-        $this->shared[$name] = (bool) $shared;
+		$this->invokableClasses[$name] = $class;
+		$this->shared[$name] = (bool) $shared;
 
-        return $this;
-    }
+		return $this;
+	}
 
 	public function setShared($name, $isShared) {
 		$this->shared[$name] = $isShared;
@@ -152,6 +163,7 @@ class ServiceManager implements IServiceManager {
 	 */
 	public function setService($name, $service) {
 		$this->instances[$name] = $service;
+
 		return $this;
 	}
 }
