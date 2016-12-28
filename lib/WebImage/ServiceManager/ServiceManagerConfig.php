@@ -37,9 +37,11 @@ class ServiceManagerConfig implements IServiceManagerConfig {
 	public function getAbstractFactories() {
         return (isset($this->config['abstract_factories'])) ? $this->config['abstract_factories'] : array();
 	}
+	*/
 	public function getInvokables() {
         return (isset($this->config['invokables'])) ? $this->config['invokables'] : array();
 	}
+	/*
 	public function getServices() {
         return (isset($this->config['services'])) ? $this->config['services'] : array();
 	}
@@ -71,6 +73,11 @@ class ServiceManagerConfig implements IServiceManagerConfig {
 		foreach($this->getFactories() as $name => $factory) {
 			$service_manager->setFactory($name, $factory);
 		}
+
+		// Setup invokables
+        foreach($this->getInvokables() as $name => $class) {
+            $service_manager->setInvokable($name, $class);
+        }
 
 		// Setup aliases
 		foreach($this->getAliases() as $alias => $name) {
