@@ -120,10 +120,10 @@ class AdminRequestHandler extends AbstractRequestHandler {
 			
 			#$this->getPageRequest()->getPageResponse()->addScript( ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_JS') . 'jquery/jquery-1.4.2.min.js' );
 			#$this->getPageRequest()->getPageResponse()->addScript( 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' ); # Replaced 2012-10-16
-			$this->getPageRequest()->getPageResponse()->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js'); #Added 2012-10-16
+			$this->getPageRequest()->getPageResponse()->addScript('//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js'); #Added 2012-10-16
 			#$this->getPageRequest()->getPageResponse()->addScript( ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_JS') . 'jquery/jquery-ui-1.8.1.custom.min.js' );
 			#$this->getPageRequest()->getPageResponse()->addScript( ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_JS') . 'jquery/jquery-ui-1.8.4.custom.min.js' );
-			$this->getPageRequest()->getPageResponse()->addScript('http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js');
+			$this->getPageRequest()->getPageResponse()->addScript('//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js');
 			
 			$this->getPageRequest()->getPageResponse()->addScript( ConfigurationManager::get('DIR_WS_GASSETS_JS') . 'core.js' );
 			$this->getPageRequest()->getPageResponse()->addScript( ConfigurationManager::get('DIR_WS_ADMIN_ASSETS_JS') . 'global.js' );
