@@ -18,7 +18,7 @@ INSERT INTO permissions (permission) VALUES('Admin.System.Memberships.Roles');
 INSERT INTO permissions (permission) VALUES('Admin.System.Memberships.AssignRoles');
 INSERT INTO permissions (permission) VALUES('Admin.System.Memberships.Roles.Permissions');
 	-->
-	<siteMapNode url="%DIR_WS_ADMIN%pages/" title="Pages">
+	<siteMapNode title="Pages">
 		<siteMapNode url="%DIR_WS_ADMIN%pages" title="Page Management">
 			<siteMapNode url="%DIR_WS_ADMIN%pages/" title="Page List" description="Hierarchical list of pages" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_sitemap.gif" />
 			<siteMapNode url="%DIR_WS_ADMIN%content/" title="Edit Live Site" description="View the live site to edit pages directly" icon="%DIR_WS_ADMIN_ASSETS_IMG%icons/i_pagelightning.gif" />
