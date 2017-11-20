@@ -5,99 +5,95 @@
 FrameworkManager::loadLibrary('admin');
 
 class AdminNavControl extends WebControl {
-	function _userInRole($roles_string) {
-		if (empty($roles_string)) return true;
-		else {
-			$roles = explode(',', $roles_string);
-			foreach($roles as $role) {
-				$role = trim($role);
-				
-				if (Roles::isUserInRole($role)) {
-					return true;
+	
+	function prepareContent() {
+		
+		$paths = array_reverse(PathManager::getPaths());
+		
+		FrameworkManager::loadLibrary('xml.compile');
+		
+		$menu = new AdminMenu();
+		foreach($paths as $path) {
+			$admin_nav = $path . 'config/adminnav.xml';
+			if (file_exists($admin_nav)) {
+				$nav_contents = file_get_contents($admin_nav);
+				try {
+					$nav_xml = CWI_XML_Compile::compile($nav_contents);
+					$menu->importFromXml($nav_xml);
+				} catch (CWI_XML_CompileException $e) {
+					echo 'Compile Exception: ' . $e->getMessage();exit;
+				} catch (Exception $e) {
+					echo 'Some other error was found: ' . $e->getMessage();exit;
 				}
+				
 			}
 		}
-		// If we have gotten this far, the user does not have permission
-		return false;
-	}
-	function _userHasPermission($permission_string) {
-		if (empty($permission_string)) return true;
-		else {
-			$permissions = explode(',', $permission_string);
-			
-			foreach($permissions as $permission) {
-				$permission = trim($permission);
-				
-				if (Roles::canRead($permission)) {
-					return true;
-				}
-			}
-		}
-		// If we have gotten this far, the user does not have permission
-		return false;
+		
+		$this->setRenderedContent( $this->generateSectionHtml($menu) );
 	}
 	
-	private function generateSectionHtml($nav, $level=1) {
+	private function generateSectionHtml(AdminMenu $menu, $parent=null, $level = 1) {
 		$output = '';
 		
-		foreach($nav as $key=>$val) {
-
-			if (substr($key, 0, 1) != '_' && $this->_userInRole($val['_roles']) && $this->_userHasPermission($val['_permissions'])) {
+		$items = $menu->getItems($parent);
+		
+		/** @var AdminMenuItem $item */
+		foreach($items as $item) {
+			
+			if ($this->userCanView($item)) {
 				
-				$children_html = $this->generateSectionHtml($val, $level+1);
+				$child_html = $this->generateSectionHtml($menu, $item->getId(), $level+1);
 				
-				$class = '';
-				if ($level == 1) $class = 'dropdown';
-				else if ($level == 2) $class = 'nav-header';
+				$menu_class_html = $this->getMenuClassHtml($level);
 				
-				if (!empty($class)) $class = ' class="' . $class . '"';
-				
-				$output .= sprintf('<li%s>', $class);
-				
-				$title = $key;
+				$output .= sprintf('<li%s>', $menu_class_html);
 				
 				$link_attr = array('href'=>'#');
 				
-				if (!empty($val['_url'])) {
+				if (strlen($item->getUrl()) > 0) {
 					// Link
-					if (isset($val['_new_window']) && $val['_new_window']) {
-						
-						$link_attr['onclick'] = "window.open('" . $val['_url'] . "', '', '" . $val['_new_window']. "');return false;";
-					
+					if ($item->shouldOpenNewWindow()) {
+						$window_attrs = $item->getNewWindowAttributes();
+						$window_attrs = str_replace("'", "\'", $window_attrs);
+						$link_attr['onclick'] = "window.open('" . $item->getUrl() . "', '', '" . $window_attrs . "');return false;";
 					} else {
-						
-						$link_attr['href'] = $val['_url'];
-
+						$link_attr['href'] = $item->getUrl();
 					}
-					
 				}
 				
 				$caret = '';
-				if ($level == 1 && !empty($children_html)) {
+				
+				if ($level == 1) {
 					
-					#if ($link_attr['href'] != '#') {
+					if (empty($child_html)) {
+						
+						if (count($link_attr) == 1 && isset($link_attr['href']) && ($link_attr['href'] == '#' || empty(trim($link_attr['href'])))) {
+							continue;
+						}
+					
+					} else if ( ! empty($child_html)) {
+						
 						$link_attr['class'] = 'dropdown-toggle';
 						$link_attr['data-toggle'] = 'dropdown';
-					#} 
-					
-					#if (!empty($children_html)) 
-					$caret = ' <b class="caret"></b>';
+						
+						$caret = ' <b class="caret"></b>';
+					}
 				}
 				
-				$link_format = '<a';
-				foreach($link_attr as $attr_key=>$attr_val) {
-					$link_format .= ' ' . $attr_key . '="' . $attr_val . '"';
-				}
-				
-				$link_format .= '>';
-				$link_format .= '%s';
-				$link_format .= $caret;
-				$link_format .= '</a>';
-				
-				if ($level == 2) {
-					$output .= $title;
+				if ($level == 2) { // Level 2 is just a section header
+					$output .= $item->getTitle();
 				} else {
-					$output .= sprintf($link_format, $title);
+					$link = '<a';
+					foreach($link_attr as $attr_key=>$attr_val) {
+						$link .= ' ' . $attr_key . '="' . $attr_val . '"';
+					}
+					
+					$link .= '>';
+					$link .= htmlentities($item->getTitle());
+					$link .= $caret;
+					$link .= '</a>';
+					
+					$output .= $link;
 				}
 				
 				$end_tag = '</li>' . PHP_EOL;
@@ -108,11 +104,8 @@ class AdminNavControl extends WebControl {
 					$output_format = '%s%s';
 				}
 				
-				$output .= sprintf($output_format, $children_html, $end_tag);
-				
-				
+				$output .= sprintf($output_format, $child_html, $end_tag);
 			}
-
 		}
 		
 		$class = '';
@@ -126,35 +119,44 @@ class AdminNavControl extends WebControl {
 		return $output;
 	}
 	
-	function prepareContent() {
-		
-		$paths = array_reverse(PathManager::getPaths());
-				
-		FrameworkManager::loadLibrary('xml.compile');
-		$nav = array();
-		foreach($paths as $path) {
-			$admin_nav = $path . 'config/adminnav.xml';
-			if (file_exists($admin_nav)) {
-				$nav_contents = file_get_contents($admin_nav);
-				try {
-					$nav_xml = CWI_XML_Compile::compile($nav_contents);
-					adminNav($nav, $nav_xml);
-				} catch (CWI_XML_CompileException $e) {
-					echo 'Compile Exception: ' . $e->getMessage();exit;
-				} catch (Exception $e) {
-					echo 'Some other error was found: ' . $e->getMessage();exit;
-				}
-				
-			}
-		}
-		
-		if (is_array($nav)) {
-			
-			$this->setRenderedContent( $this->generateSectionHtml($nav) );
-			
-		}
-	
+	private function userCanView(AdminMenuItem $item) {
+		return ($item->isEnabled() && $this->userHasRequiredRole($item) && $this->userHasRequiredPermission($item));
 	}
-}
+	
+	private function userHasRequiredRole(AdminMenuItem $item) {
+		
+		$roles = $item->getRoles();
+		if (count($roles) == 0) return true;
 
-?>
+		foreach($roles as $role) {
+			if (Roles::isUserInRole($role)) return true;
+		}
+		
+		// If we have gotten this far, the user does not have role
+		return false;
+	}
+	
+	private function userHasRequiredPermission(AdminMenuItem $item) {
+		
+		$permissions = $item->getPermissions();
+		if (count($permissions) == 0) return true;
+		
+		foreach($permissions as $permission) {
+			if (Roles::canRead($permission)) return true;
+		}
+		
+		// If we have gotten this far, the user does not have permission
+		return false;
+	}
+	
+	private function getMenuClassHtml($level) {
+		$classes = array();
+		if ($level == 1) $classes[] = 'dropdown';
+		else if ($level == 2) $classes[] = 'nav-header';
+		
+		$class = (count($classes) > 0) ? ' class="' . implode(' ', $classes) . '"' : '';
+		
+		return $class;
+	}
+	
+}

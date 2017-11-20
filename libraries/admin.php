@@ -2,103 +2,331 @@
 /**
  * CHANGELOG
  * 10/11/2010	(Robert Jones) Added support for permissions
+ * 11/17/2017	(Robert Jones) Converted functions to class
  */
-function _adminNavCheckValue($value) {
 
-	if (preg_match_all('#%(.+?)%#', $value, $matches)) {
+class AdminMenu {
+	const ROOT = '';
+	const NODE_SITEMAPNODE = 'siteMapNode';
+	const NODE_RESETCHILDREN= 'resetChildren';
+	const PARAM_RESET = 'reset';
+	
+	/**
+	 * @var
+	 */
+	private $hierarchy = array();
+	
+	/**
+	 * Get items by their parent ID
+	 * @param String $parent
+	 * @return mixe
+	 */
+	public function getItems($parent=null) {
+		if (null === $parent) $parent = self::ROOT;
 		
-		for ($i=0; $i < count($matches[0]); $i++) {
-			if ($configuration_value = ConfigurationManager::get($matches[1][$i])) {
-				$value = str_replace($matches[0][$i], $configuration_value, $value);
+		if (isset($this->hierarchy[$parent])) return $this->hierarchy[$parent];
+	}
+	/**
+	 * @param $xml
+	 */
+	public function importFromXml(CWI_XML_Traversal $site_map) {
+		
+		/** @var CWI_XML_Traversal $root */
+		$root = $site_map->getPathSingle('/siteMap');
+		
+		if ($root) $this->addChildren($root);
+	}
+	
+	private function addChildren(CWI_XML_Traversal $node, $parent_key=null, $level = 0) {
+		
+		$sections = $node->getChildren();
+		if (null === $parent_key) $parent_key = self::ROOT;
+		
+		if (!isset($this->hierarchy[$parent_key])) $this->resetHierarchy($parent_key);
+		
+		/** @var CWI_XML_Traversal $section */
+		foreach($sections as $section)  {
+		
+			if ($section->getTagName() == self::NODE_SITEMAPNODE) {
+			
+				$section_node = $this->createSectionNode($section, $parent_key, $this->hierarchy[$parent_key]);
+				
+				if ($this->hasResetParam($section)) {
+					$this->resetHierarchy($section_node->getId());
+				}
+				
+				$this->hierarchy[$parent_key][$section_node->getId()] = $section_node;
+				
+				$this->addChildren($section, $section_node->getId());
+			
+			} else if ($section->getTagName() == self::NODE_RESETCHILDREN) {
+				// Reset the parent key
+				$this->resetHierarchy($parent_key);
 			}
 		}
 	}
 	
-	return $value;
-}
-function get_admin_nav_struct() {
-	return array(
-		'_title'	=> '',
-		'_url'		=> '',
-		'_description'	=> '',
-		'_image'	=> '',
-		'_roles'	=> '',
-		'_permissions'	=> '',
-		'_new_window'	=> false
-	);
-}
-
-function adminNav(&$nav, $site_map) {
-	if ($sections = $site_map->getPath('/siteMap/siteMapNode')) {
-		foreach($sections as $section) {
+	private function hasResetParam(CWI_XML_Traversal $node) {
+		$reset = $node->getParam(self::PARAM_RESET, '');
+		$reset = strtolower($reset);
 		
-			$section_title		= $section->getParam('title');
-			$section_url		= $section->getParam('url');
-			$section_roles		= $section->getParam('roles');
-			$section_permissions	= $section->getParam('permissions');
-			
-			if (!isset($nav[$section_title])) {
-				$nav[$section_title] = get_admin_nav_struct();
+		return ($reset == 'true');
+	}
+	
+	private function createSectionNode(CWI_XML_Traversal $xml, $parent_key, array $sibling_nodes) {
+		
+		$id = $this->getIdForNode($xml, $parent_key);
+		$original = isset($sibling_nodes[$id]) ? $sibling_nodes[$id] : new AdminMenuItem();
+		
+		$title		= $this->getXmlStringParamValue($xml, 'title', $original->getTitle());
+		$url		= $this->getXmlStringParamValue($xml, 'url', $original->getUrl());
+		$description	= $this->getXmlStringParamValue($xml, 'description', $original->getDescription());
+		$image		= $this->getXmlStringParamValue($xml, 'image', $original->getImage());
+		$roles		= $this->getXmlArrayParamValue($xml, 'roles', $original->getRoles());
+		$permissions	= $this->getXmlArrayParamValue($xml, 'permissions', $original->getPermissions());
+		$new_window	= $this->getXmlStringParamValue($xml, 'newWindow', $original->getNewWindowAttributes());
+		$is_enabled	= $this->getXmlBooleanParamValue($xml, 'enable', true, $original->isEnabled());
+		$sortorder	= $this->getXmlIntegerParamValue($xml, 'sortorder', $original->getSortorder());
+		
+		return new AdminMenuItem($id, $title, $url, $description, $image, $roles, $permissions, $new_window, $is_enabled, $sortorder);
+	}
+	
+	private function getIdForNode(CWI_XML_Traversal $xml, $parent_key) {
+		
+		$id = $this->getXmlStringParamValue($xml, 'id'); // See if an ID is already specified
+		
+		if (empty($id)) {
+			$title = $this->getXmlStringParamValue($xml, 'title');
+			$id = sprintf('%s::%s', $parent_key, $title);
+		}
+		
+		return $id;
+	}
+	
+	/**
+	 * Retrieves an XML parameter as a string and processes any configuration values in the format %CONFIG_KEY%
+	 * @param CWI_XML_Traversal $node
+	 * @param $param_name
+	 * @return mixed
+	 */
+	private function getXmlStringParamValue(CWI_XML_Traversal $node, $param_name, $default=null) {
+		$value = $default;
+		
+		if ($node->getParam($param_name)) $value = $this->replaceConfigValues($node->getParam($param_name));
+		
+		return $value;
+	}
+	
+	/**
+	 * Retrieves an XML parameter as a list an return an array
+	 * @param CWI_XML_Traversal $node
+	 * @param $param_name
+	 * @return array
+	 */
+	private function getXmlArrayParamValue(CWI_XML_Traversal $node, $param_name, $default=null) {
+		$values = array();
+		
+		$value = $node->getParam($param_name);
+		
+		if ($value && !empty($value)) {
+			$split = preg_split('/, +/', $value);
+			foreach($split as $val) {
+				$values[] = $this->replaceConfigValues($val);
 			}
-			
-			if ($section_url) $nav[$section_title]['_url']			= _adminNavCheckValue($section_url);
-			if ($section_title) $nav[$section_title]['_title']		= _adminNavCheckValue($section_title);
-			if ($section_roles) $nav[$section_title]['_roles']		= _adminNavCheckValue($section_roles);
-			if ($section_permissions) $nav[$section_title]['_permissions']	= _adminNavCheckValue($section_permissions);
-			
-			if ($groups = $section->getPath('siteMapNode')) {
-			
-				foreach($groups as $group) {
-				
-					$group_title = $group->getParam('title');
-					$group_url = $group->getParam('url');
-					$group_roles = $group->getParam('roles');
-					$group_permissions = $group->getParam('permissions');
-					
-					if (!isset($nav[$section_title][$group_title])) {
-						$nav[$section_title][$group_title] = get_admin_nav_struct();
-					}
-					
-					if ($group_title)	$nav[$section_title][$group_title]['_title']		= _adminNavCheckValue($group_title);
-					if ($group_url)		$nav[$section_title][$group_title]['_url']		= _adminNavCheckValue($group_url);
-					if ($group_roles)	$nav[$section_title][$group_title]['_roles']		= _adminNavCheckValue($group_roles);
-					if ($group_permissions)	$nav[$section_title][$group_title]['_permissions']	= _adminNavCheckValue($group_permissions);
-					
-					
-					if ($buttons = $group->getPath('siteMapNode')) {
-					
-						foreach($buttons as $button) {
-						
-							$button_title		= $button->getParam('title');
-							$button_url		= $button->getParam('url');
-							$button_description	= $button->getParam('description');
-							$button_image		= $button->getParam('icon');
-							$button_roles		= $button->getParam('roles');
-							$button_permissions	= $button->getParam('permissions');
-							$new_window		= $button->getparam('newWindow');
-							
-							if (!isset($nav[$section_title][$group_title][$button_title])) {
-								$nav[$section_title][$group_title][$button_title] = get_admin_nav_struct();
-							}
-
-							if ($button_title)		$nav[$section_title][$group_title][$button_title]['_title']		= _adminNavCheckValue($button_title);
-							if ($button_url)		$nav[$section_title][$group_title][$button_title]['_url']		= _adminNavCheckValue($button_url);
-							if ($button_description)	$nav[$section_title][$group_title][$button_title]['_description']	= _adminNavCheckValue($button_description);
-							if ($button_image)		$nav[$section_title][$group_title][$button_title]['_image']		= _adminNavCheckValue($button_image);
-							if ($button_roles)		$nav[$section_title][$group_title][$button_title]['_roles']		= _adminNavCheckValue($button_roles);
-							if ($button_permissions)	$nav[$section_title][$group_title][$button_title]['_permissions']	= _adminNavCheckValue($button_permissions);
-							
-							if ($new_window) {
-								if ($new_window != 'false') {
-									$nav[$section_title][$group_title][$button_title]['_new_window'] = $new_window;
-								}
-							}
-						}
-					}
+		}
+		
+		return count($values) > 0 ? $values : $default;
+	}
+	
+	/**
+	 * Retrieves an XML parameter as a boolean
+	 * @param CWI_XML_Traversal $node
+	 * @param $param_name
+	 * @return array
+	 */
+	private function getXmlBooleanParamValue(CWI_XML_Traversal $node, $param_name, $fallback_value, $default=null) {
+		if (null !== $fallback_value && !is_bool($fallback_value)) throw new Exception('Unsupported fallback value.  Must be boolean');
+		
+		$value = $node->getParam($param_name, null);
+		
+		if (null === $value) return $default;
+		else {
+			$value = strtolower($value);
+			if ($value == 'true') return true;
+			else if ($value == 'false') return false;
+		}
+		
+		return $fallback_value;
+	}
+	
+	/**
+	 * Retrieves an XML parameter as an integer
+	 * @param CWI_XML_Traversal $node
+	 * @param $param_name
+	 * @return array
+	 */
+	private function getXmlIntegerParamValue(CWI_XML_Traversal $node, $param_name, $default_value=null) {
+		$value = $node->getParam($param_name, null);
+		if (null === $value) return $default_value;
+		
+		return intval($value);
+	}
+	
+	private function replaceConfigValues($value) {
+		
+		if (preg_match_all('#%(.+?)%#', $value, $matches)) {
+			for ($i=0; $i < count($matches[0]); $i++) {
+				if ($configuration_value = ConfigurationManager::get($matches[1][$i])) {
+					$value = str_replace($matches[0][$i], $configuration_value, $value);
 				}
 			}
 		}
+		
+		return $value;
 	}
+	
+	/**
+	 * Reset a hiearchy back to an empty array
+	 * @param $parent_key
+	 */
+	private function resetHierarchy($parent_key) {
+		$this->hierarchy[$parent_key] = array();
+	}
+	
+	/**
+	 * Checks if the XML node has a param="true" node
+	 * @param CWI_XML_Traversal $node
+	 * @return bool
+	 */
+	
 }
 
-?>
+class AdminMenuItem {
+	private $id;
+	private $title;
+	private $url;
+	private $description;
+	private $image;
+	private $roles = array();
+	private $permissions = array();
+	private $newWindowAttributes = '';
+	private $enable = true;
+	private $sortorder;
+	
+	/**
+	 * AdminMenuItem constructor.
+	 * @param String $id
+	 * @param String $title
+	 * @param String $url
+	 * @param String $description
+	 * @param String $image
+	 * @param array $roles
+	 * @param array $permissions
+	 * @param bool $newWindowAttributes
+	 * @param bool $enable
+	 * @param int $sortorder
+	 */
+	public function __construct($id, $title, $url, $description, $image, $roles, $permissions, $new_window_attrs, $enable, $sortorder)
+	{
+		$this->id = $id;
+		$this->title = $title;
+		$this->url = $url;
+		$this->description = $description;
+		$this->image = $image;
+		$this->roles = $roles;
+		$this->permissions = $permissions;
+		$this->newWindowAttributes = $new_window_attrs;
+		$this->sortorder = $sortorder;
+		
+		if (is_bool($enable)) $this->enable = $enable;
+	}
+	
+	/**
+	 * @return String
+	 */
+	public function getId()
+	{
+		return $this->id;
+	}
+	
+	/**
+	 * @return String
+	 */
+	public function getTitle()
+	{
+		return $this->title;
+	}
+	
+	/**
+	 * @return String
+	 */
+	public function getUrl()
+	{
+		return $this->url;
+	}
+	
+	/**
+	 * @return String
+	 */
+	public function getDescription()
+	{
+		return $this->description;
+	}
+	
+	/**
+	 * @return String
+	 */
+	public function getImage()
+	{
+		return $this->image;
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function getRoles()
+	{
+		return $this->roles;
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function getPermissions()
+	{
+		return $this->permissions;
+	}
+	
+	/**
+	 * @return bool
+	 */
+	public function getNewWindowAttributes()
+	{
+		return $this->newWindowAttributes;
+	}
+	
+	/**
+	 * @return bool
+	 */
+	public function shouldOpenNewWindow()
+	{
+		return !empty($this->newWindowAttributes);
+	}
+	
+	/**
+	 * @return bool
+	 */
+	public function isEnabled()
+	{
+		return $this->enable;
+	}
+	
+	/**
+	 * @return int
+	 */
+	public function getSortorder()
+	{
+		return $this->sortorder;
+	}
+	
+}
