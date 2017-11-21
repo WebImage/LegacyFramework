@@ -6,15 +6,17 @@
  */
 
 class AdminMenu {
-	const ROOT = '';
+	const ROOT = '_';
 	const NODE_SITEMAPNODE = 'siteMapNode';
 	const NODE_RESETCHILDREN= 'resetChildren';
 	const PARAM_RESET = 'reset';
+	const SORTORDER_RESET = 'reset';
 	
 	/**
 	 * @var
 	 */
 	private $hierarchy = array();
+	private $sortorders = array();
 	
 	/**
 	 * Get items by their parent ID
@@ -64,6 +66,14 @@ class AdminMenu {
 				$this->resetHierarchy($parent_key);
 			}
 		}
+		
+		uasort($this->hierarchy[$parent_key], array($this, 'compareChildren'));
+	}
+	
+	private function compareChildren(AdminMenuItem $a, AdminMenuItem $b) {
+		if ($a->getSortorder() == $b->getSortorder()) return 0;
+		
+		return $a->getSortorder() < $b->getSortorder() ? -1 : 1;
 	}
 	
 	private function hasResetParam(CWI_XML_Traversal $node) {
@@ -86,7 +96,22 @@ class AdminMenu {
 		$permissions	= $this->getXmlArrayParamValue($xml, 'permissions', $original->getPermissions());
 		$new_window	= $this->getXmlStringParamValue($xml, 'newWindow', $original->getNewWindowAttributes());
 		$is_enabled	= $this->getXmlBooleanParamValue($xml, 'enable', true, $original->isEnabled());
-		$sortorder	= $this->getXmlIntegerParamValue($xml, 'sortorder', $original->getSortorder());
+		
+		$sortorder	= $this->getXmlStringParamValue($xml, 'sortorder');
+		
+		/**
+		 * If $sortorder is not set then it will be automatically assigned
+		 * If $sortorder == 'reset' then re-calculate the sort position to appear next after the previous menu item under the same parent
+		 */
+		if (null === $sortorder || $sortorder == self::SORTORDER_RESET) {
+			if ($sortorder == self::SORTORDER_RESET || null === $original->getSortorder()) {
+				$sortorder = $this->getNextSortorder($parent_key);
+			} else {
+				$sortorder = $original->getSortorder();
+			}
+		}
+		
+		$sortorder = intval($sortorder);
 		
 		return new AdminMenuItem($id, $title, $url, $description, $image, $roles, $permissions, $new_window, $is_enabled, $sortorder);
 	}
@@ -129,7 +154,7 @@ class AdminMenu {
 		$value = $node->getParam($param_name);
 		
 		if ($value && !empty($value)) {
-			$split = preg_split('/, +/', $value);
+			$split = preg_split('/, */', $value);
 			foreach($split as $val) {
 				$values[] = $this->replaceConfigValues($val);
 			}
@@ -167,6 +192,7 @@ class AdminMenu {
 	 */
 	private function getXmlIntegerParamValue(CWI_XML_Traversal $node, $param_name, $default_value=null) {
 		$value = $node->getParam($param_name, null);
+		
 		if (null === $value) return $default_value;
 		
 		return intval($value);
@@ -189,7 +215,8 @@ class AdminMenu {
 	 * Reset a hiearchy back to an empty array
 	 * @param $parent_key
 	 */
-	private function resetHierarchy($parent_key) {
+	private function resetHierarchy($parent_key)
+	{
 		$this->hierarchy[$parent_key] = array();
 	}
 	
@@ -198,6 +225,17 @@ class AdminMenu {
 	 * @param CWI_XML_Traversal $node
 	 * @return bool
 	 */
+	
+	/**
+	 * Get the next sorting order for an item of a given parent key
+	 * @param string $parent_key
+	 */
+	public function getNextSortorder($parent_key)
+	{
+		if (!isset($this->sortorders[$parent_key])) $this->sortorders[$parent_key] = 0;
+		
+		return $this->sortorders[$parent_key]++;
+	}
 	
 }
 
