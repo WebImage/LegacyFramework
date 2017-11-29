@@ -86,7 +86,7 @@ class AdminMenu {
 	private function createSectionNode(CWI_XML_Traversal $xml, $parent_key, array $sibling_nodes) {
 		
 		$id = $this->getIdForNode($xml, $parent_key);
-		$original = isset($sibling_nodes[$id]) ? $sibling_nodes[$id] : new AdminMenuItem();
+		$original = isset($sibling_nodes[$id]) ? $sibling_nodes[$id] : new AdminMenuItem(null, null, null, null, null, null, null, null, null, null);
 		
 		$title		= $this->getXmlStringParamValue($xml, 'title', $original->getTitle());
 		$url		= $this->getXmlStringParamValue($xml, 'url', $original->getUrl());
