@@ -51,25 +51,57 @@ function handle_autoload_core_classes($class_name) {
 		case 'ixmlcreatableobject':
 			$class_file = dirname(__FILE__) . '/core/' . $class_lower . '.php';
 			include($class_file);
-			break;
+			return;
 
 		case 'missingconnectionexception':
 			$class_file = dirname(__FILE__) . '/db/' . $class_lower . '.php';
 			include($class_file);
-			break;
+			return;
 	}
 
 	// Check library paths
 	$paths = PathManager::getPaths();
+	
+	// Original core framework classes for Logic, DataAccessObject (DAO), and Struct data objects
+	$has_namespace = (strpos($class_lower, '/') !== false);
+	$is_orig_logic = !$has_namespace && (substr($class_lower, -5) == 'logic');
+	$is_orig_dao = !$has_namespace && (substr($class_lower, -3) == 'dao');
+	$is_orig_struct = !$has_namespace && (substr($class_lower, -6) == 'struct');
+	
+	$class_path = null;
+	
 	foreach($paths as $base_path) {
-		$check_path = $base_path . 'lib' . DIRECTORY_SEPARATOR .  str_replace('\\', DIRECTORY_SEPARATOR, $class_name) . '.php';
-		if (file_exists($check_path)) {
-			require_once($check_path);
-			break;
+		
+		$class_path = $base_path . 'lib' . DIRECTORY_SEPARATOR .  str_replace('\\', DIRECTORY_SEPARATOR, $class_name) . '.php';
+		
+		// Override class_path for core logic, dao, struct classes
+		if ($is_orig_logic || $is_orig_dao || $is_orig_struct) {
+			$core_dir = '';
+			$class_dir = '';
+			$append_file = '';
+			if ($is_orig_logic) {
+				$core_dir = 'logic';
+				$class_dir = substr($class_lower, 0, -5); // remove "logic" for dir/file names
+			} else if ($is_orig_dao) {
+				$core_dir = 'data';
+				$class_dir = substr($class_lower, 0, -3); // remove "dao" for dir/file names
+				$append_file = '_dao';
+			} else if ($is_orig_struct) {
+				$core_dir = 'data';
+				$class_dir = substr($class_lower, 0, -6); // remove "struct" for dir/file names
+				$append_file = '_structure';
+			}
+			
+			$class_path = $base_path . $core_dir . DIRECTORY_SEPARATOR . $class_dir . DIRECTORY_SEPARATOR . $class_dir . $append_file . '.php';
+		}
+		
+		if (file_exists($class_path)) {
+			require_once($class_path);
+			return;
 		}
 	}
-	
 }
+
 spl_autoload_register('handle_autoload_core_classes');
 
 if (!function_exists('property_exists')) {
