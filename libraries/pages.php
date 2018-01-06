@@ -35,6 +35,7 @@ class PageResponse {
 	const OUTPUT_TYPE_HTML = 'html';
 	const OUTPUT_TYPE_XML = 'xml';
 	const OUTPUT_TYPE_JSON = 'json';
+	const OUTPUT_TYPE_CSV = 'csv';
 	
 	private $initCode = array();
 	private $attachInitCode = array();
