@@ -69,6 +69,8 @@ class SessionManager {
 	}
 	
 	public static function getId() {
+		SessionManager::getInstance();
+		
 		return (static::isSessionEnabled()) ? session_id() : 0;
 	}
 	
