@@ -128,11 +128,11 @@ class PathManager {
 	}
 	
 	public static function getPath() {
-		if ($path_parts = parse_url($_SERVER['REQUEST_URI'])) return $path_parts['path'];
+		if (isset($_SERVER['REQUEST_URI']) && ($path_parts = parse_url($_SERVER['REQUEST_URI']))) return $path_parts['path'];
 		else return false;
 	}
 	public static function getQueryString() {
-		if ($path_parts = parse_url($_SERVER['REQUEST_URI'])) return (isset($path_parts['query']) ? $path_parts['query'] : '');
+		if (isset($_SERVER['REQUEST_URI']) && ($path_parts = parse_url($_SERVER['REQUEST_URI']))) return (isset($path_parts['query']) ? $path_parts['query'] : '');
 		else return false;
 		#return $_SERVER['QUERY_STRING'];		
 	}
