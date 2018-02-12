@@ -748,6 +748,11 @@ class Page {
 		}
 		return false;
 	}
+	
+	/**
+	 * @return PageResponse
+	 * @throws Exception
+	 */
 	public static function getCurrentPageRequest() {
 		$_this = Page::getInstance();
 		$index = count($_this->_pageRequests)-1;
