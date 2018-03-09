@@ -2,9 +2,9 @@
 
 namespace WebImage\Core;
 
-use ArrayAccess;
+use ArrayAccess, Iterator;
 
-class Dictionary implements ArrayAccess { // extends  IDictionary {
+class Dictionary implements ArrayAccess, Iterator { // extends  IDictionary {
 	protected $lst = array();
 	protected function getStorage() { return $this->lst; }
 	function __construct($init_array=null) { // Must be an associative array
@@ -48,8 +48,45 @@ class Dictionary implements ArrayAccess { // extends  IDictionary {
 	/**
 	 * Implement methods from ArrayAccess
 	 **/
-	public function offsetExists($key) { return $this->isDefined($key); }
-	public function offsetGet($key) { return $this->get($key); }
-	public function offsetSet($key, $value) { $this->set($key, $value); }
-	public function offsetUnset($key) { $this->del($key); }
+	public function offsetExists($key) {
+		return $this->isDefined($key);
+	}
+	
+	public function offsetGet($key) {
+		return $this->get($key);
+	}
+	
+	public function offsetSet($key, $value) {
+		$this->set($key, $value);
+	}
+	
+	public function offsetUnset($key) {
+		$this->del($key);
+	}
+	
+	/**
+	 * Implements methods from Iterator
+	 */
+	public function current() {
+		return current($this->lst);
+	}
+	
+	public function next() {
+		return next($this->lst);
+	}
+	
+	public function key() {
+		return key($this->lst);
+	}
+	
+	public function valid() {
+		$key = key($this->lst);
+		
+		return ($key !== null && $key !== false);
+	}
+	
+	public function rewind() {
+		return reset($this->lst);
+	}
+	
 }
