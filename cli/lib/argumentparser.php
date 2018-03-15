@@ -16,13 +16,14 @@ class ArgumentParser {
 				if (substr($arg, 1, 1) == '-') $remove_char ++;
 				
 				$flag_name = substr($arg, $remove_char);
-				$arg = null; // Set default value
+				$this->flags[$flag_name] = null;
 			} else {
 				$this->flags[$flag_name] = $arg;
 				$flag_name = 'global';
 			}
 		}
 	}
+	
 	function getCommand() { return $this->command; }
 	function isFlagSet($flag) {
 		return (in_array($flag, array_keys($this->flags)));
