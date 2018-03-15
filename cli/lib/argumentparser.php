@@ -10,14 +10,17 @@ class ArgumentParser {
 		$flag_name = 'global';
 		for($i=1; $i < count($raw_command_args); $i++) {
 			$arg = $raw_command_args[$i];
+			
 			if (substr($arg, 0, 1) == '-') {
 				$remove_char = 1;
 				if (substr($arg, 1, 1) == '-') $remove_char ++;
 				
 				$flag_name = substr($arg, $remove_char);
 				$arg = null; // Set default value
+			} else {
+				$this->flags[$flag_name] = $arg;
+				$flag_name = 'global';
 			}
-			$this->flags[$flag_name] = $arg;
 		}
 	}
 	function getCommand() { return $this->command; }
