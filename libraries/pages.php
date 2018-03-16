@@ -117,17 +117,57 @@ class PageResponse {
 	}
 	public function setTitle($title) { $this->title = $title; }
 	
-	public function setMetaTag($name, $content) { // robots, description, keywords
-		while ($meta_tag = $this->headers['meta']->getNext()) {
-			if ($meta_tag->getName() == $name) {
-				$meta_tag = new PageHeaderMetaTag($name, $content);
-				return;
+	/**
+	 * Sets a specific meta tag
+	 * @param string|PageHeaderMetaTag $name
+	 * @param string|null $content
+	 *
+	 * @example setMetaTag('key', 'content')
+	 * @example setMetaTag(PageHeaderMetaTag $tag)
+	 */
+	public function setMetaTag($name_or_tag, $content=null) { // robots, description, keywords
+		$new_tag = $this->createPageHeaderMetaTag($name_or_tag, $content);
+		
+		/** @var Collection $metas */
+		$metas = $this->headers['meta'];
+		while ($meta_tag = $metas->getNext()) {
+			if ($meta_tag->getName() == $new_tag->getName()) {
+				$metas->removeAt($metas->getCurrentIndex());
+				$metas->resetIndex();
 			}
 		}
-		$this->addMetaTag($name, $content);
+		$this->addMetaTag($new_tag);
 	}
-	public function addMetaTag($name, $content) { // robots, description, keywords
-		$this->headers['meta']->add( new PageHeaderMetaTag($name, $content) );
+	/**
+	 * Sets a specific meta tag
+	 * @param string|PageHeaderMetaTag $name
+	 * @param string|null $content
+	 *
+	 * @example setMetaTag('key', 'content')
+	 * @example setMetaTag(PageHeaderMetaTag $tag)
+	 */
+	public function addMetaTag($name_or_tag, $content=null) { // robots, description, keywords
+		$tag = $this->createPageHeaderMetaTag($name_or_tag, $content);
+		$this->headers['meta']->add($tag);
+	}
+	
+	/**
+	 * setMetaTag('key', 'content')
+	 * setMetaTag(PageHeaderMetaTag $tag)
+	 *
+	 * @param string|PageHeaderMetaTag $name_or_tag
+	 * @param null|string $content
+	 *
+	 * @return PageHeaderMetaTag
+	 */
+	private function createPageHeaderMetaTag($name_or_tag, $content=null) {
+		if ($name_or_tag instanceof PageHeaderMetaTag) return $name_or_tag;
+		
+		if (!is_string($name_or_tag)) {
+			throw new InvalidArgumentException(sprintf('%s was expecting a string for name', __METHOD__));
+		}
+		
+		return new PageHeaderMetaTag($name_or_tag, $content);
 	}
 	
 	public function addScript($src, $type='text/javascript', $add_to_top=false) {
@@ -504,10 +544,48 @@ class PageHeaderScript extends PageHeader {
 }
 class PageHeaderMetaTag extends PageHeader {
 	var $name, $content;
-	public function __construct($name, $content) { $this->name = $name; $this->content=$content; }
-	public function renderHtml() { return '<meta name="' . $this->name . '" content="' . $this->content . '" />'; }
+	private $nameAttribute = 'name';
+	private $valueAttribute = 'content';
+	
+	/**
+	 * PageHeaderMetaTag constructor.
+	 * @param $name
+	 * @param $content
+	 * @param string|null $name_attribute Allows the "name? attribute to be overridden, e.g. "property" instead of "name" - thanks Facebook
+	 * @param string|null $value_attribute Allows the "content" attribute to be overridden, e.g. "value" instead of "content" - adding just in case
+	 */
+	public function __construct($name, $content, $name_attribute=null, $value_attribute=null) {
+		$this->name = $name;
+		$this->content = $content;
+		if (null !== $name_attribute && is_string($name_attribute)) $this->nameAttribute = $name_attribute;
+		if (null !== $value_attribute && is_string($value_attribute)) $this->valueAttribute = $value_attribute;
+	}
+	
+	public function renderHtml() {
+		$name_attribute = $this->nameAttribute;
+		if (empty($name_attribute)) $name_attribute = 'name';
+		return sprintf('<meta %s="%s" %s="%s" />',
+			$this->getNameAttribute(),
+			htmlentities($this->getName()),
+			$this->getValueAttribute(),
+			htmlentities($this->getContent())
+		);
+	}
+	
 	public function getName() { return $this->name; }
 	public function getContent() { return $this->content; }
+	public function getNameAttribute() {
+		$name_attribute = $this->nameAttribute;
+		if (empty($name_attribute)) $name_attribute = 'name';
+		
+		return $name_attribute;
+	}
+	public function getValueAttribute() {
+		$name_attribute = $this->nameAttribute;
+		if (empty($name_attribute)) $name_attribute = 'name';
+		
+		return $name_attribute;
+	}
 }
 
 FrameworkManager::loadLibrary('event.args');
@@ -640,7 +718,7 @@ class Page {
 		$meta_tags->add( new PageHeaderMetaTag('generator', 'EditInSite') );
 		//$meta_tags->add( new PageHeaderMetaTag('revisit-after', '7 days') );
 		$meta_tags->add( new PageHeaderMetaTag('copyright', 'Copyright &copy; ' . date('Y') . '.  All rights reserved.') );
-		$meta_tags->add( new PageHeaderMetaTag('author', 'Robert Jones II') );
+		$meta_tags->add( new PageHeaderMetaTag('author', 'Corporate Web Image, Inc.') );
 		
 		if ($debug) $header .= "\r\n<!-- // Meta Tags // -->\r\n";
 		while ($meta = $meta_tags->getNext()) {
@@ -750,18 +828,18 @@ class Page {
 	}
 	
 	/**
-	 * @return PageResponse
+	 * @return PageRequest
 	 * @throws Exception
 	 */
 	public static function getCurrentPageRequest() {
 		$_this = Page::getInstance();
 		$index = count($_this->_pageRequests)-1;
 		
-		if ($index >= 0) {
-			return $_this->_pageRequests[$index];
-		} else {
+		if ($index < 0) {
 			throw new Exception('Current page request is not available.');
 		}
+		
+		return $_this->_pageRequests[$index];
 		
 	}
 	public static function createPageRequest($url) {
