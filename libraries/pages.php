@@ -581,10 +581,10 @@ class PageHeaderMetaTag extends PageHeader {
 		return $name_attribute;
 	}
 	public function getValueAttribute() {
-		$name_attribute = $this->nameAttribute;
-		if (empty($name_attribute)) $name_attribute = 'name';
+		$value_attribute = $this->valueAttribute;
+		if (empty($value_attribute)) $value_attribute = 'content';
 		
-		return $name_attribute;
+		return $value_attribute;
 	}
 }
 
