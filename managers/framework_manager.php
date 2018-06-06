@@ -579,7 +579,9 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 		
 		FrameworkManager::loadBaseLogic('site');
 
+		$debug = array();
 		$domain = $config['settings']['general']['DOMAIN'];
+		$debug[] = 'Domain from settings: ' . $domain;
 
 		if (substr($domain, 0, 4) == 'www.') $domain = substr($domain, 4);
 
@@ -587,6 +589,8 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 
 		FrameworkManager::markTime(__class__ . '->initializeSite() before DB domain check');
 
+		$debug[] = '$dir_app: ' . $dir_app . '; Exists: ' . (file_exists($dir_app) ? 'Yes' : 'No') . PHP_EOL;
+		
 		if (file_exists($dir_app)) {
 
 			$config['settings']['general']['SITE_ID'] = 0; // Legacy
@@ -599,9 +603,12 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 
 		} else {
 
+			$debug[] = 'ConnectionManager::hasConnection: ' . (ConnectionManager::hasConnection() ? 'Yes' : 'No');
+			
 			if (ConnectionManager::hasConnection() && $site = SiteLogic::getSiteByDomain($domain)) {
 
 				$valid_site = true;
+				
 				// Site Values
 				$config['settings']['general']['SITE_ID'] = $site->id;
 				$config['settings']['general']['SITE_KEY'] = strtolower($site->key);
@@ -618,16 +625,16 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 				if (file_exists($dir_app_domain)) {
 
 					$config['settings']['general']['DIR_FS_FRAMEWORK_APP'] = $dir_app_domain;
+					$debug[] = 'Using domain directory: ' . $dir_app_domain;
 
 					// Fall back to app key directory
 				} else {
 
 					$config['settings']['general']['DIR_FS_FRAMEWORK_APP'] = $dir_app_key;
+					$debug[] = 'Falling back to app key directory: ' . $dir_app_key;
 
 				}
-
 			}
-
 		}
 
 		FrameworkManager::markTime(__class__ . '->initializeSite() after domain check');
@@ -642,6 +649,8 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 		//if (!ConfigurationManager::addConfigFile(ConfigurationManager::get('DIR_FS_FRAMEWORK_APP') . 'config/config.xml', 'app')) die("We'll be right back!\n<!-- // Error: Unable to Load Site Configuration // -->");
 		$dir_fs_framework_app = (isset($config['settings']['general']['DIR_FS_FRAMEWORK_APP'])) ? $config['settings']['general']['DIR_FS_FRAMEWORK_APP'] : null;
 
+		$debug[] = '$dir_fs_framework_app: ' . $dir_fs_framework_app . '; Exists: ' . (file_exists($dir_fs_framework_app) ? 'Yes' : 'No');
+		
 		if (file_exists($dir_fs_framework_app)) {
 
 			 PathManager::addFirst($config['settings']['general']['DIR_FS_FRAMEWORK_APP']);
@@ -701,6 +710,8 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 
 		DatabaseManager::finalizeTableSettings();
 
+//		echo '<pre>';print_r($debug);exit;
+		
 		self::$isSiteInitialized = true;
 
 	}
