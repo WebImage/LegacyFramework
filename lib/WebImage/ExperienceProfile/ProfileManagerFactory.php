@@ -23,22 +23,19 @@ class ProfileManagerFactory implements IFactory {
 
 		$providers = $config[$this->configKeyProviders];
 		$default_provider = $config[$this->configKeyDefaultProvider];
-
+		$default_provider_class = $providers[$default_provider]->get($this->configKeyProviderClassName);
+		
 		$manager = new ProfileManager();
 		$manager->setDefaultProviderName($default_provider);
 
 		$domain_mapping = $config[$this->configKeyDomainMapping];
 
 		if ($domain_mapping) {
-
 			foreach($domain_mapping as $profile_name => $domains) {
-
 				foreach($domains as $domain) {
-
 					$manager->setDomainProfile($domain, $profile_name);
 				}
 			}
-
 		}
 
 		$configs = array();
@@ -50,13 +47,20 @@ class ProfileManagerFactory implements IFactory {
 			if (empty($name)) $name = $p_name;
 
 			$class_name = $p_config->get($this->configKeyProviderClassName);
+			if (empty($class_name)) {
+				if ($p_name == $default_provider) {
+					throw new \RuntimeException(sprintf('%s profile is missing a class name', $p_name));
+				}
+				$class_name = $default_provider_class;
+			}
+			
 			$class_file = $p_config->get($this->configKeyProviderClassFile);
 
 			// Remove provider config values that are no longer necessary
 			$p_config->del($this->configKeyProviderName);
 			$p_config->del($this->configKeyProviderClassName);
 			$p_config->del($this->configKeyProviderClassFile);
-
+			
 			// Rewrite generic config as ProfileConfig
 			$p_config = new ProviderConfig($name, $class_name, $class_file, $p_config);
 			$configs[] = $p_config;
@@ -71,7 +75,7 @@ class ProfileManagerFactory implements IFactory {
 			else if ($a > $b) return -1;
 			else return 0;
 		});
-
+		
 		foreach($configs as $config) {
 			$manager->addProviderConfig($config);
 		}

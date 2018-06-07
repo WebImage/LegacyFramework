@@ -2,6 +2,4 @@
 
 namespace WebImage\ExperienceProfile;
 
-class DefaultProfile extends AbstractProfile {
-	public function checkIfSupported() { return true; }
-}
+class DefaultProfile extends AbstractProfile {}

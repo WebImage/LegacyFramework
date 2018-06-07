@@ -72,7 +72,6 @@ abstract class AbstractProfile extends AbstractProvider implements IProfile {
 	 */
 	private $isSupported;
 	public function isSupported() {
-
 		$domain = \ConfigurationManager::get('DOMAIN');
 
 		$debug = false;
@@ -100,8 +99,9 @@ if ($debug) echo '-- Is NOT mapped to domain<br />';
 
 			$this->isSupported = $is_supported;
 		}
-if ($debug) echo '-- Supported: ' . ($this->isSupported?'Yes':'No') . '<br />';
-#echo __METHOD__ . ': ' . $this->getName() . ' = ' . ($this->isSupported?'Yes':'No') . '<br />';
+		
+if ($debug) echo get_class($this) . ' -- Supported: ' . ($this->isSupported?'Yes':'No') . '<br />';
+		
 		return $this->isSupported;
 
 	}

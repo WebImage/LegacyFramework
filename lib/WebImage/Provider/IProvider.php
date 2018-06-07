@@ -23,15 +23,7 @@ interface IProvider {
 	public function setName($name);
 
 	/**
-	 * @param string $name
-	 * @return mixed
+	 * @return Config
 	 */
-	public function getConfigValue($name);
-
-	/**
-	 * @param $name
-	 * @param $value
-	 * @return void
-	 */
-	public function setConfigValue($name, $value);
+	public function getConfig();
 }
