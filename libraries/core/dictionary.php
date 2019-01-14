@@ -1,6 +1,6 @@
 <?php
 
-class Dictionary implements ArrayAccess { // extends  IDictionary {
+class Dictionary implements Countable, Iterator, ArrayAccess { // extends  IDictionary {
 	protected $lst = array();
 	protected function getStorage() { return $this->lst; }
 	function __construct($init_array=null) { // Must be an associative array
@@ -41,11 +41,44 @@ class Dictionary implements ArrayAccess { // extends  IDictionary {
 			$this->set($key, $value);
 		}
 	}
-	/**
-	 * Implement methods from ArrayAccess
-	 **/
+	/** Implement methods from ArrayAccess */
 	public function offsetExists($key) { return $this->isDefined($key); }
 	public function offsetGet($key) { return $this->get($key); }
 	public function offsetSet($key, $value) { $this->set($key, $value); }
 	public function offsetUnset($key) { $this->del($key); }
+	/** Countable */
+	public function count() { return count($this->lst); }
+	/** Iterable */
+	public function current() { return current($this->lst); }
+	public function next() { return next($this->lst); }
+	public function key() { return key($this->lst); }
+	public function valid() { return ($this->key() !== null); }
+	public function rewind() { reset($this->lst); }
+	
+	/**
+	 * Get the defined keys
+	 *
+	 * @return array
+	 */
+	public function keys() { return array_keys($this->lst); }
+	
+	/**
+	 * Return an associative array of the stored data.
+	 *
+	 * @return array
+	 */
+	public function toArray() {
+		$array = array();
+		
+		/** @var static $value */
+		foreach ($this->lst as $key => $value) {
+			if ($value instanceof static) {
+				$array[$key] = $value->toArray();
+			} else {
+				$array[$key] = $value;
+			}
+		}
+		
+		return $array;
+	}
 }
