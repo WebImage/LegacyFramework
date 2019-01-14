@@ -228,7 +228,10 @@ class PageResponse {
 }
 class PageRequest {	
 	private $requestedParams;
+	/** @var \WebImage\String\Url */
 	private $internalUrl; // Translated URL
+	private $requestedScheme;
+	private $requestedDomain;
 	private $requestedPath;
 	private $requestedQueryString;
 	private $requestHandler;
@@ -258,37 +261,29 @@ class PageRequest {
 		else return $default;
 	}
 
+	/** @return \WebImage\String\Url */
 	public function getInternalUrl() { return $this->internalUrl; }
-	public function getInternalPath() {
-		$path_parts = parse_url($this->getInternalUrl());
-		if (isset($path_parts['path'])) return $path_parts['path'];
-		else return false;
-	}
-	public function getInternalQueryString() {
-		$path_parts = parse_url($this->getInternalUrl());
-		if (isset($path_parts['query'])) return $path_parts['query'];
-		else return false;
-	}
+	public function getInternalPath() { return $this->getInternalUrl()->getPath(); }
+	public function getInternalQueryString() { return $this->getInternalUrl()->getQueryString(); }
+	
 	public function getRequestedUrl() {
+		$url = '';
+		$scheme = $this->getRequestedScheme();
+		$domain = $this->getRequestedDomain();
 		$path = $this->getRequestedPath();
 		$query = $this->getRequestedQueryString();
-		$uri = (empty($query)) ? $path : $path.'?'.$query;
-		return $uri;
-		}
-	public function getRequestedPath() {
-		/*$path_parts = parse_url($this->getRequestedUrl());
-		if (isset($path_parts['path'])) return $path_parts['path'];
-		else return false;
-		*/
-		return $this->requestedPath;
+		
+		if (!empty($scheme) && !empty($domain)) $url = sprintf('%s://%s', $scheme, $domain);
+		$url .= $path;
+		if (!empty($query)) $url .= '?' . $query;
+		
+		return $url;
 	}
-	public function getRequestedQueryString() {
-		/*$path_parts = parse_url($this->getRequestedUrl());
-		if (isset($path_parts['query'])) return $path_parts['query'];
-		else return false;
-		*/
-		return $this->requestedQueryString;
-	}
+	
+	public function getRequestedScheme() { return $this->requestedScheme; }
+	public function getRequestedDomain() { return $this->requestedDomain; }
+	public function getRequestedPath() { return $this->requestedPath; }
+	public function getRequestedQueryString() { return $this->requestedQueryString; }
 	
 	public function getTheme() { return $this->theme; }
 	public function setTheme($theme) { $this->theme = $theme; }
@@ -300,27 +295,36 @@ class PageRequest {
 		$this->requestHandler = $handler;
 	}
 
+	private function setRequestedScheme($scheme) { $this->requestedScheme = $scheme; }
+	private function setRequestedDomain($domain) { $this->requestedDomain = $domain; }
 	private function setRequestedPath($requested_path) { $this->requestedPath = $requested_path; }
 	private function setRequestedQueryString($query_string) { $this->requestedQueryString = $query_string; }
 	
-	public function setInternalUrl($internal_url, $optional_query=null) {
-		if (!empty($optional_query)) $internal_url .= '?' . $optional_query;
-		$this->internalUrl = $internal_url;
-	}
-	private function initUrl($url) {
-
-		$config = ConfigurationManager::getConfig();
-		
+	public function setInternalUrl(\WebImage\String\Url $url) { $this->internalUrl = $url; }
+	
+	/**
+	 * Breaks out a URL into its various parts and sets up the internal URL structure
+	 * @param $url
+	 */
+	private function initUrlParts($url) {
 		$url = str_replace('/index.php', '/index.html', $url);
 		
-		$url_path = '';
+		$url_scheme = '';
+		$url_domain = '';
 		$url_query = '';
 		$url_parts = parse_url($url);
+		$url_path = $url_parts['scheme'];
+		
+		if (isset($url_parts['scheme']) && isset($url_parts['host'])) {
+			$url_scheme = $url_parts['scheme'];
+			$url_domain = $url_parts['host'];
+		}
+		
 		if (isset($url_parts['path'])) $url_path = $url_parts['path'];
 		if (isset($url_parts['query'])) $url_query = $url_parts['query'];
-
-		$requested_page_parts = explode('/', $url_path);
-		$page_part = $requested_page_parts[count($requested_page_parts)-1];
+		
+//		$requested_page_parts = explode('/', $url_path);
+//		$page_part = $requested_page_parts[count($requested_page_parts)-1];
 		
 		if (!defined('DEFAULT_FILE_NAME')) define('DEFAULT_FILE_NAME', 'index');
 		ConfigurationManager::set('DEFAULT_FILE_NAME', DEFAULT_FILE_NAME);
@@ -332,13 +336,13 @@ class PageRequest {
 		ConfigurationManager::set('DEFAULT_FILE', $default_file);
 		
 		$period_pos = strrpos($url_path, '.');
-
+		
 		if ($period_pos === false) {
-			
 			if (substr($url_path, -1, 1) != '/') {
 				$url_path .= '/';
 			}
 			$url_path .= $default_file;
+			$this->getPageResponse()->setOutputType(PageResponse::OUTPUT_TYPE_HTML);
 		} else {
 			$extension = substr($url_path, $period_pos+1);
 			$this->getPageResponse()->setOutputType($extension);
@@ -347,11 +351,20 @@ class PageRequest {
 			}
 			$this->getPageResponse()->setOutputType($extension);
 		}
-
+		
+		$this->setRequestedScheme($url_scheme);
+		$this->setRequestedDomain($url_domain);
 		$this->setRequestedPath($url_path);
 		$this->setRequestedQueryString($url_query);
+	}
+	
+	/**
+	 * Make any modifications to the URL for internal purposes
+	 */
+	private function doUrlRemapping() {
+		$config = ConfigurationManager::getConfig();
 		
-
+		$url = new \WebImage\String\Url($this->getRequestedUrl());
 		/**
 		 *
 		 * This section determines whether the request was for a file or directory.
@@ -360,86 +373,105 @@ class PageRequest {
 		 */
 		$config_path_mappings = (isset($config['pages']['pathMappings'])) ? $config['pages']['pathMappings'] : array();
 		$config_request_handlers = (isset($config['pages']['requestHandlers'])) ? $config['pages']['requestHandlers'] : array();
-
+		
 		foreach($config_path_mappings as $mapping) {
-
+			
 			$search = '#' . str_replace('#', '##', $mapping['path']) . '#';
-
-			if (preg_match($search, $url_path, $path_matches)) {
-
-				if (count($path_matches) > 0) {
-
-					$translated_path = $mapping['translate'];
-
-					if (!empty($translated_path)) {
+			
+			if (preg_match($search, $url->getPath(), $path_matches)) {
 				
+				// Add parameters
+				if (isset($mapping['params'])) {
+					foreach($mapping['params'] as $key => $val) {
+						if (is_int($key)) {
+							$ref_ix = $key + 1;
+							$key = $val;
+							$val = '$' . $ref_ix;
+						}
+						
+						// Replace any $[num] references to their position in the matched path
+						if (preg_match_all('/\$([0-9])/', $val, $matches)) {
+							for($i=0, $j=count($matches[0]); $i < $j; $i++) {
+								$ix = $matches[1][$i];
+								$val = str_replace('$' . $ix, $path_matches[$ix], $val);
+							}
+						}
+						$this->set($key, $val);
+					}
+				}
+				
+				// Assign parameters for mapping
+				if (count($path_matches) > 0) {
+					
+					$translated_path = isset($mapping['translate']) ? $mapping['translate'] : '';
+					
+					if (!empty($translated_path)) {
+						
 						for ($i=count($path_matches)-1; $i > 0; $i--) {
 							$translated_path = str_replace('$'.$i, $path_matches[$i], $translated_path);
 						}
 						
 						$translated_path_parts = explode('?', $translated_path, 2);
-						$url_path = $translated_path_parts[0];
-	
+						if (!empty($translated_path_parts[0])) $url->setPath($translated_path_parts[0]);
+						
 						if (isset($translated_path_parts[1])) {
 							$translated_vars = explode('&', $translated_path_parts[1]);
-
+							
 							foreach($translated_vars as $var_set) {
 								$name_value = explode('=', $var_set, 2);
 								$name = $name_value[0];
 								$value = '';
-	
+								
 								if (isset($name_value[1])) $value = $name_value[1];
-	
+								
 								$this->set($name, $value);
 							}
 						}
 					}
-
+					
 					$handler_name = (isset($mapping['requestHandler'])) ? $mapping['requestHandler'] : null;
-
+					
 					if (null !== $handler_name) {
-
+						
 						$handler_config = (isset($config_request_handlers[$handler_name])) ? $config_request_handlers[$handler_name] : null;
-
+						
 						if (null !== $handler_config) {
-
-							if ($handler_file = PathManager::translate($handler_config['classFile'])) {
-
-								include_once($handler_file);
-								$class_name = $handler_config['className'];
-
-								if (class_exists($class_name)) {
-									$handler = new $class_name();
-									$handler->setPageRequest($this);
-									$this->setRequestHandler($handler);
-								}
+							
+							if ($handler_file = PathManager::translate($handler_config['classFile'])) include_once($handler_file);
+							
+							$class_name = $handler_config['className'];
+							
+							if (class_exists($class_name)) {
+								$handler = new $class_name();
+								$handler->setPageRequest($this);
+								$this->setRequestHandler($handler);
 							}
 						}
-
-
+						
 						break;
-
 					}
-
 				}
 			}
-			
 		}
 		
+		$this->setInternalUrl($url);
+	}
+	
+	private function checkAccessRights() {
 		/**
 		 * Check if user is allowed access to this location
 		 **/
 		$user_allowed = true;
 		$location_roles = ConfigurationManager::getLocationRoles();
 		$check_url = PathManager::getPath();
-
+		
 		foreach($location_roles as $location_role) {
-
+			
 			$search = '#^' . str_replace('#', '##', $location_role['path_regex']) . '$#';
-
+			
 			// Check the internal and external paths for matches
-			if (preg_match($search, $url_path, $path_matches) || preg_match($search, $check_url, $path_matches)) {
-
+			if (preg_match($search, $this->getRequestedPath(), $path_matches) || preg_match($search, $check_url, $path_matches)) {
+				
 				if (count($location_role['roles']) > 0) {
 					$user_allowed = false;
 					foreach($location_role['roles'] as $role) {
@@ -452,12 +484,11 @@ class PageRequest {
 					if (!$user_allowed) break;
 				}
 			}
-			
 		}
-
+		
 		if (!$user_allowed) {
-			$return_path = $url_path;
-			if (!empty($url_query)) $return_path .= '?' . $url_query;
+			$return_path = $this->getRequestedPath();
+			if (strlen($this->getRequestedQueryString()) > 0) $return_path .= '?' . $this->getRequestedQueryString();
 			
 			SessionManager::set('returnpath', $return_path);
 			$redirect_url = ConfigurationManager::get('URL_LOGIN') . '?type=unauthorized';
@@ -466,31 +497,31 @@ class PageRequest {
 			if (substr($redirect_url, 0, 4) == 'http') {
 				$redirect_url .= '&fromdomain=' . ConfigurationManager::get('DOMAIN');
 			}
-
+			
 			Page::redirect( $redirect_url );
 		}
-
-		$internal_url = $url_path;
-		if (!empty($url_query)) $internal_url .= '?' . $url_query;
-
-		$this->setInternalUrl($internal_url);
-				
+	}
+	
+	private function initUrl($url) {
+		
+		$this->initUrlParts($url);
+		$this->doUrlRemapping();
+		$this->checkAccessRights();
+		
 		/**
 		 * Check whether page should be loaded from a file or generated from a database
 		 */
 		$request_handler_found = false;
 		
 		if ($request_handler = $this->getRequestHandler()) {
-
 			$request_handler->setPageRequest($this);
 
 			if ($request_handler->canHandleRequest()) {
-
 				$request_handler_found = true;
 				$this->setRequestHandler($request_handler);
 			}
 		}
-
+		
 		if (!$request_handler_found) {
 
 			$request_handlers = ConfigurationManager::getRequestHandlers();
@@ -517,12 +548,12 @@ class PageRequest {
 	}
 }
 class PageHeader {
-	function PageHeader() {}
+	function __construct() {}
 	function renderHtml() {}
 }
 class PageHeaderStylesheet extends PageHeader {
 	var $src, $type, $media, $rel;
-	function PageHeaderStylesheet($src, $type='text/css', $media='all', $rel='stylesheet') {
+	function __construct($src, $type='text/css', $media='all', $rel='stylesheet') {
 		$this->src = $src;
 		$this->type = $type;
 		$this->media = $media;
@@ -535,7 +566,7 @@ class PageHeaderStylesheet extends PageHeader {
 }
 class PageHeaderScript extends PageHeader {
 	var $src, $type;
-	function PageHeaderScript($src, $type='text/javascript') { $this->src = $src; $this->type = $type; }
+	function __construct($src, $type='text/javascript') { $this->src = $src; $this->type = $type; }
 	function renderHtml() {
 		return '<script src="' . $this->getSource() . '" type="' . $this->getType() . '"></script>';
 	}
@@ -1297,7 +1328,7 @@ class SiteMap {
 	 * this parameter  from the iniFromXml function.
 	 */
 	var $m_nodes=array();
-	function SiteMap() {}
+	function __construct() {}
 	function getNodes() { return $this->m_nodes; }
 	function initFromXml($xml) {
 		FrameworkManager::loadLibrary('xml.compile');
@@ -1395,7 +1426,7 @@ class SiteMapNode { //extends Collection {
 }
 class Link {
 	var $_link, $_title;
-	function Link($link, $title) {
+	function __construct($link, $title) {
 		$this->setLink($link);
 		$this->setTitle($title);
 	}
@@ -1408,7 +1439,7 @@ class Link {
 }
 // TODO: move to own file
 class BreadCrumbElement extends Link {
-	function BreadCrumbElement($title, $url=null) {
+	function __construct($title, $url=null) {
 		$this->Link($url, $title);
 	}	
 }
@@ -1416,7 +1447,7 @@ class BreadCrumbElement extends Link {
 class BreadCrumb {
 	var $_trail = array();
 
-	function BreadCrumb() {
+	function __construct() {
 	}
 	/**
 	 * $link_last_element = true/false = whether to link last element in trail
