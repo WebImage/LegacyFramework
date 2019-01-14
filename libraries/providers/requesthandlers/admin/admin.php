@@ -9,20 +9,23 @@ class AdminRequestHandler extends AbstractRequestHandler {
 
 		if ($this->isAdminRequest()) {
 			
-			$request_url = $this->getPageRequest()->getInternalUrl();
+			$request_path = $this->getPageRequest()->getInternalUrl()->getPath();
+			$admin_path = ConfigurationManager::get('DIR_WS_ADMIN');
+			$content_path = ConfigurationManager::get('DIR_WS_ADMIN_CONTENT');
+			$home_path = ConfigurationManager::get('DIR_WS_HOME');
 			
-			$check_admin_content = substr($request_url, 0, strlen(ConfigurationManager::get('DIR_WS_ADMIN_CONTENT')));
+			$check_admin_content = substr($request_path, 0, strlen($content_path));
 			
-			if ($check_admin_content == ConfigurationManager::get('DIR_WS_ADMIN_CONTENT')) { // Editing content page
-
-				$request_url = str_replace(ConfigurationManager::get('DIR_WS_ADMIN_CONTENT'), ConfigurationManager::get('DIR_WS_HOME'), $request_url);
+			if ($check_admin_content == $content_path) { // Editing content page
+				
+				$request_path = str_replace($content_path, $home_path, $request_path);
 				
 				FrameworkManager::loadLibrary('providers.requesthandlers.database.database');
 				
 				$database_request = new DatabaseRequestHandler();
 				
 				$new_page_request = clone $this->getPageRequest();
-				$new_page_request->setInternalUrl($request_url);
+				$new_page_request->setInternalUrl(new \WebImage\String\Url($request_path));
 				
 				$database_request->setPageRequest( $new_page_request );
 				
@@ -46,36 +49,29 @@ class AdminRequestHandler extends AbstractRequestHandler {
 					} else {
 						
 						// Reaches this point if a page cannot be found
-						Page::redirect( ConfigurationManager::get('DIR_WS_ADMIN') . 'pages/edit.html?missingurl=' . urlencode($request_url) );
-						
-						#echo '<pre>';
-						#print_R($new_page_request);
-						#exit;
-						#die('made it');
-						
+						Page::redirect( ConfigurationManager::get('DIR_WS_ADMIN') . 'pages/edit.html?missingurl=' . urlencode($request_path) );
 					}
 				}
 				
 			} else { // Page within the admin
 				
-				$request_url = str_replace(ConfigurationManager::get('DIR_WS_ADMIN'), ConfigurationManager::get('DIR_WS_HOME'), $request_url);
-
+				$request_path = str_replace($admin_path, $home_path, $request_path);
+				
 				FrameworkManager::loadLibrary('providers.requesthandlers.file.file');
 				
 				$file_request = new FileRequestHandler();
 				
 				$system_path = '~/admin/';
 				
-				if (substr($request_url, 0, 8) == '/plugins') {
-					$path_parts = explode('/', $request_url, 4);
+				if (substr($request_path, 0, 8) == '/plugins') {
+					$path_parts = explode('/', $request_path, 4);
 					$plugin_name = $path_parts[2];
-					$request_url = '/' . $path_parts[3];
+					$request_path = '/' . $path_parts[3];
 					$system_path = ConfigurationManager::get('DIR_FS_PLUGINS') . $plugin_name . '/admin/';
-#FrameworkManager::debug('Rewriting system path for plugins: ' . $system_path);
 				}
 
 				$file_page_request = clone $this->getPageRequest();
-				$file_page_request->setInternalUrl($request_url);
+				$file_page_request->setInternalUrl(new \WebImage\String\Url($request_path));
 				
 				$file_request->setPageRequest($file_page_request);
 				$file_request->setSystemPath($system_path);
@@ -92,8 +88,6 @@ class AdminRequestHandler extends AbstractRequestHandler {
 	}
 	
 	function isAdminRequest() {
-		$request = $this->getPageRequest();
-		
 		$dir_ws_admin = substr(ConfigurationManager::get('DIR_WS_ADMIN'), 0, -1);
 		$check_admin = substr($this->getPageRequest()->getRequestedPath(), 0, strlen($dir_ws_admin));
 		if ($dir_ws_admin == $check_admin) return true;
@@ -132,7 +126,6 @@ class AdminRequestHandler extends AbstractRequestHandler {
 			$this->getPageRequest()->getPageResponse()->addScript( ConfigurationManager::get('DIR_WS_GASSETS_JS') . 'tinymce/tiny_mce.js' );
 			$this->getPageRequest()->getPageResponse()->addScript( ConfigurationManager::get('DIR_WS_GASSETS_JS') . 'tinymce/jquery.tinymce.js' );
 			$this->getPageRequest()->getPageResponse()->addScript( ConfigurationManager::get('DIR_WS_GASSETS_JS') . 'jquery/jquery.clickedit.js' );
-			
 			
 			// $this->getPageRequest()->getPageResponse()->addStylesheet( ConfigurationManager::get('DIR_WS_GASSETS_CSS') . 'controls.css' );
 			
