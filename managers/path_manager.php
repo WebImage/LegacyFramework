@@ -138,10 +138,22 @@ class PathManager {
 	}
 	
 	public static function getCurrentUrl() {
-		$path = PathManager::getPath();
+		$domain = '';
+		if (isset($_SERVER['SERVER_NAME']) && !empty($_SERVER['SERVER_NAME'])) {
+			$domain = $_SERVER['SERVER_NAME'];
+		} else if (isset($_SERVER['HTTP_HOST']) && !empty($_SERVER['HTTP_HOST'])) {
+			$domain = $_SERVER['HTTP_HOST'];
+		}
+		
+		$url = '';
+		if (!empty($domain)) {
+			$url = $_SERVER['REQUEST_SCHEME'] . '://' . $domain;
+		}
+		$url .= PathManager::getPath();
 		$query = PathManager::getQueryString();
-		if (!empty($query)) $path .= '?' . $query;
-		return $path;
+		if (!empty($query)) $url .= '?' . $query;
+		
+		return $url;
 	}
 	
 	public static function getNonSecureUrl($path=null) {
