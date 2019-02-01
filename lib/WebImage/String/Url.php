@@ -122,7 +122,7 @@ class Url {
 		$url = '';
 		if (strlen($host) > 0) {
 
-			if (strlen($scheme) > 0) $url .= $scheme. '://';
+			if (strlen($scheme) > 0) $url = $scheme. '://' . $url;
 
 			if (strlen($user) > 0 || strlen($pass) > 0) {
 				$url .= sprintf('%s:%s@', $user, $pass);
