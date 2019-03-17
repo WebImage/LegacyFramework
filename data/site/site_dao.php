@@ -15,7 +15,7 @@ class SiteDAO extends DataAccessObject {
 	var $modelName = 'SiteStruct';
 	var $updateFields = array('company_id', 'created', 'created_by', 'domain', 'enable', 'environment', 'is_remote', 'key', 'name', 'parent_id', 'updated', 'updated_by');
 	
-	public function SiteDAO() {
+	public function __construct() {
 		$this->tableName = DatabaseManager::getTable('sites');
 	}
 	public function getAllSites() {

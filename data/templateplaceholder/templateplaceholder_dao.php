@@ -16,7 +16,7 @@ class TemplatePlaceholderDAO extends DataAccessObject {
 	//var $tableName = TABLE_TEMPLATE_PLACEHOLDERS;
 	var $primaryKey = 'id';
 	
-	function TemplatePlaceholderDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('template_placeholders');
 	}
 }

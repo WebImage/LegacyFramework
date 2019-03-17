@@ -17,7 +17,7 @@ class RoleDAO extends DataAccessObject {
 	var $primaryKey = 'id';
 	var $updateFields = array('created', 'created_by', 'description', 'name', 'start_page', 'updated', 'updated_by', 'visible');
 		
-	function RoleDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('roles');
 	}
 	

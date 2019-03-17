@@ -16,7 +16,7 @@ class ContentDAO extends DataAccessObject {
 	var $primaryKey = 'id';
 	var $updateFields = array('abstract', 'category_id', 'checked_out', 'checked_out_time', 'created', 'created_by', 'description', 'meta_desc', 'meta_key', 'published', 'publish_start', 'publish_end', 'section_id', 'sort_order', 'title', 'updated', 'updated_by');
 		
-	function ContentDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('content');
 	}
 }

@@ -16,7 +16,7 @@ class TemplateDAO extends DataAccessObject {
 	var $updateFields = array('created', 'created_by', 'name', 'file_contents', 'file_src', 'type', 'updated', 'updated_by');
 	
 	
-	function TemplateDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('templates');
 	}
 	

@@ -15,7 +15,7 @@ class MembershipParameterDAO extends DataAccessObject {
 	var $modelName = 'MembershipParameterStruct';
 	var $updateFields = array('created', 'created_by', 'membership_id', 'parameter', 'updated', 'updated_by', 'value');
 	
-	function MembershipParameterDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('membership_parameters');
 	}
 	

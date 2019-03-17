@@ -5,7 +5,7 @@ class RolePermissionDAO extends DataAccessObject {
 	var $modelName = 'RolePermissionStruct';
 	var $updateFields = array('allow_create', 'allow_read', 'allow_update', 'allow_delete', 'created', 'created_by', 'updated', 'updated_by');
 	var $primaryKey = array('role_id', 'permission');
-	function RolePermissionDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('roles_permissions');
 	}
 	

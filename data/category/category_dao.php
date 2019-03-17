@@ -15,7 +15,7 @@ class CategoryDAO extends DataAccessObject {
 	var $modelName = 'CategoryStruct';
 	var $primaryKey = 'id';
 	var $updateFields = array('created', 'created_by', 'enable', 'extendable_id', 'is_inherited', 'items_per_page', 'meta_class_id', 'name', 'page_url', 'parent_id', 'sortorder', 'template_id', 'type_id', 'updated', 'updated_by');
-	function CategoryDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('categories');
 	}
 	

@@ -16,7 +16,7 @@
  */
 class DatabaseSetting {
 	private $host, $username, $password, $database;
-	function DatabaseSetting($host, $username, $password, $database) {
+	function __construct($host, $username, $password, $database) {
 		$this->host = $host;
 		$this->username = $username;
 		$this->password = $password;

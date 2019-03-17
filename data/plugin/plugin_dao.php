@@ -16,7 +16,7 @@ class PluginDAO extends DataAccessObject {
 	var $modelName = 'PluginStruct';
 	var $updateFields = array('created','created_by','enable','friendly_name','path','updated','updated_by','version');
 	var $primaryKey = 'name';
-	function PluginDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('plugins');
 	}
 	

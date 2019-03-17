@@ -15,7 +15,7 @@ class PageParameterDAO extends DataAccessObject {
 	var $modelName = 'PageParameterStruct';
 	var $updateFields = array('created', 'created_by', 'parameter', 'page_id', 'updated', 'updated_by', 'value');
 	
-	function PageParameterDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('page_parameters');
 	}
 	

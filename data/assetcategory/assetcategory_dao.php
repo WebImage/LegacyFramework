@@ -13,7 +13,7 @@ class AssetCategoryDAO extends DataAccessObject {
 	var $primaryKey = 'id';
 	var $updateFields = array('created', 'created_by', 'extensions', 'folder', 'name', 'parent_id', 'type', 'updated', 'updated_by');
 	
-	function AssetCategoryDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('asset_categories');
 	}
 	

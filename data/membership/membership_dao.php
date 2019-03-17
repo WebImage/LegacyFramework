@@ -17,7 +17,7 @@ class MembershipDAO extends DataAccessObject {
 	var $primaryKey = 'id';
 	var $updateFields = array('approved', 'approved_by', 'central_login_id', 'comment', 'created', 'created_by', 'email', 'enable', 'failed_login_attempts', 'last_login', 'last_password_changed', 'login_key', 'password', 'password_answer', 'password_question', 'updated', 'updated_by', 'username', 'verify_key', 'visitor_id');
 		
-	function MembershipDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('memberships');
 	}
 	

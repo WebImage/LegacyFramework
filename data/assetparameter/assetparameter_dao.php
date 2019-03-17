@@ -16,7 +16,7 @@ class AssetParameterDAO extends DataAccessObject {
 	var $modelName = 'AssetParameterStruct';
 	var $updateFields = array('value');
 	var $primaryKey = array('asset_id', 'parameter');
-	function AssetParameterDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('asset_parameters');
 	}
 	

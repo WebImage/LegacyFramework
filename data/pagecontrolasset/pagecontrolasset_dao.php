@@ -17,7 +17,7 @@ class PageControlAssetDAO extends DataAccessObject {
 	var $primaryKey = 'id';
 	var $updateFields = array('asset_id', 'created', 'created_by', 'page_control_id', 'updated', 'updated_by');
 	
-	function PageControlAssetDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('page_control_assets');
 	}
 	

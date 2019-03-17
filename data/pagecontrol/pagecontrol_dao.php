@@ -15,7 +15,7 @@ class PageControlDAO extends DataAccessObject {
 	var $modelName = 'PageControlStruct';
 	var $primaryKey = 'id';
 	var $updateFields = array('config', 'control_id', 'created', 'created_by', 'favorite', 'is_draft', 'is_favorite', 'mirror_id', 'page_id', 'sortorder', 'placeholder', 'template_id', 'title', 'updated', 'updated_by');
-	function PageControlDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('page_controls');
 	}
 	function getNextSortOrder($page_id, $placeholder) {

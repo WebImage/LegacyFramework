@@ -13,7 +13,7 @@ FrameworkManager::loadStruct('assettype');
 
 class AssetTypeDAO extends DataAccessObject {
 	var $modelName = 'AssetTypeStruct';
-	function AssetTypeDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('asset_types');
 	}
 	function getAssetTypeByName($name) {

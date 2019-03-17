@@ -16,7 +16,7 @@ class ControlDAO extends DataAccessObject {
 	var $primaryKey = 'id';
 	var $updateFields = array('class_name', 'created', 'created_by', 'enable', 'file_src', 'label', 'updated', 'updated_by');
 	
-	function ControlDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('controls');
 	}
 	

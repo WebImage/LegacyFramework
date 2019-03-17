@@ -1407,7 +1407,7 @@ class _DataTagTemplateField {
 }
 class _DataTagTemplateReplacement {
 	var $_replaceText, $_xmlObj;
-	public function _DataTagTemplateReplacement($replace_text, $xml_obj) {
+	public function __construct($replace_text, $xml_obj) {
 		$this->_replaceText = $replace_text;
 		$this->_xmlObj = $xml_obj;
 	}

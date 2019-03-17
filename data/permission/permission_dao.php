@@ -17,7 +17,7 @@ class PermissionDAO extends DataAccessObject {
 	var $updateFields = array('created','created_by','description','updated','updated_by');
 	var $primaryKey = 'permission';
 	
-	function PermissionDAO() {
+	function __construct() {
 		$this->tableName = DatabaseManager::getTable('permissions');
 		$this->setForceInsert(true);
 	}
