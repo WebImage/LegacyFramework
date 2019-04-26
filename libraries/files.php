@@ -5,7 +5,7 @@ define('WATERMARK_POS_TILE',	2);
 
 class ImageResource {
 	var $_fileSrc, $_width, $_height, $_imageResource;
-	function ImageResource($file_src, $width, $height) {
+	function __construct($file_src, $width, $height) {
 		$this->_fileSrc	= $file_src;
 		$this->_width	= $width;
 		$this->_height	= $height;

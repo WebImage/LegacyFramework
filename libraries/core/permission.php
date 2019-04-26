@@ -3,7 +3,7 @@
 class Permission {
 	var $m_create, $m_read, $m_update, $m_delete; // Permissions
 	
-	function Permission($create, $read, $update, $delete) {
+	function __construct($create, $read, $update, $delete) {
 		$this->m_create = $create;
 		$this->m_read = $read;
 		$this->m_update = $update;

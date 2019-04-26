@@ -6,7 +6,7 @@ class Template {
 	var $_cache = false;
 	var $_cache_file;
 	
-	function Template($file = null) {
+	function __construct($file = null) {
 		$this->file = $file;
 	}
 	

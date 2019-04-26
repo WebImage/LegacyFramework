@@ -267,7 +267,7 @@ class DAOSearchFieldLengthLessThanOrEqual extends DAOSearchFieldLength { functio
 
 class DAOSearchFieldWildcard extends DAOSearchField {
 	var $_value, $_wildcard;
-	function DAOSearchFieldWildcard($table_key, $field_key, $value, $wildcard=false) {
+	function __constructFieldWildcard($table_key, $field_key, $value, $wildcard=false) {
 		parent::__construct($table_key, $field_key, $value);
 		$this->isWildcard($wildcard);
 	}

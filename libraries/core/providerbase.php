@@ -14,7 +14,7 @@ class ProviderBase {
 	 *	var $m_className; // Class name
 	 *	var $m_applicationName; // The application this provider is associated with
 	 *
-	 *	function ProviderBase($name, $class_file, $class_name, $application_name) {
+	 *	function __construct($name, $class_file, $class_name, $application_name) {
 	 *		$this->m_name = $name;
 	 *		$this->m_classFile = PathManager::translate($class_file);
 	 *		$this->m_className = $class_name;

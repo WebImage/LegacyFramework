@@ -24,7 +24,7 @@ class MembershipUser {
 	
 	//var $m_providerName;
 	
-	function MembershipUser($approved, $approved_by, $comment, $created, $created_by, $email, $enable, $failed_login_attempts, $id, $last_activity, $last_login, $last_password_changed, $login_key, $password, $password_answer, $password_question, $username, $visitor_id) {
+	function __construct($approved, $approved_by, $comment, $created, $created_by, $email, $enable, $failed_login_attempts, $id, $last_activity, $last_login, $last_password_changed, $login_key, $password, $password_answer, $password_question, $username, $visitor_id) {
 		$this->m_approved		= $approved;
 		$this->m_approvedBy		= $approved_by;
 		$this->m_comment		= $comment;

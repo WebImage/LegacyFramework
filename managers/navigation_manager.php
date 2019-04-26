@@ -4,7 +4,7 @@ class NavigationItem {
 	var $_link;
 	var $_name;
 	var $_linkId;
-	function NavigationItem($link, $name, $link_id) {
+	function __construct($link, $name, $link_id) {
 		$this->_link = $link;
 		$this->_name = $name;
 		$this->_linkId = $link_id;
@@ -27,7 +27,7 @@ class NavigationCollection extends Collection{
 	var $_templateSelectedItem;
 	var $_templateDisabledItem;
 	
-	function NavigationCollection($id) {
+	function __construct($id) {
 		
 	}
 	

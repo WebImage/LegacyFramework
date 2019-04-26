@@ -22,7 +22,7 @@ define('ASSETMANAGER_', false);
 
 class AssetManager {
 	var $m_assetLocation;
-	function AssetManager($file_system_path) {
+	function __construct($file_system_path) {
 		$this->m_assetLocation = $file_system_path;
 	}
 
