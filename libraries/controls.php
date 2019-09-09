@@ -21,7 +21,7 @@ class CWI_EVENT_ControlAddedArgs extends CWI_EVENT_Args {
 	}
 	public function getAddedControl() { return $this->addedControl; }
 }
-class Object { }
+
 /**
  * Control parameters used to be passed as an array.  Now they use ConfigDictionary.  ControlConfigDictionary allows the ConfigDictionary object to be accessed as if it were an array
  **/
@@ -34,7 +34,7 @@ class ControlConfigDictionary extends ConfigDictionary implements ArrayAccess { 
 	public function offsetSet($key, $value) { $this->set($key, $value); }
 	public function offsetUnset($key) { $this->del($key); }
 }
-class Control extends Object {
+class Control {
 	var $m_renderedContent;
 	private $contentFinalized = false; // Whether the content has already been rendered for this control (ensures that prepareContent() is only called once)
 	
