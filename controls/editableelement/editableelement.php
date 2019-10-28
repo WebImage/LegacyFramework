@@ -6,7 +6,6 @@ class EditableElementControl extends WebControl {
 	const EDITFIELDTYPE_WYSIWYG = 'wysiwyg';
 	
 	var $m_processInternal = false;
-	#var $m_tagName = 'div'; // The tag name, e.g. h1, div, etc.
 	#var $m_content;
 	#var $m_defaultContent = 'Click to edit';
 	#var $m_editFieldType;

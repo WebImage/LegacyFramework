@@ -29,13 +29,17 @@ class LiteralControl extends WebControl {
 		if ($for = $this->getParam('for')) return $for; # New
 		return false; # New & Legacy
 	}
-	function getStruct() { if (!empty($this->m_struct)) return $this->m_struct; else return false; }
-		function getStructKey() {
-		if (empty($this->m_structKey)) {
-			return $this->getId();
-		} else {
-			return $this->m_structKey;
-		}
+	
+	function getStruct() {
+		return $this->getParam('struct');
+	}
+	
+	function getStructKey() {
+		$key = $this->get('structKey');
+		
+		if (empty($key)) return $this->getId();
+		
+		return $key;
 	}
 	function getText() {
 		if ($text = $this->getParam('text')) return $text; # New
@@ -46,7 +50,10 @@ class LiteralControl extends WebControl {
 	function setText($text) {
 		$this->setParam('text', $text); # New
 	}
-	function setStruct($struct) { $this->m_struct = $struct; }
+	
+	function setStruct($struct) {
+		$this->setParam('struct', $struct);
+	}
 	
 	function getProcessStructOutput() {
 		if (!empty($this->m_htmlTag)) {

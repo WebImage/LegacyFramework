@@ -17,33 +17,34 @@ $templateItemSeparator	'<br />';
 FrameworkManager::loadControl('html');
 
 class InputControl extends HtmlControl {
-	var $m_tagName = 'input';
-	var $m_type;
-	#var $m_value;
-	var $m_text;
-	var $m_checked;
-	var $m_enableEditor = false; // Enable WYSIWYG editor (textarea only)
 	var $_escapeHtmlOnDisplay = true; // Not public for now
 	
-	function getType() { return $this->m_type; }
+	protected function init()
+	{
+		parent::init();
+		$this->setInitParam('tagName', 'input');
+		$this->setInitParam('enableEditor', false); // Enable WYSIWYG editor (textarea only)
+	}
+	
+	function getType() { return $this->getParam('type'); }
 	function getValue() { return $this->getParam('value'); }
-	function getText() { return $this->m_text; }
-	function setType($type) { $this->m_type = $type; }
+	function getText() { return $this->getParam('text'); }
+	function setType($type) { $this->setParam('type', $type); }
 	function setValue($value) { $this->setParam('value', $value); }
-	function setText($text) { $this->m_text = $text; }
+	function setText($text) { $this->setParam('text', $text); }
 	
 	/**
 	 * Getter/settor for editor mode - only works when type=textarea
 	 **/
 	function isEditorEnabled($true_false=null) { 
 		if (is_null($true_false)) { // Getter
-			return $this->m_enableEditor;
+			return $this->getParam('enableEditor');
 		} else {
-			$this->m_enableEditor = $true_false;
+			$this->setParam('enableEditor', $true_false);
 		}
 	}
 	
-	function setStructKey($struct_key) { $this->m_structKey = $struct_key; }
+	function setStructKey($struct_key) { $this->setParam('structKey', $struct_key); }
 	
 	function __construct($init=array()) {
 		parent::__construct($init);
