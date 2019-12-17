@@ -206,7 +206,7 @@ class CWI_XML_Traversal {
 	 * @param CWI_XML_Traversal $xml_traversal_obj a child to be appended
 	 * @return void
 	 */
-	function addChild(&$xml_traversal_obj, $attach_parent=true, $add_to_top=false) {
+	function addChild($xml_traversal_obj, $attach_parent=true, $add_to_top=false) {
 		// Make the parent of the child object $this object
 		if (is_object($xml_traversal_obj) && (is_a($xml_traversal_obj, 'XmlTraversal') || is_a($xml_traversal_obj, 'CWI_XML_Traversal') )) {
 			if ($attach_parent) {
@@ -220,7 +220,7 @@ class CWI_XML_Traversal {
 			array_push($this->children, $xml_traversal_obj);
 		}
 	}
-	function addChildToTop(&$xml_traversal_obj, $attach_parent=true) {
+	function addChildToTop($xml_traversal_obj, $attach_parent=true) {
 		$this->addChild($xml_traversal_obj, $attach_parent, true);
 	}
 	
@@ -230,7 +230,7 @@ class CWI_XML_Traversal {
 	private function removeChildAt($child_index) {
 		array_splice($this->children, $child_index, 1, array());
 	}
-	function setParent(&$parent_xml_traversal_obj) {
+	function setParent($parent_xml_traversal_obj) {
 		$this->parent = &$parent_xml_traversal_obj;
 	}
 	function removeParent() {
