@@ -264,14 +264,14 @@ class AdminMenuItem {
 	 * @param bool $enable
 	 * @param int $sortorder
 	 */
-	public function __construct($id, $title, $url, $description, $image, $roles, $permissions, $new_window_attrs, $enable, $sortorder)
+	public function __construct($id, $title, $url, $description, $image, array $roles=null, $permissions, $new_window_attrs, $enable, $sortorder)
 	{
 		$this->id = $id;
 		$this->title = $title;
 		$this->url = $url;
 		$this->description = $description;
 		$this->image = $image;
-		$this->roles = $roles;
+		if (null !== $roles) $this->roles = $roles;
 		$this->permissions = $permissions;
 		$this->newWindowAttributes = $new_window_attrs;
 		$this->sortorder = $sortorder;

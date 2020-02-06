@@ -140,6 +140,9 @@ class AdminNavControl extends WebControl
 	{
 		
 		$roles = $item->getRoles();
+		if (!is_array($roles)) {
+			echo '<pre>';print_r($item);echo '<hr />' . __FILE__ .':'.__LINE__;exit;
+		}
 		if (count($roles) == 0) return true;
 		foreach ($roles as $role) {
 			if (Roles::isUserInRole($role)) return true;
