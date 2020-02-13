@@ -32,6 +32,7 @@ class ConnectionManager {
 	var $databases = array();
 	var $connections = array();
 	var $connection_configs = array();
+	private $defaultConnectionName = 'default';
 	
 	public static function getInstance() {
 		$_this = Singleton::getInstance('ConnectionManager');
@@ -39,19 +40,14 @@ class ConnectionManager {
 	}
 
 	/**
-	 * @deprecated
-	 */
-	public static function getConnectionSettings($connection_name='default') { return; }
-
-	/**
 	 * @param string $connection_name
 	 * @return null
 	 * @throws
 	 */
-	public static function getConnection($connection_name='default') {
-
+	public static function getConnection($connection_name=null) {
 		$_this = ConnectionManager::getInstance();
-
+		$connection_name = $connection_name ?: $_this->defaultConnectionName;
+		
 		$config = ConfigurationManager::getConfig();
 		$config_connection = (isset($config['database']['connections'][$connection_name])) ? $config['database']['connections'][$connection_name] : null;
 
@@ -77,8 +73,7 @@ class ConnectionManager {
 		return $_this->connections[$connection_name];
 	}
 
-	public static function hasConnection($connection_name='default') {
-
+	public static function hasConnection($connection_name=null) {
 		try {
 			self::getConnection($connection_name);
 		} catch (MissingConnectionException $e) {

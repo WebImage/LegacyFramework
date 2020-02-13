@@ -143,17 +143,20 @@ class DataAccessObject {
 	 */
 	private $errors = array();
 	
+	private $writeConnName = null;
+	private $readConnName = null;
+	
 	/**
 	 * Should be overridden with specific 
 	 */
-	function load($id) { // Simple query, should be override for more advanced queries
+	public function load($id) { // Simple query, should be override for more advanced queries
 		$conditions = $this->primaryKey . '=\'' . $id . '\'';
 		$select_sql = sprintf($this->selectQuery, '*', $this->getTableName(), '`' . $this->primaryKey . "`='". $id . "'");
 		$results = $this->selectQuery($select_sql, $this->modelName);
 		return $results->getAt(0);
 	}
 	
-	function loadAll() {
+	public function loadAll() {
 	/*
 		loadAll($extend=array());
 		
@@ -165,10 +168,10 @@ class DataAccessObject {
 		$sql = sprintf($this->selectQuery, '*', $this->getTableName(), '1=1');
 		return $this->selectQuery($sql, $this->modelName);
 	}
-	function getTableName() { return $this->tableName; }
-	function setTableName($table_name) { $this->tableName = $table_name; }
+	public function getTableName() { return $this->tableName; }
+	public function setTableName($table_name) { $this->tableName = $table_name; }
 	
-	function save($structure_object) {
+	public function save($structure_object) {
 		if (count($this->updateFields) > 0 && !empty($this->tableName)) {
 
 			$primary_key = $this->primaryKey;
@@ -233,7 +236,7 @@ class DataAccessObject {
 				// Populate primary key, but only if this is not a forced inserted record
 				if (!is_array($primary_key) && !$this->isForceInsert() && !empty($primary_key)) {
 					// Make sure result is not false (failed), otherwise a primary key could be associated with this record from a previously saved record
-					if ($result !== false) $structure_object->$primary_key = mysqli_insert_id(ConnectionManager::getConnection());
+					if ($result !== false) $structure_object->$primary_key = mysqli_insert_id($this->getWriteConnection());
 				}
 
 			} else { // UPDATE QUERY
@@ -263,7 +266,7 @@ class DataAccessObject {
 		return $structure_object;
 	}
 	
-	function delete($primary_key) {
+	public function delete($primary_key) {
 		#if (is_numeric($primary_key)) {
 			$where = $this->primaryKey . " = '" . $this->safeString($primary_key) . "'";
 			$this->commandQuery(sprintf($this->deleteQuery, $this->tableName, $where));
@@ -271,7 +274,7 @@ class DataAccessObject {
 		#} else return false;
 	}
 	
-	function getSearchQueryString($dao_search_obj) {
+	public function getSearchQueryString($dao_search_obj) {
 		$select_columns	= $dao_search_obj->getTableKey() . '.*';
 
 		$from 		= DatabaseManager::getTable($dao_search_obj->getTableKey()) . ' AS ' . $dao_search_obj->getTableAlias();
@@ -381,7 +384,7 @@ class DataAccessObject {
 		}
 		return $sql;
 	}
-	function search($dao_search_obj) {
+	public function search($dao_search_obj) {
 		$sql = $this->getSearchQueryString($dao_search_obj);		
 		return $this->selectQuery($sql, $this->modelName);
 	}
@@ -390,7 +393,7 @@ class DataAccessObject {
 	 * @param string $cast_as_class
 	 * @return ResultSet
 	 */
-	function selectQuery($sql, $cast_as_class='stdClass') { // SELECT statements; Returns result object
+	public function selectQuery($sql, $cast_as_class='stdClass') { // SELECT statements; Returns result object
 		$debug_message = '';
 
 		$start_query_time = FrameworkManager::getTime();
@@ -409,7 +412,7 @@ class DataAccessObject {
 		$result_set = new ResultSet();
 
 		try {
-			$db = ConnectionManager::getConnection();
+			$db = $this->getReadConnection();
 		} catch (MissingConnectionException $e) {
 			$this->addError($e->getMessage());
 			return $result_set;
@@ -441,7 +444,7 @@ class DataAccessObject {
 			$result_set->setResultsPerPage($this->_resultsPerPage);
 			$sql .= ' LIMIT ' . ($this->_currentPage * $this->_resultsPerPage - $this->_resultsPerPage) . ', ' . $this->_resultsPerPage;
 		}
-				
+		
 		if ($query = mysqli_query($db, $sql)) {
 
 			$fields = mysqli_fetch_fields($query);
@@ -501,13 +504,14 @@ class DataAccessObject {
 		DebugDBManager::addTime($query_time);
 		return $result_set;
 	}
-	function commandQuery($query) { // UPDATE, DELETE, INSERT; 
+	
+	public function commandQuery($query) { // UPDATE, DELETE, INSERT;
 		$debug_message = '';
 		
 		$start_query_time = FrameworkManager::getTime();
 
 		try {
-			$db = ConnectionManager::getConnection();
+			$db = $this->getWriteConnection();
 		} catch (MissingConnectionException $e) {
 			$this->addError($e->getMessage());
 			return false;
@@ -539,7 +543,7 @@ class DataAccessObject {
 	/**
 	 * Paginate results
 	 */
-	function paginate($current_page=null, $results_per_page) {
+	public function paginate($current_page=null, $results_per_page) {
 		$this->_paginate = true;
 		if (!is_null($current_page)) $this->_currentPage = $current_page;
 		if (!is_null($results_per_page)) $this->_resultsPerPage = $results_per_page;
@@ -549,7 +553,7 @@ class DataAccessObject {
 	 * Checks if the structure represents a new entry.  Checks if the primary key is empty
 	 * Assumes only one primary key - needs to be updated if multiple primary keys are specified
 	 */
-	function isNewRecord($structure_object) {
+	public function isNewRecord($structure_object) {
 		$primary_key = $this->primaryKey;
 		if (is_array($primary_key)) { // This probably still needs some work, since if the primary key is an array, we might need to do some additional checking to verify that we should really return true, right now we assume that all fields must not be empty
 			$any_empty = false;
@@ -571,11 +575,11 @@ class DataAccessObject {
 	/**
 	 * Whether or not to use cached queries
 	 */
-	function setCacheResults($cache_results) { // Boolean
+	public function setCacheResults($cache_results) { // Boolean
 		$this->_cacheResults = $cache_results;
 	}
 	
-	function isCachingResults() {
+	public function isCachingResults() {
 		$DATABASE_CACHE_RESULTS = ConfigurationManager::get('DATABASE_CACHE_RESULTS');
 		
 		$config_cache_results = !($DATABASE_CACHE_RESULTS == 'false' || $DATABASE_CACHE_RESULTS === false);
@@ -587,25 +591,25 @@ class DataAccessObject {
 	 * Whether or not to force INSERT instread of UPDATE
 	 * A lot of code still relies on this method, so it is kept for legacy support
 	 */
-	function setForceInsert($force_insert) { // Boolean
+	public function setForceInsert($force_insert) { // Boolean
 		#$this->_forceInsert = $force_insert;
 		// Added the following for legacy support so that we can support the new setSaveType method functionality
 		if ($force_insert) $this->setSaveType(self::SAVE_TYPE_INSERT);
 		else $this->setSaveType(self::SAVE_TYPE_AUTO);
 	}
-	function setSaveType($save_type) {
+	public function setSaveType($save_type) {
 		$allowed_types = array(self::SAVE_TYPE_AUTO, self::SAVE_TYPE_INSERT, self::SAVE_TYPE_UPDATE);
 		if (!in_array($save_type, $allowed_types)) throw new Exception('Save type ' . $save_type . ' is not a valid save type option');
 		$this->_saveType = $save_type;
 	}
-	function getSaveType() {
+	public function getSaveType() {
 		$save_type = $this->_saveType;
 		if (empty($save_type)) $save_type = self::SAVE_TYPE_AUTO;
 		return $save_type;
 	}
 	
 	#function isForceInsert() { return $this->_forceInsert; }
-	function isForceInsert() { return ($this->getSaveType() == self::SAVE_TYPE_INSERT); }
+	public function isForceInsert() { return ($this->getSaveType() == self::SAVE_TYPE_INSERT); }
 	
 	/**
 	 * Make query value safe for database
@@ -613,7 +617,7 @@ class DataAccessObject {
 	 * @access public static
 	 * @static
 	 */
-	public static function safeString($string) {
+	public static function safeString($string, $connectionName=null) {
 
 		$return_string = $string;
 		if (get_magic_quotes_gpc()) {
@@ -621,7 +625,7 @@ class DataAccessObject {
 		}
 
 		try {
-			$db = ConnectionManager::getConnection();
+			$db = ConnectionManager::getConnection($connectionName);
 			$return_string = mysqli_real_escape_string($db, $return_string);
 		} catch (MissingConnectionException $e) {
 			// Do nothing
@@ -634,7 +638,7 @@ class DataAccessObject {
 	/**
 	 * Check if a database table exists
 	 */
-	function tableExists($table_name) {
+	public function tableExists($table_name) {
 		$sql_select = "SHOW TABLES LIKE '" . $table_name . "'";
 		$results = $this->selectQuery($sql_select);
 		if ($results->getAt(0)) return true;
@@ -643,11 +647,11 @@ class DataAccessObject {
 	/**
 	 * Get all tables
 	 */
-	function getDatabaseTables() {
+	public function getDatabaseTables($connectionName=null) {
 		$sql_select = "SHOW TABLES";
 		$rs_results = new ResultSet();
 		
-		$db = ConnectionManager::getConnection();
+		$db = ConnectionManager::getConnection($connectionName === null ? $this->getReadConnectionName() : $connectionName);
 		
 		if ($query = mysqli_query($db, $sql_select)) {
 			$field_names = array();
@@ -669,18 +673,18 @@ class DataAccessObject {
 	/**
 	 * Check if there are any errors on the stack
 	 */
-	function anyErrors() {
+	public function anyErrors() {
 		return (count($this->errors) > 0);
 	}
-	function addError($message) {
+	public function addError($message) {
 		array_push($this->errors, $message);
 	}
-	function getErrors() {
+	public function getErrors() {
 		return $this->errors;
 	}
 	
-	function setModelName($model_name) { $this->modelName = $model_name; }
-	function getModelName() { return $this->modelName; }
+	public function setModelName($model_name) { $this->modelName = $model_name; }
+	public function getModelName() { return $this->modelName; }
 	
 	public function separateResultTables($true_false=null) {
 		if (is_null($true_false)) { // Getter
@@ -709,7 +713,61 @@ class DataAccessObject {
 		if (!is_array($this->primaryKey)) $this->primaryKey = array();
 		array_push($this->primaryKey, $field_name);
 	}
-
+	
+	/**
+	 * @return mixed A database connection for reading
+	 */
+	public function getReadConnection() {
+		return ConnectionManager::getConnection($this->readConnName);
+	}
+	
+	/**
+	 * @return mixed A database connection for writing
+	 */
+	public function getWriteConnection() {
+		return ConnectionManager::getConnection($this->writeConnName);
+	}
+	
+	/**
+	 * @return string|null
+	 */
+	public function getWriteConnectionName()
+	{
+		return $this->writeConnName;
+	}
+	
+	/**
+	 * @param string $writeConnName
+	 */
+	public function setWriteConnectionName($writeConnName)
+	{
+		$this->writeConnName = $writeConnName;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getReadConnectionName()
+	{
+		return $this->readConnName;
+	}
+	
+	/**
+	 * @param string $readConnName
+	 */
+	public function setReadConnectionName($readConnName)
+	{
+		$this->readConnName = $readConnName;
+	}
+	
+	/**
+	 * Convenience method to set read/write connection names at the same time
+	 * @param $connName
+	 */
+	public function setConnectionName($connName) {
+		$this->setWriteConnectionName($connName);
+		$this->setReadConnectionName($connName);
+	}
 }
 
 /**
@@ -762,5 +820,3 @@ function database_format_date($display_format, $database_format, $default_value=
 		return $default_value;
 	}
 }
-
-?>
