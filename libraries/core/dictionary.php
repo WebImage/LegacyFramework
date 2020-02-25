@@ -13,9 +13,9 @@ class Dictionary implements Countable, Iterator, ArrayAccess { // extends  IDict
 	function set($key, $value) {
 		$this->lst[$key] = $value;
 	}
-	function get($key) {
+	function get($key, $default=false) {
 		if ($this->isDefined($key)) return $this->lst[$key];
-		else return false;
+		else return $default;
 	}
 	function del($key) {
 		unset($this->lst[$key]);
