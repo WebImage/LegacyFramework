@@ -1,5 +1,7 @@
 <?php
 
+use WebImage\Config\Config;
+
 FrameworkManager::loadDAO('permission');
 class PermissionLogic {
 	public static function getPermissions() {
@@ -49,6 +51,9 @@ class PermissionLogic {
 			$struct->permission = $permission;
 			$struct->description = $description;
 			
+			$permission_dao->setForceInsert(true);
+			$permission_dao->save($struct);
+			
 			return $permission_dao->save($struct);
 		}		
 	}
@@ -70,23 +75,16 @@ class PermissionLogic {
 			array_push($existing_permissions, $permission_struct->permission);
 		}
 		
-		$xml_config = ConfigurationManager::getConfig();
+		$config = ConfigurationManager::getConfig();
 		
-		if ($xml_add_permissions = $xml_config->getPath('roleManager/permissions/add')) {
-			
-			foreach($xml_add_permissions as $xml_add) {
-				
-				$permission = $xml_add->getParam('permission');
-				
-				if (!empty($permission) && !in_array($permission, $existing_permissions)) {
-					self::createPermission($permission);
-				}
-				
-				
+		if (null === ($role_manager_config = $config->get('roleManager'))) die(__FILE__.':'.__LINE__.PHP_EOL);
+		if (null === ($permissions_config = $role_manager_config->get('permissions'))) die(__FILE__.':'.__LINE__.PHP_EOL);
+		
+		foreach($permissions_config as $permission => $permission_config) {
+			if (!empty($permission) && !in_array($permission, $existing_permissions)) {
+				$description = $permission_config->get('description');
+				self::createPermission($permission, $description);
 			}
-			
 		}
 	}
 }
-
-?>
