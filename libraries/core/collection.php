@@ -4,7 +4,7 @@
  * 02/05/2010	(Robert Jones) Changed $lst, and $current_index properties to be private (instead of var)
  * 08/04/2010	(Robert Jones) Added $cacheCount to Collection to keep track of how many entries are in the collection/array.  When used in hasNext() execution decreased by 100 times
  */
-class Collection implements ICollection { // Implements ICollection
+class Collection implements ICollection, Iterator, ArrayAccess, Countable { // Implements ICollection
 	private $lst = array();
 	private $current_index = -1;
 	private $cacheCount;
@@ -80,4 +80,67 @@ class Collection implements ICollection { // Implements ICollection
 		return $this->getAll();
 	}
 	
+	/**
+	 * Implements Countable::count
+	 * @return int
+	 */
+	public function count() {
+		return $this->getCount();
+	}
+	
+	/**
+	 * Implements ArrayAccess::offsetExists
+	 * @param mixed $offset
+	 * @return bool
+	 */
+	public function offsetExists($offset) {
+		return isset($this->lst[$offset]);
+	}
+	
+	/**
+	 * Implements ArrayAccess::offsetGet
+	 * @param mixed $offset
+	 * @return mixed|void
+	 */
+	public function offsetGet($offset) {
+		return $this->getAt($offset);
+	}
+	
+	/**
+	 * Implements ArrayAccess::offsetSet
+	 * @param mixed $offset
+	 * @param mixed $value
+	 */
+	public function offsetSet($offset, $value) {
+		$this->setAt($offset, $value);
+	}
+	
+	/**
+	 * Implements ArrayAccess::offsetUnset
+	 * @param mixed $offset
+	 */
+	public function offsetUnset($offset) {
+		$this->removeAt($offset);
+	}
+	
+	public function current() {
+		return $this->getAt($this->getCurrentIndex());
+	}
+	
+	public function next() {
+		$this->setCurrentIndex($this->getCurrentIndex()+1);
+	}
+	
+	public function key() {
+		return $this->getCurrentIndex();
+	}
+	
+	public function valid() {
+		return $this->getCurrentIndex() >= 0 && $this->getCurrentIndex() < $this->getCount();
+	}
+	
+	public function rewind()
+	{
+		$this->setCurrentIndex(0);
+	}
 }
