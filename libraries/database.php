@@ -82,14 +82,20 @@ $query = $this->select()
 	->exec();
 	
 // How to do or/and groupings in where clause
+->orWhere(function($qb) {
+	$qb->where('id', 1);
+	$qb->where('created', '>=', '2020-04-15 00:00:00');
+])
 
 $this->insert()
 	->set('first_name', 'Robert')
 	->set('last_name', 'Jones')
-	->set('membership_id');
+	->set('membership_id')
+	->exec();
 
 $this->delete()
-	->where('id', 5);
+	->where('id', 5)
+	->exec();
 	
 $this->update()
 	->set('last_name', 'Jones II')
