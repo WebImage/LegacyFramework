@@ -302,6 +302,7 @@ return array(
 	'serviceManager' => array(
 		'factories' => array(
 			'ControlManager' => 'ControlManagerFactory',
+			'Events' => 'WebImage\Event\ManagerFactory',
 			'WebImage\ExperienceProfile\ProfileManager' => 'WebImage\ExperienceProfile\ProfileManagerFactory'
 		),
 		'aliases' => array(
