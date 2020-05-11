@@ -62,7 +62,7 @@ function build_page_list($pages, $parent_id=0, $indent_level = 1) {
 			$output .= '</li>';
 		}
 		
-		$output .= '<ul>';					
+		$output .= '</ul>';
 	}
 	
 	return $output;
