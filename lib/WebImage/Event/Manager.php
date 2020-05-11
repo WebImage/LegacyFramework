@@ -26,7 +26,7 @@ class Manager implements ManagerInterface
 	 *
 	 * @return mixed[] Responses from all listeners
 	 */
-	public function trigger($event, $data, $sender = null): array
+	public function trigger($event, $data, $sender = null)
 	{
 		$responses = [];
 		$event = $this->buildEvent($event, $data, $sender);
@@ -47,7 +47,7 @@ class Manager implements ManagerInterface
 	 *
 	 * @return array
 	 */
-	private function prioritizedListenersForEvent(Event $event): array
+	private function prioritizedListenersForEvent(Event $event)
 	{
 		$type = $event->getType();
 		$listeners = isset($this->listeners[$type]) ? $this->listeners[$type] : [];
@@ -63,7 +63,7 @@ class Manager implements ManagerInterface
 	 *
 	 * @return Event
 	 */
-	private function buildEvent($event, $data, $sender): Event
+	private function buildEvent($event, $data, $sender)
 	{
 		if (is_object($event)) {
 			if (!($event instanceof Event)) {
