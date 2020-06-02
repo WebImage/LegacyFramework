@@ -7,7 +7,7 @@ FrameworkManager::loadStruct('cart');
 include('sqlmembershipprovider.php');
 
 class SqlCartMembershipProvider extends SqlMembershipProvider {	
-	var $cart;
+	protected $cart;
 	
 	function _sessionToCustomer($membership_user) {
 		$session_key = SessionManager::getId();
@@ -63,21 +63,17 @@ class SqlCartMembershipProvider extends SqlMembershipProvider {
 		// Validate cart items
 		
 		$shopping_cart_items = $shopping_cart->getCartItems();
-		
+
 		foreach($shopping_cart_items as $shopping_cart_item) {
 			
 			if (!$shopping_cart_item->isValid()) {
-				
 				CartLogic::deleteCartItemById($shopping_cart_item->getId());
-				
+
 				$shopping_cart->removeCartItemById($shopping_cart_item->getId());
-				
 			}
-			
 		}
-		
-		$_this->_cart = $shopping_cart;
-		return $_this->_cart;
+
+		return $this->cart = $shopping_cart;
 	}
 	
 	function getCartItems() {
@@ -221,7 +217,7 @@ class SqlCartMembershipProvider extends SqlMembershipProvider {
 			CartLogic::deleteCartBySessionKey(SessionManager::getId());
 		}
 		// Reset cart object to force system to refresh cart if it is needed after emptyCart() is called.
-		$_this->cart = null;
+		$this->cart = null;
 		return true;
 	}
 }
