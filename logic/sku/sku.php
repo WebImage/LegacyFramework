@@ -65,11 +65,11 @@ class CrossSellDAO extends DataAccessObject {
 	var $modelName = 'CrossSellStruct';
 	var $updateFields = array('created', 'created_by', 'sortorder', 'updated', 'updated_by');
 	var $primaryKey = array('sku_id', 'related_sku_id');
-	public static function __construct() {
+	public function __construct() {
 		$this->tableName = DatabaseManager::getTable('cross_sells');
 	}
-	
-	public static function getCrossSellsBySkuId($sku_id) {
+
+	public function getCrossSellsBySkuId($sku_id) {
 		
 		$sql_select = "
 			SELECT 
@@ -89,8 +89,8 @@ class CrossSellDAO extends DataAccessObject {
 		return $this->selectQuery($sql_select);
 		
 	}
-	
-	public static function getCrossSellRelationship($sku_id, $related_sku_id) {
+
+	public function getCrossSellRelationship($sku_id, $related_sku_id) {
 		
 		$sql_select = "
 			SELECT *
@@ -102,8 +102,8 @@ class CrossSellDAO extends DataAccessObject {
 		return $this->selectQuery($sql_select, 'CrossSellStruct')->getAt(0);
 		
 	}
-	
-	public static function delete($sku_id, $related_sku_id) {
+
+	public function delete($sku_id, $related_sku_id) {
 		
 		$sql_command = "
 			DELETE *
@@ -113,7 +113,6 @@ class CrossSellDAO extends DataAccessObject {
 				related_sku_id = '" . $this->safeString($related_sku_id) . "'";
 		
 		return $this->commandQuery($sql_command);
-		
 	}
 }
 ?>
