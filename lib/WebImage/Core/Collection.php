@@ -70,16 +70,46 @@ class Collection implements ICollection { // Implements ICollection
 			return ($next_index < $this->cacheCount);
 		}
 	}
+	
 	/**
 	 * Merge another collection into this collection
-	 * @param Collection
+	 * @param Collection $collection
+	 * @return array|mixed
 	 */
 	public function merge($collection) {
 		if (is_array($collection)) $this->lst = array_merge($this->lst, $collection);
 		else if (is_a($collection, 'Collection')) $this->lst = array_merge($this->lst, $collection->lst);
 		else throw new Exception('Invalid type passed to Collection::merge($collection).');
 		$this->cacheCount = count($this->lst);
+		
 		return $this->getAll();
 	}
 	
+	/**
+	 * Sort the internal storage mechanism
+	 * @param callable $sorter
+	 */
+	public function sort(callable $sorter) {
+		usort($this->lst, $sorter);
+	}
+	
+	/**
+	 * Return a filtered copy of the internal storage mechanism
+	 * @param callable $filterer
+	 * @return $this
+	 */
+	public function filter(callable $filterer) {
+		$filtered = new static;
+		
+		foreach($this as $key => $val) {
+			$result = call_user_func($filterer, $val, $key) === true;
+			if (!is_bool($result)) throw new \RuntimeException('Filter must return boolean');
+			
+			if ($result === true) {
+				$filtered->add($val);
+			}
+		}
+		
+		return $filtered;
+	}
 }

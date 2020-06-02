@@ -68,9 +68,12 @@ class Collection implements ICollection, Iterator, ArrayAccess, Countable { // I
 			return ($next_index < $this->cacheCount);
 		}
 	}
+	
 	/**
-	 * Merge another collection into this collection
-	 * @param Collection
+	 * * Merge another collection into this collection
+	 * @param Collection $collection
+	 * @return array|mixed
+	 * @throws Exception
 	 */
 	public function merge($collection) {
 		if (is_array($collection)) $this->lst = array_merge($this->lst, $collection);
@@ -78,6 +81,25 @@ class Collection implements ICollection, Iterator, ArrayAccess, Countable { // I
 		else throw new Exception('Invalid type passed to Collection::merge($collection).');
 		$this->cacheCount = count($this->lst);
 		return $this->getAll();
+	}
+	
+	public function sort(callable $sorter) {
+		usort($this->lst, $sorter);
+	}
+	
+	public function filter(callable $filterer) {
+		$filtered = new static;
+		
+		foreach($this as $key => $val) {
+			$result = call_user_func($filterer, $val, $key) === true;
+			if (!is_bool($result)) throw new \RuntimeException('Filter must return boolean');
+			
+			if ($result === true) {
+				$filtered->add($val);
+			}
+		}
+		
+		return $filtered;
 	}
 	
 	/**
