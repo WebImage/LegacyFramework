@@ -8,6 +8,8 @@ class CWI_DB_ModelDiff {
 	private $fields = array();
 	public function getSourceModel() { return $this->sourceModel; }
 	public function getTargetModel() { return $this->targetModel; }
+
+	/** @return CWI_DB_ModelFieldDiff[] */
 	public function getFieldChanges() { return $this->fields; }
 	
 	public static function compareModels($source, $target) {

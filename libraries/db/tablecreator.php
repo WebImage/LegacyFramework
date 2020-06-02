@@ -50,7 +50,7 @@ class CWI_DB_MySqlTableCreator implements CWI_DB_ITableCreator {
 			
 			$type = '';
 			if (count($model_diff->getFieldChanges()) > 0) {
-				$this->updateTableFields($model_diff);
+				$this->updateTable($model_diff);
 				$type = CWI_DB_ModelResult::TYPE_UPDATED;
 			} else {
 				$type = CWI_DB_ModelResult::TYPE_UNCHANGED;
@@ -60,8 +60,6 @@ class CWI_DB_MySqlTableCreator implements CWI_DB_ITableCreator {
 		} else {
 			return $this->createTable($this->getModel()->getTableName());
 		}
-		
-		
 	}
 	
 	private function getModelDefStringFromField($field) {
@@ -94,10 +92,29 @@ class CWI_DB_MySqlTableCreator implements CWI_DB_ITableCreator {
 		if ($field->isPrimaryKey()) array_push($primary_keys, '`' . $field->getName() . '`');
 		return $field_def;
 	}
-	private function updateTableFields($model_diff) {
+
+	public function updateTable($model_diff) {
+		$sqls = $this->updateTableFields($model_diff);
+
 		$dao = new DataAccessObject();
 		$dao->setCacheResults(false);
-		
+
+		foreach($sqls as $sql) {
+			$dao->commandQuery($sql);
+		}
+	}
+
+	/**
+	 * @param $model_diff
+	 *
+	 * @return string[]
+	 * @throws Exception
+	 */
+	public function updateTableFieldsSql($model_diff) {
+		$dao = new DataAccessObject();
+		$dao->setCacheResults(false);
+		$sqls = array();
+
 		$table_name = $model_diff->getSourceModel()->getTableName();
 		
 		$field_changes = $model_diff->getFieldChanges();
@@ -162,10 +179,10 @@ class CWI_DB_MySqlTableCreator implements CWI_DB_ITableCreator {
 					break;
 			}
 			
-			if (!empty($sql)) {
-				$dao->commandQuery($sql);
-			}
+			if (!empty($sql)) $sqls[] = $sql;
 		}
+
+		return $sqls;
 	}
 	/**
 	 * @return boolean whether or not the table exists
@@ -180,11 +197,12 @@ class CWI_DB_MySqlTableCreator implements CWI_DB_ITableCreator {
 		$dao->setCacheResults(false);
 		return $dao->tableExists($table_name);
 	}
-	public function createTable($table_name=null) {
+
+	public function createTableSql($table_name=null) {
 		$model = $this->model;
 
 		if (empty($table_name)) $table_name = $this->getModel()->getTableName();
-		
+
 		$fields = $model->getFields();
 		$primary_keys = array();
 		$sql_fields = array();
@@ -194,9 +212,9 @@ class CWI_DB_MySqlTableCreator implements CWI_DB_ITableCreator {
 			$field_size = $field->getSize();
 			$field_scale = $field->getScale();
 			$field_default = $field->getDefault();
-			
+
 			$field_sql = '`' . $field->getName() . '` ' . strtoupper($field->getType());
-			
+
 			if (!empty($field_size)) {
 				if (!is_numeric($field_size)) throw new Exception('Unable to create table: ' . $table_name . ' because `' . $field->getName() . '`\'s size was not numeric: ' . $field_size);
 				$field_sql .= '(';
@@ -208,7 +226,7 @@ class CWI_DB_MySqlTableCreator implements CWI_DB_ITableCreator {
 				}
 				$field_sql .= ')';
 			}
-			
+
 			if ($field->isRequired()) $field_sql .= ' NOT NULL';
 			if ($field->isAutoIncrement()) $field_sql .= ' AUTO_INCREMENT';
 			if (null !== $field_default) {
@@ -221,6 +239,12 @@ class CWI_DB_MySqlTableCreator implements CWI_DB_ITableCreator {
 		$sql .= ' (' . implode(',', $sql_fields);
 		if (count($primary_keys) > 0) $sql .= ', PRIMARY KEY (' . implode(',', $primary_keys) . ')';
 		$sql .= ')';
+
+		return $sql;
+	}
+
+	public function createTable($table_name=null) {
+		$sql =$this->createTableSql($table_name);
 		
 		// Data Access Object
 		$dao = new DataAccessObject();

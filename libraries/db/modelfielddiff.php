@@ -29,7 +29,7 @@ class CWI_DB_ModelFieldDiff {
 	
 	/**
 	 * Takes a source field array and a target field array and finds out what has to be done to the source to make it like the target
-	 * @return array of CWI_DB_ModelFieldDiff
+	 * @return CWI_DB_ModelFieldDiff[]
 	 */
 	public static function compareFields($source_fields, $target_fields) {
 		$changes = array();

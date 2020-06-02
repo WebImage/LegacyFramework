@@ -4,6 +4,7 @@ FrameworkManager::loadLibrary('db.model');
 FrameworkManager::loadLibrary('db.modelfield');
 FrameworkManager::loadLibrary('db.modelindex');
 FrameworkManager::loadLibrary('db.modelindexfield');
+FrameworkManager::loadLibrary('xml.compile');
 
 /**
  * 01/27/2010	(Robert Jones) Modified class to take advantage of the fact that CWI_XML_Compile::compile() now throws errors
@@ -14,7 +15,7 @@ class CWI_DB_DatabaseHelper {
 	
 	public static function createModelFromTableKey($table_key) {
 		$model = new CWI_DB_Model();
-		
+
 		$table_name = DatabaseManager::getTable($table_key);
 		$model->setTableName($table_name);
 		$model->setName($table_key);
@@ -32,7 +33,7 @@ class CWI_DB_DatabaseHelper {
 		// Columns
 		$sql_select = "SHOW COLUMNS FROM `" . $table_name . "`";
 		$rows = $dao->selectQuery($sql_select);
-		
+
 		if ($rows->getCount() == 0) throw new Exception ('Unknown table');
 		
 		while ($row = $rows->getNext()) {
@@ -106,10 +107,10 @@ class CWI_DB_DatabaseHelper {
 	public static function convertXmlToModel($xml_traversal_model) {
 		
 		FrameworkManager::loadLibrary('db.model');
-	
+
 		if (is_string($xml_traversal_model)) {
 			try {
-				$xml_traversal_model = CWI_XML_Compile::compile($xml_traversal);
+				$xml_traversal_model = CWI_XML_Compile::compile($xml_traversal_model);
 			} catch (Exception $e) {
 				throw new CWI_SYNC_DatabaseConversionException('Unable to compile XML');
 			}
@@ -118,7 +119,7 @@ class CWI_DB_DatabaseHelper {
 		) {
 			throw new CWI_SYNC_DatabaseConversionException('Passing unknown type (of type '.gettype($xml_traversal_model) . ') to convertXmlToModel()');
 		}
-	
+
 		if ($xml_model_root = $xml_traversal_model->getPathSingle('/model')) {
 				
 			// Initiate database model
