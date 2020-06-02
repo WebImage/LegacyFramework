@@ -1186,13 +1186,15 @@ class Page {
 			if ($request_handler = $in_context_page_request->getRequestHandler()) {
 
 				if ($_this->isRootPageRequest() && $request_handler->statsEnabled() && ConfigurationManager::get('ENABLE_PAGE_STATS') == 'true') {
+
 					FrameworkManager::loadLogic('pagestat');
+
 					if ($stat = PageStatLogic::createStatForCurrentUser( Page::getPath(), Page::getQueryString())) {
 						Page::setPageStatId($stat->id);
 					}
 				}
-				$output = $request_handler->render();
 
+				$output = $request_handler->render();
 			}
 		}
 
@@ -1200,7 +1202,7 @@ class Page {
 		if ($new_request) {
 			$_this->endCurrentPageRequest();
 		}
-		
+
 		return $output;
 	}
 	
