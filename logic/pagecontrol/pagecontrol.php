@@ -31,7 +31,7 @@ class PageControlLogic {
 	public static function getControlsByPageIdOrTemplateId($page_id, $template_id) {
 		$page_control_dao = new PageControlDAO();
 		$page_controls = $page_control_dao->getControlsByPageIdOrTemplateId($page_id, $template_id);
-		
+
 		/** 
 		 * Find out if a mirrored control points to a template control in the same result set
 		 * If so then the template control will be removed
@@ -83,12 +83,14 @@ class PageControlLogic {
 	 */
 	public static function _getMirroredFields() { return array('config', 'control_id', 'class_name', 'control_src'); }
 	
-	public static function buildControlByPageControlId($page_control_struct, $edit_mode=null, $edit_context=null, $window_mode=null, $new_control_id=null) { // Can be database id "page_control->id" or object from PageControlLogic::getPageControlById();
+	public static function buildControlByPageControlId(int $page_control_id, $edit_mode=null, $edit_context=null, $window_mode=null, $new_control_id=null) { // Can be database id "page_control->id" or object from PageControlLogic::getPageControlById();
+		if (!is_numeric($page_control_id)) throw new \InvalidArgumentException('Expecting numeric value for page_control_id');
+		$page_control = PageControlLogic::getPageControlById($page_control_id);
 
-		if (!is_object($page_control_struct)) { // Assume PageControl->id
-			$page_control_struct = PageControlLogic::getPageControlById($page_control_struct);
-		}
-		
+		return self::buildControlByPageControl($page_control, $edit_mode, $edit_context, $window_mode, $new_control_id);
+	}
+
+	public static function buildControlByPageControl(PageControlStruct $page_control_struct, $edit_mode=null, $edit_context=null, $window_mode=null, $new_control_id=null) { // Can be database id "page_control->id" or object from PageControlLogic::getPageControlById();
 		/**
 		 * Grabs mirrored control values and applies them to this control
 		 */
@@ -107,12 +109,11 @@ class PageControlLogic {
 				}
 			}
 		}
-		
+
 		$control_file_path = PathManager::translate($page_control_struct->control_src);
-		
 		include_once($control_file_path);
 		$class_name = $page_control_struct->class_name;
-		
+
 		$config_text = $page_control_struct->config;
 		// Begin adding support for CWI_CONTROLS_EDITABLE_AbstractEditInPlaceControl, which uses serialized config values, instead of text 
 		#$config_text_length = strlen($config_text);
@@ -128,35 +129,46 @@ class PageControlLogic {
 			#$config_array = unserialize($config_text);
 			$config = ConfigDictionary::createFromString($config_text);
 		} else { // EditableControl - old - phasing out
+
+			// Convert old style config to new
 			$init_array = Control::ParseConfigString($config_text);
 			foreach($init_array as $config_name=>$config_value) { // Convert old param system to new system
 				$config->set($config_name, $config_value);
-				#$old_config[$config_name] = $config_value;
 			}
+			$page_control_struct->config = $config->toString();
+
+			// Saved upgraded config style
+			self::save($page_control_struct);
 		}
+
 		$control = new $class_name();
-		
-		if (is_a($control, 'EditableControl') || is_a($control, 'CWI_CONTROLS_EDITABLE_AbstractEditInPlaceControl') || is_a($control, 'CWI_CONTROLS_AbstractPageControl')) {
+
+		if ($control instanceof EditableControl || $control instanceof CWI_CONTROLS_EDITABLE_AbstractEditInPlaceControl || $control instanceof CWI_CONTROLS_AbstractPageControl) {
+			$control->setConfig($config);
+			$control->setPageControlId($page_control_struct->id);
+			$control->setControlId($page_control_struct->control_id);
+			$control->setPageId($page_control_struct->page_id);
 			if (!empty($edit_mode)) $control->setEditMode($edit_mode);
 			if (!empty($edit_context)) $control->setEditContext($edit_context);
 			if (!empty($window_mode)) $control->setWindowMode($window_mode);
-			$control->setLocalPath(dirname($control_file_path) . '/');
+			if ($control instanceof PageControlControl) {
+				$control->setLocalPath(dirname($control_file_path) . '/');
+			}
 		}
-		
-		
-		if (is_a($control, 'EditableControl')) { // Legacy
-			
+
+		if ($control instanceof PageControlControl) { // Legacy
 			$control->setConfig($config);
 			$control->setPageControlId($page_control_struct->id);
 			$control->setControlId($page_control_struct->control_id);
 			$control->setControlFriendlyName($page_control_struct->control_label);
 			$control->setPageId($page_control_struct->page_id);
-			$control->setId($page_control_struct->placeholder.'_'.$page_control_struct->id);
+			$control->setId($page_control_struct->placeholder . '_' . $page_control_struct->id);
 			$control->setPlaceholder($page_control_struct->placeholder);
+
 			return $control;
-			
-		} else if (is_a($control, 'CWI_CONTROLS_EDITABLE_AbstractEditInPlaceControl') || is_a($control, 'ManagedControl') || is_a($control, 'CWI_CONTROLS_IPageControl')) { // Don't think ManagedControl is actually used anywhere... maybe it can be removed
-			
+
+		} else if ($control instanceof CWI_CONTROLS_IPageControl) {
+
 			$id = $page_control_struct->placeholder . '_';
 			$page_control_id = $page_control_struct->id;
 			
@@ -181,15 +193,16 @@ class PageControlLogic {
 			$control->setControlFriendlyName($page_control_struct->control_label);
 			$control->isFavorite( ($page_control_struct->is_favorite==1) );
 			$control->setFavoriteTitle($page_control_struct->favorite_title);
-			
+
 			return $control;
 		} else {
-			
 			$page_control = new PageControlControl($page_control_struct);
 			$page_control->m_childControl = $control;
+
 			$page_control->setControlFriendlyName($page_control_struct->control_label);
 			return $page_control;
 		}
+
 	}
 	
 	public static function buildNewControl($page_control_struct, $edit_mode=null, $edit_context=null, $window_mode=null, $new_control_id=null) {
@@ -200,38 +213,12 @@ class PageControlLogic {
 		$page_control_struct->control_src = $control_struct->file_src;
 		$page_control_struct->control_label = $control_struct->label;
 		
-		return PageControlLogic::buildControlByPageControlId($page_control_struct, $edit_mode, $edit_context, $window_mode, $new_control_id);
+		return PageControlLogic::buildControlByPageControl($page_control_struct, $edit_mode, $edit_context, $window_mode, $new_control_id);
 	}
 	
 	public static function save($page_control_struct) {
 		$page_control = new PageControlDAO();
-		$primary_key = $page_control->primaryKey;
-		
-		/*
-		// Check to see if this is an existing page control
-		if (!empty($page_control_struct->$primary_key)) {
-			// If this page control is meant to mirror another page control, update the other page control instead
-			if (is_numeric($page_control_struct->mirror_id) && $page_control_struct->mirror_id > 0) {
-				FrameworkManager::loadStruct('pagecontrol');
-				
-				$real_page_control = new PageControlStruct();
-				$control_vars = get_object_vars($page_control_struct);
-				
-				// Recursively copy class vars
-				foreach($control_vars as $var=>$val) {
-					if (array_key_exists($var, $control_vars)) {
-						$real_page_control->$var = $page_control_struct->$var;
-					}
-				}
-				
-				$real_page_control->id = $page_control_struct->mirror_id;
-				$real_page_control->mirror_id = 0;
 
-				$page_control->save($real_page_control);
-				return $page_control_struct;
-			}
-		}
-		*/
 		return $page_control->save($page_control_struct);
 	}
 	

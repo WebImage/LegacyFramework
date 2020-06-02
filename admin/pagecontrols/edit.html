@@ -1,100 +1,164 @@
 <@Page templateId="admin-default" title="Edit Page Control">
 <cms:Content id="content1" placeHolderId="ph_admin_main">
-<?php 
-		$display_html = trim($editing_control_rendered);
-?>
-<script>
-$(document).ready(function(){
-	$("#edit_content_tabs").tabs();
-});
-</script>
-	<form method="post" action="edit.html" enctype="multipart/form-data">
-	<input type="hidden" name="pagecontrolid" value="<?php echo $page_control_id; ?>" />
-	<input type="hidden" name="editmode" value="<?php echo $set_edit_mode; ?>" />
-<div id="edit_content_tabs">
-	<ul>
-		<?php
-		if (!empty($display_html)) {
-		?>
-		<li><a href="#tab_content"><span>Content</span></a></li>
-		<?php
-		}
-		?>
-		<li><a href="#tab_display"><span>Display Configuration</span></a></li>
-		<li><a href="#tab_advanced"><span>Advanced Configuration</span></a></li>
-	</ul>
-	<?php
-	if (!empty($display_html)) {
-		?>
-		<div id="tab_content">
-			<?php echo $editing_control_rendered; ?>
-		</div>
-		<?php
-	}
-	?>
-	<div id="tab_display">
-		<?php echo $editing_control_configuration; ?>
+	<?php $display_html = trim($editing_control_rendered); ?>
+	<div class="page-header">
+		<h1>Edit Content</h1>
 	</div>
+    <script>
+        $(document).ready(function() {
+            var $tabs = $('#editing-tabs a');
+            var $content = $tabs.map(function(ix, el) {
+                return $(el.getAttribute('href'));
+            });
+            $($tabs.get(0)).parent().addClass('active');
+            $($content.get(0)).addClass('active');
 
-	<div id="tab_advanced">
-		<cms:Input type="hidden" struct="pagecontrol" structKey="id" size="4" />
-		<p>The values under this tab are for advanced administration only.  Please do not change unless you absolutely know what you are doing.</p>
-		<table cellspacing="0" cellpadding="0" border="0" class="detaileditview">
-		<tr><td colspan="2"><hr /></td></tr>
-		<tr>
-			<td class="field"><cms:Literal for="control_id">Control ID</cms:Literal></td>
-			<td class="value">
-				<cms:Input type="text" id="control_id" struct="pagecontrol" size="4" /><br />
-				<span style="font-style:italic;">This is the control id that this page control represents.</span> 
-			</td>
-		</tr>
-		<tr><td colspan="2"><hr /></td></tr>
-		<tr>
-			<td class="field"><cms:Literal for="mirror_id">Mirror ID</cms:Literal></td>
-			<td class="value">
-				<cms:Input type="text" id="mirror_id" struct="pagecontrol" size="4" /><br />
-				<span style="font-style:italic;">If this page control is a reference only, this field points to the actual page control id.</span>
-			</td>
-		</tr>
-		<tr><td colspan="2"><hr /></td></tr>
-		<tr>
-			<td class="field"><cms:Literal for="page_id">Page ID</cms:Literal></td>
-			<td class="value">
-				<cms:Input type="text" id="page_id" struct="pagecontrol" size="4" /><br />
-				<span style="font-style:italic;">The page id that this page control belongs to.</span>
-			</td>
-		</tr>
-		<tr><td colspan="2"><hr /></td></tr>
-		<tr>
-			<td class="field"><cms:Literal for="sortorder">Sort Order</cms:Literal></td>
-			<td class="value">
-				<cms:Input type="text" id="sortorder" struct="pagecontrol" size="4" /><br />
-				<span style="font-style:italic;">The order preference for this page control based on the page id and placeholder.</span>
-			</td>
-		</tr>
-		<tr><td colspan="2"><hr /></td></tr>
-		<tr>
-			<td class="field"><cms:Literal for="placeholder">Place Holder</cms:Literal></td>
-			<td class="value">
-				<cms:Input type="text" id="placeholder" struct="pagecontrol" /><br />
-				<span style="font-style:italic;">The place holder on the page (page id) that this content belongs to.</span>
-			</td>
-		</tr>
-		<tr><td colspan="2"><hr /></td></tr>
-		<tr>
-			<td class="field">Configuration Text</td>
-			<td class="value">
-				<?php echo str_replace("\r\n", "<br />", Page::getStructFieldValue('pagecontrol', 'config')); ?></p>
-				<span style="font-style:italic;">Configuration setting generally stored by the actual control.</span>
-			</td>
-		</tr>
-		<tr><td colspan="2"><hr /></td></tr>
-		</table>
+            $tabs.click(function(ev) {
+                ev.preventDefault();
+                $tabs.parent().removeClass('active');
+                $content.each(function() { $(this).removeClass('active');});
+                $(this).parent().addClass('active');
+                console.log('$content',$content);
+                $(this.getAttribute('href')).addClass('active');
+            });
+        });
+    </script>
+	<div class="wrap">
+		<form method="post" action="edit.html">
+			<input type="hidden" name="pagecontrolid" value="<?php echo $page_control_id; ?>"/>
+			<input type="hidden" name="editmode" value="<?php echo $set_edit_mode; ?>"/>
+
+			<ul id="editing-tabs" class="nav nav-tabs">
+				<?php
+				if (!empty($display_html)) {
+					?>
+					<li role="presentation"><a href="#tab_content">Content</a></li>
+					<?php
+				}
+				?>
+				<li role="presentation"><a href="#tab_display">Display Configuration</a></li>
+				<li role="presentation"><a href="#tab_advanced">Advanced Configuration</a></li>
+			</ul>
+
+			<div class="tab-content">
+				<?php
+				if (!empty($display_html)) {
+					?>
+					<div role="tabpanel" class="tab-pane" id="tab_content">
+						<?php echo $editing_control_rendered; ?>
+					</div>
+					<?php
+				}
+				?>
+				<div role="tabpanel" class="tab-pane" id="tab_display">
+					<?php echo $editing_control_configuration; ?>
+				</div>
+
+				<div role="tabpanel" class="tab-pane" id="tab_advanced">
+					<cms:Input type="hidden" struct="pagecontrol" structKey="id" size="4"/>
+					<p>The values under this tab are for advanced administration only. Please do not change unless you
+						absolutely know what you are doing.</p>
+					<table cellspacing="0" cellpadding="0" border="0" class="detaileditview">
+						<tr>
+							<td colspan="2">
+								<hr/>
+							</td>
+						</tr>
+						<tr>
+							<td class="field">
+								<cms:Literal for="control_id">Control ID</cms:Literal>
+							</td>
+							<td class="value">
+								<cms:Input type="text" id="control_id" struct="pagecontrol" size="4"/>
+								<br/>
+								<span style="font-style:italic;">This is the control id that this page control represents.</span>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<hr/>
+							</td>
+						</tr>
+						<tr>
+							<td class="field">
+								<cms:Literal for="mirror_id">Mirror ID</cms:Literal>
+							</td>
+							<td class="value">
+								<cms:Input type="text" id="mirror_id" struct="pagecontrol" size="4"/>
+								<br/>
+								<span style="font-style:italic;">If this page control is a reference only, this field points to the actual page control id.</span>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<hr/>
+							</td>
+						</tr>
+						<tr>
+							<td class="field">
+								<cms:Literal for="page_id">Page ID</cms:Literal>
+							</td>
+							<td class="value">
+								<cms:Input type="text" id="page_id" struct="pagecontrol" size="4"/>
+								<br/>
+								<span style="font-style:italic;">The page id that this page control belongs to.</span>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<hr/>
+							</td>
+						</tr>
+						<tr>
+							<td class="field">
+								<cms:Literal for="sortorder">Sort Order</cms:Literal>
+							</td>
+							<td class="value">
+								<cms:Input type="text" id="sortorder" struct="pagecontrol" size="4"/>
+								<br/>
+								<span style="font-style:italic;">The order preference for this page control based on the page id and placeholder.</span>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<hr/>
+							</td>
+						</tr>
+						<tr>
+							<td class="field">
+								<cms:Literal for="placeholder">Place Holder</cms:Literal>
+							</td>
+							<td class="value">
+								<cms:Input type="text" id="placeholder" struct="pagecontrol"/>
+								<br/>
+								<span style="font-style:italic;">The place holder on the page (page id) that this content belongs to.</span>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<hr/>
+							</td>
+						</tr>
+						<tr>
+							<td class="field">Configuration Text</td>
+							<td class="value">
+								<?php echo str_replace("\r\n", "<br />", Page::getStructFieldValue('pagecontrol', 'config')); ?></p>
+								<span style="font-style:italic;">Configuration setting generally stored by the actual control.</span>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<hr/>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+
+			<p>
+				<cms:Input type="submit" value="Save / Continue"/>
+			</p>
+			<cms:Literal id="lbl_page_description"/>
+		</form>
 	</div>
-	
-</div>
-	
-	<p><cms:Input type="submit" value="Save / Continue" /></p>
-	<cms:Literal id="lbl_page_description" />
-	</form>
 </cms:Content>

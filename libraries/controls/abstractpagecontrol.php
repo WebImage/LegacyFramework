@@ -39,15 +39,20 @@ abstract class CWI_CONTROLS_AbstractPageControl extends WebControl implements CW
 	
 	public function getConfig() { return $this->config; }
 	public function getConfigValue($name) { return $this->getConfig()->get($name); }
-	
-	public function getEditMode() { 
-		$edit_mode = $this->editMode;
+
+	protected function getRawEditMode() {
+		return $this->editMode;
+	}
+
+	public function getEditMode() {
+		$edit_mode = $this->getRawEditMode();
 		if (empty($edit_mode)) {
 			if (Page::isAdminRequest() && Roles::isUserInRole('AdmBase')) $edit_mode = EDITABLE_EDITMODE_ADMIN;
 			else $edit_mode = EDITABLE_EDITMODE_DEFAULT;
 		}
 		return $edit_mode;
 	}
+
 	public function getEditContext() { return $this->editContext; }
 	public function getWindowMode() {
 		$window_mode = $this->windowMode;
@@ -105,11 +110,10 @@ abstract class CWI_CONTROLS_AbstractPageControl extends WebControl implements CW
 		}
 		return $id;
 	}
-	#public function getJsId() { return $this->getId(); }
-	
+
 	public function setConfig(ConfigDictionary $config) { $this->config = $config; }
 	public function setConfigValue($name, $value) { $this->getConfig()->set($name, $value); }
-	
+
 	public function setEditMode($mode) { $this->editMode = $mode; }
 	public function setEditContext($context) { $this->editContext = $context; }
 	public function setWindowMode($mode) { $this->windowMode = $mode; }
@@ -139,25 +143,25 @@ abstract class CWI_CONTROLS_AbstractPageControl extends WebControl implements CW
 		return strlen($this->getPageControlId() == 0);
 	}
 	
-	private function getConfigFileXml() {
-		if (is_null($this->cachedConfigXml)) {
-			$xml_file = $this->getLocalPath() . 'config.xml';
-			if (file_exists($xml_file)) {
-				FrameworkManager::loadLibrary('xml.compile');
-				try {
-					$xml_config = CWI_XML_Compile::compile( file_get_contents($xml_file) );
-				} catch (Exception $e) {
-					$this->cachedConfigXml = false;
-					return false;
-				}
-				$this->cachedConfigXml = $xml_config;
-				return $xml_config;
-			}
-			$this->cachedConfigXml = false;
-			return false;
-		} else return $this->cachedConfigXml;
-	}
-	
+//	private function getConfigFileXml() {
+//		if (is_null($this->cachedConfigXml)) {
+//			$xml_file = $this->getLocalPath() . 'config.xml';
+//			if (file_exists($xml_file)) {
+//				FrameworkManager::loadLibrary('xml.compile');
+//				try {
+//					$xml_config = CWI_XML_Compile::compile( file_get_contents($xml_file) );
+//				} catch (Exception $e) {
+//					$this->cachedConfigXml = false;
+//					return false;
+//				}
+//				$this->cachedConfigXml = $xml_config;
+//				return $xml_config;
+//			}
+//			$this->cachedConfigXml = false;
+//			return false;
+//		} else return $this->cachedConfigXml;
+//	}
+//
 }
 
 ?>

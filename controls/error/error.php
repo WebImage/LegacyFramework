@@ -21,11 +21,12 @@ class ErrorControl extends WebControl {
 			'itemTemplate' => '<li class="errormsg">%s</li>'
 		));
 	}
+	
+	
 	/**
 	 * Override contentFinalized.  All controls have been had their regular content rendered, so now we can output any errors that have been rendered
 	 **/
 	public function contentFinalized() {
-		
 		$output = '';
 		if (ErrorManager::anyDisplayErrors()) {
 			$errors = ErrorManager::getDisplayErrors();

@@ -98,7 +98,7 @@ class DatabaseRequestHandler extends AbstractRequestHandler {
 			
 			while ($get_controls = $db_controls->getNext()) {
 				
-				$control = PageControlLogic::buildControlByPageControlId($get_controls);
+				$control = PageControlLogic::buildControlByPageControl($get_controls);
 
 				/*
 				if ($parent_control = Page::getControlById($get_controls->placeholder)) {
@@ -123,6 +123,7 @@ class DatabaseRequestHandler extends AbstractRequestHandler {
 		
 		$output = ob_get_contents();
 		ob_end_clean();
+
 		return $output;
 		
 	}

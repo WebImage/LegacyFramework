@@ -265,7 +265,6 @@ class CompileControl {
 # $object
 # $this_object 
 # $this_object->m_processInternal
-# isset($object->m_params['id']
 #
 		$CONTROL_COMPILE_MODE = ConfigurationManager::get('CONTROL_COMPILE_MODE'); // CompileControlResult | WebControl
 		
@@ -559,7 +558,7 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 						#
 						// Set parent id
 						if (strlen($object->getId()) > 0) {
-						//if (isset($object->m_params['id'])) {
+
 							
 							# 
 							# BEGIN ADD
@@ -574,7 +573,7 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 							# 
 							# BEGIN REMOVE
 							#
-							$this_object->parentControl = $object->m_params['id'];
+							$this_object->parentControl = $object->getParam('id');
 							# 
 							# END REMOVE
 							#
@@ -809,7 +808,7 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 			$params = new ControlConfigDictionary(array('text'=>$text_buffer, 'id'=>$text_control_name));
 			
 			// Add attachment code for parent hierarchy
-			$result->createInitialization('LiteralControl', $text_control_name, $params, (isset($object->m_params['id']) ? $object->m_params['id'] : ''));
+			$result->createInitialization('LiteralControl', $text_control_name, $params, $object->getParam('id'));
 						
 			#
 			# END ADD
@@ -829,8 +828,8 @@ echo 'Strlen: ' . $str_len_count . '<br />';
 			#
 			# BEGIN REMOVE (but make sure to add code to attach parent
 			#
-			if (isset($object->m_params['id'])) {
-				$this_object->parentControl = $object->m_params['id'];
+			if (!empty($object->getParam('id'))) {
+				$this_object->parentControl = $object->getParam('id');
 			}
 			#
 			# END REMOVE

@@ -33,7 +33,7 @@ $db_controls = PageControlLogic::getControlsByTemplateId($template_id);
 			
 while ($get_control = $db_controls->getNext()) {
 	
-	$control = PageControlLogic::buildControlByPageControlId($get_control);
+	$control = PageControlLogic::buildControlByPageControl($get_control);
 	if ($parent_control = Page::getControlById($get_control->placeholder)) {
 		// Create hierarchal controls
 		$parent_control->addControl($control);

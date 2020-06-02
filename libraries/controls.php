@@ -38,7 +38,6 @@ class Control {
 	var $m_renderedContent;
 	private $contentFinalized = false; // Whether the content has already been rendered for this control (ensures that prepareContent() is only called once)
 	
-	var $m_params = array();
 	var $m_renderedChildContent;
 	
 	var $m_innerCode; // Only set when $this->m_processInternal = false; (i.e. literal control rather than one whose contents are processed)
@@ -162,7 +161,6 @@ class Control {
 			#echo 'Invalid<pre>';print_r($this);exit;
 		}
 		if ($parameter = $this->parameters->get($name)) return $parameter; # New
-		if (isset($this->m_params[$name])) return $this->m_params[$name]; # Legacy
 		# New / Legagy - Return false if parameter is not found
 		return false;
 	}
@@ -189,12 +187,10 @@ class Control {
 	#function setRenderPassedContents($contents) { $this->m_renderPassedContents = $contents; }
 	public function setRenderedChildContent($content) { $this->m_renderedChildContent = $content; }
 	public function setParams($params=array()) {
-		$this->m_params = $params;
 		$this->parameters = new ControlConfigDictionary($params);
 	}
 	public function setParam($name, $value) { 
 		$this->parameters->set($name, $value); # New
-		$this->m_params[$name] = $value; # Legacy
 	}
 	/**
 	 * Same as setParam except that values are only set if they have not been set before
@@ -418,16 +414,7 @@ class Control {
 	 * @return string
 	 */
 	protected function getValueForParamString($param_name) {
-
-		$legacy_param = sprintf('m_' . $param_name);
-		$value = $this->getParam($param_name);
-
-		if ($value) return $value;
-		else {
-			// Legacy parameter value support
-			if (isset($this->$legacy_param)) return $this->legacy_param;
-		}
-
+		return $this->getParam($param_name);
 	}
 
 	/**
@@ -584,7 +571,7 @@ class Control {
 	#function renderChildren($auto_init=true) {
 	public function renderChildren() {
 		$children = $this->getControls();
-		$children->sort();
+		$children->sortControls();
 		#if ($children->getCount() > 0) {
 		#	echo '<pre>';print_r($children);exit;
 		#}
@@ -606,7 +593,7 @@ class Control {
 	
 	protected function getControlsByType($type) {}
 	
-	public function &getControlById($id) {
+	public function getControlById($id) {
 		if ($this->getId() == $id) {
 			return $this;
 		} else {
@@ -651,10 +638,10 @@ class Control {
 			$this->setId($this_id);
 			self::debugOutput('strlen($this->getId()) > 0) = ' . $this_id . '<br />');
 		}
-		
-		if (isset($this->m_params['placeHolderId'])) {
-			
-			$this->parentControl = $this->m_params['placeHolderId'];
+
+		$place_holder_id = $this->getParam('placeHolderId');
+		if (!empty($place_holder_id)) {
+			$this->parentControl = $place_holder_id;
 			
 			self::debugOutput('parentControl via placeHolderId: ' . $this->parentControl . '<br />');
 			
@@ -664,7 +651,7 @@ class Control {
 		
 		if (!$this->m_processInternal && isset($this->m_innerCode)) {
 			
-			$this->m_params['innerCode'] = $this->m_innerCode;
+			# DOES REMOVING THIS BREAK ANYTHING? $this->m_params['innerCode'] = $this->m_innerCode;
 			
 			self::debugOutput('!$this->m_processInternal && isset($this->m_innerCode))<br />');
 			
@@ -673,7 +660,8 @@ class Control {
 		 * Setup initialization variables. 
 		 */
 		self::debugOutput('<div style="margin:10px 0;padding:10px;border:1px solid #999;color:#999;">Building init array:<br />');
-		foreach($this->m_params as $aname=>$aval) {
+
+		foreach($this->getParams()->toArray() as $aname => $aval) {
 			
 			$init_array[] = "'" . $aname . "' => '" . str_replace("'", "\'", $aval) . "'";
 			
@@ -789,8 +777,9 @@ class Control {
 			}
 		}
 		return $config;
-	}	
-	public static function BuildConfigString($config_array) {
+	}
+
+	public static function BuildConfigString(array $config_array) {
 		$config_params = array();
 		foreach($config_array as $config_name=>$config_value) {
 			$config_params[] = $config_name . '=' . $config_value;
@@ -816,7 +805,7 @@ class ControlCollection extends Collection {
 	/**
 	 * Sort items in the collection by their "order" parameter
 	 **/
-	public function sort() {
+	public function sortControls() {
 		$array = &$this->getAll();
 		usort($array, '_sortControlCollection');
 	}
@@ -1140,7 +1129,7 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 			}
 		}
 
-		$root_controls->sort();
+		$root_controls->sortControls();
 
 		$this->log('render() finalizeContent');
 		// Finalize content generation so that "post" controls can properly execute (e.g. ErrorControl / HeaderControl
@@ -1152,6 +1141,7 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 		while ($control = $root_controls->getNext()) {
 			$output .= $control->render();
 		}
+		
 		return $output;
 			
 	}
@@ -1163,7 +1153,7 @@ class ControlManager implements \WebImage\ServiceManager\IServiceManagerAware {
 
 class WebControl extends Control {
 	
-	var $m_templateFile;
+	var $templateFile;
 	var $m_templateControlObject;
 	
 	var $template;
@@ -1173,7 +1163,7 @@ class WebControl extends Control {
 	 * Configuration variables, used by PageControls to automatically construct/initialize object
 	 */
 	var $m_config = array();
-	var $m_configChanged = false;
+	var $configChanged = false;
 	
 	/**
 	 * If this control is being generated as a PageControl, this will contain the page_control object
@@ -1232,12 +1222,12 @@ class WebControl extends Control {
 	}
 	
 	public function setConfigValue($name, $value) {
-		$this->m_configChanged = true;
+		$this->configChanged   = true;
 		$this->m_config[$name] = $value;
 	}
 	
 	public function getConfigValue($name) { if (isset($this->m_config[$name])) return $this->m_config[$name]; else return false; }
-	public function configChanged() { return $this->m_configChanged; }
+	public function configChanged() { return $this->configChanged; }
 	
 }
 
