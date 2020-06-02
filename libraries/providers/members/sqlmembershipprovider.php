@@ -18,7 +18,7 @@ class SqlMembershipProvider extends MembershipProvider {
 	}
 	
 	function createUser($membership_struct) {
-		parent::createUser();
+		parent::createUser($membership_struct);
 		FrameworkManager::loadDAO('membership');
 		$membership_dao = new MembershipDAO();
 
