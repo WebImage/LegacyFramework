@@ -82,6 +82,26 @@ class PluginLogic {
 		if (!PluginLogic::getInstalledPluginByName($plugin_struct->name)) $dao_plugin->setForceInsert(true); // Does not already exist, create it
 		return $dao_plugin->save($plugin_struct);
 	}
+	public static function installPluginByName($plugin_name) {
+		FrameworkManager::loadStruct('plugin');
+		$plugin_path = ConfigurationManager::get('DIR_FS_PLUGINS') . $plugin_name . '/';
+		$config_path = $plugin_path . 'config/plugin.xml';
+		if (file_exists($config_path)) {
+			try {
+				$xml = CWI_XML_Compile::compile( file_get_contents($config_path) );
+			} catch (CWI_XML_CompileException $e) {
+				die("COULD NOT PARSE PLUGIN plugin.xml: " . $e->getMessage());
+			}
+			$plugin_struct = new PluginStruct();
+			$plugin_struct->name = $plugin_name;
+			$plugin_struct->enable = 1;
+			if ($xml_plugin = $xml->getPathSingle('/plugin')) {
+				$plugin_struct->friendly_name = $xml_plugin->getParam('friendlyName');
+				$plugin_struct->version = $xml_plugin->getParam('version');
+			}
+			return PluginLogic::save($plugin_struct);
+		} else die("PLUGIN CONFIG PATH NOT FOUND: " . $config_path);
+	}
 	
 }
 
