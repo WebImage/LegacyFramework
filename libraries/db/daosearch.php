@@ -57,11 +57,14 @@ class DAOSearch {
 	const SORT_DESC		= 'DESC';
 	
 	const ALL_FIELDS	= '*';
-	
+
+	private $selectColumns = [];
+
 	private $tableKey;
 	private $tableAlias;
 	var $_fields = array();
 	private $_sorts = array();
+	private $_groups = array();
 	var $_joins = array();
 	private $joins = array();
 	var $_currentPage = 1;
@@ -71,10 +74,14 @@ class DAOSearch {
 	 * @param string or array If string, table key and alias will both be set to passed param. If array is passed the first entry will be the table key and the second entry will be the alias
 	 */
 	function __construct($table_key, $current_page=null, $results_per_page=null) {
-		
 		if (is_array($table_key)) {
-			$this->setTableKey($table_key[0]);
-			$this->setTableAlias($table_key[1]);
+			if (count($table_key) == 1) { // key => alias
+				$this->setTableKey(key($table_key));
+				$this->setTableAlias(current($table_key));
+			} else { // ['key', 'alias']
+				$this->setTableKey($table_key[0]);
+				$this->setTableAlias($table_key[1]);
+			}
 		} else {
 			$this->setTableKey($table_key);
 			$this->setTableAlias($table_key);
@@ -93,11 +100,19 @@ class DAOSearch {
 		$this->addSort($table_key, $order_by_field, $direction);
 	}
 	function addSort($table_key, $order_by_field, $direction=DAOSearch::SORT_ASC) {
-		array_push($this->_sorts, array(
-					       'TABLE_KEY'	=> $table_key,
-					       'COLUMN'		=> $order_by_field,
-					       'DIRECTION'	=> $direction
-					       ));
+		$this->_sorts[] = array(
+		   'TABLE_KEY'	=> $table_key,
+		   'COLUMN'		=> $order_by_field,
+		   'DIRECTION'	=> $direction
+	   );
+	}
+
+	function addGroup($table_key, $group_by_field, $escape=true) {
+		$this->_groups[] = array(
+			'TABLE_KEY' => $table_key,
+			'COLUMN' => $group_by_field,
+			'ESCAPE' => $escape
+		);
 	}
 	
 	/**
@@ -135,11 +150,14 @@ class DAOSearch {
 		);
 		*/
 	}
-	
+
+	public function addSelect($column) { $this->selectColumns[] = $column; }
 	public function getTableKey() { return $this->tableKey; }
 	public function getTableAlias() { return $this->tableAlias; }
 	public function getJoins() { return $this->joins; }
+	public function getSelectColumns() { return $this->selectColumns; }
 	public function getSorts() { return $this->_sorts; }
+	public function getGroups() { return $this->_groups; }
 	public function getCurrentPage() { return $this->_currentPage; }
 	public function getResultsPerPage() { return $this->_resultsPerPage; }
 	
@@ -281,7 +299,7 @@ class DAOSearchFieldWildcard extends DAOSearchField {
 	}
 	
 	function getQueryString() {
-		return $this->getTableKey() . "." . $this->getFieldKey() . " LIKE '%" . $this->getValue() . "%'";
+		return $this->getTableKey() . "." . $this->getFieldKey() . " LIKE '%" . DataAccessObject::safeString($this->getValue()) . "%'";
 	}
 }
 class DAOSearchFieldValues extends DAOSearchField {

@@ -280,8 +280,11 @@ class DataAccessObject {
 		#} else return false;
 	}
 	
-	public function getSearchQueryString($dao_search_obj) {
-		$select_columns	= $dao_search_obj->getTableKey() . '.*';
+	public function getSearchQueryString(DAOSearch $dao_search_obj) {
+		$select_columns = $dao_search_obj->getSelectColumns();
+		if (count($select_columns) == 0) {
+			$select_columns[] = $dao_search_obj->getTableKey() . '.*';
+		}
 
 		$from 		= DatabaseManager::getTable($dao_search_obj->getTableKey()) . ' AS ' . $dao_search_obj->getTableAlias();
 		
@@ -293,7 +296,7 @@ class DataAccessObject {
 		foreach($search_joins as $search_join) {
 			
 			if ($search_join->shouldSelectAllFields()) {
-				$select_columns .= ', ' . $search_join->getTableAlias() . '.*';
+				$select_columns[] = $search_join->getTableAlias() . '.*';
 			} else {
 				
 				/**
@@ -320,8 +323,8 @@ class DataAccessObject {
 						$join_field_alias = $join_field;
 						$join_field = $join_field_index;
 					}
-					$select_columns .= ', ' . $search_join->getTableAlias() . '.`' . $join_field . '`';
-					if (!empty($join_field_alias)) $select_columns .= ' AS ' . $join_field_alias;
+					$select_columns[] = $search_join->getTableAlias() . '.`' . $join_field . '`';
+					if (!empty($join_field_alias)) $select_columns[count($select_columns)-1] .= ' AS ' . $join_field_alias;
 				}
 			}
 			/*
@@ -353,9 +356,9 @@ class DataAccessObject {
 		$where_string = $dao_search_obj->getWhereString();
 		if (empty($where_string)) $where_string = '1=1';
 		
-		if ($dao_search_obj->makeDistinct()) $select_columns = 'DISTINCT ' . $select_columns;
+		if ($dao_search_obj->makeDistinct()) $select_columns[0] = 'DISTINCT ' . $select_columns[0];
 		
-		$sql = sprintf($this->selectQuery, $select_columns, $from, $where_string);
+		$sql = sprintf($this->selectQuery, implode(', ', $select_columns), $from, $where_string);
 		
 		// Sorting
 		$sorts = $dao_search_obj->getSorts();
@@ -376,8 +379,23 @@ class DataAccessObject {
 			}
 			
 			if (count($sort_stack) > 0) $sql .= " ORDER BY " . implode(', ', $sort_stack);
-			
 		}
+
+		$groups = $dao_search_obj->getGroups();
+
+		if (count($groups) > 0) {
+			$sql .= " GROUP BY " . implode(', ', array_map(function($group) {
+				$table_key = $group['TABLE_KEY'];
+				$column = $group['COLUMN'];
+				$escape = $group['ESCAPE'];
+				if ($escape) {
+					$table_key = '`' . $table_key . '`';
+					$column = '`' . $column . '`';
+				}
+				return $table_key . '.' . $column;
+			}, $groups));
+		}
+
 		// Paging
 		$current_page		= $dao_search_obj->getCurrentPage();
 		$results_per_page	= $dao_search_obj->getResultsPerPage();
@@ -513,7 +531,7 @@ class DataAccessObject {
 	
 	public function commandQuery($query) { // UPDATE, DELETE, INSERT;
 		$debug_message = '';
-		
+
 		$start_query_time = FrameworkManager::getTime();
 
 		try {
@@ -522,7 +540,7 @@ class DataAccessObject {
 			$this->addError($e->getMessage());
 			return false;
 		}
-		
+
 		if (!@mysqli_query($db, $query)) {
 			// Custodian error
 			$d = new Dictionary(array('sql'=>$query, 'error'=>mysqli_error($db)));
