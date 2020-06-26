@@ -239,6 +239,8 @@ class PageRequest {
 	private $lock = false;
 	private $pageResponse; // PageResponse
 	private $serviceManager;
+	private $remoteIp;
+	private $userAgent;
 
 	public function __construct(WebImage\ServiceManager\IServiceManager $serviceManager, $url, $request_type='GET') { // Request type is not actually used - not sure if we will
 		$this->serviceManager = $serviceManager;
@@ -284,6 +286,12 @@ class PageRequest {
 	public function getRequestedDomain() { return $this->requestedDomain; }
 	public function getRequestedPath() { return $this->requestedPath; }
 	public function getRequestedQueryString() { return $this->requestedQueryString; }
+	
+	public function getRemoteIp() { return $this->remoteIp; }
+	public function setRemoteIp($ip) { $this->remoteIp = $ip; }
+	
+	public function getUserAgent() { return $this->userAgent; }
+	public function setUserAgent($userAgent) { $this->userAgent = $userAgent; }
 	
 	public function getTheme() { return $this->theme; }
 	public function setTheme($theme) { $this->theme = $theme; }
@@ -939,6 +947,8 @@ class Page {
 		$instance->_parameters = new Dictionary();
 
 		$page_request = $instance->createPageRequest( PathManager::getCurrentUrl() );
+		$page_request->setRemoteIp(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '0.0.0.0');
+		$page_request->setUserAgent(isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '');
 		
 		foreach($_REQUEST as $request_name=>$request_value) {
 			$page_request->set($request_name, $request_value);
