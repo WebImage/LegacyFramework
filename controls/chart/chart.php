@@ -27,7 +27,7 @@ class ChartControl extends WebControl {
 				FrameworkManager::loadLogic('pagestat');
 				PageStatLogic::updateUnprocessedBrowsers();
 				
-				$end = mktime();
+				$end = time();
 				$start = strtotime('-6 days', $end);
 				
 				$filter_start = date('Y-m-d', $start);

@@ -53,7 +53,7 @@ class CyberSourcePaymentOption extends PaymentOption {
 			$days_in_month = date('t', mktime(0, 0, 0, $card_exp_month, 1, $card_exp_year));
 			$cc_time = mktime(23, 59, 59, $card_exp_month, $days_in_month, $card_exp_year);
 
-			if ($cc_time < mktime()) {
+			if ($cc_time < time()) {
 				$this->addError('The credit card expiration date occurs in the past.');
 			}
 		}

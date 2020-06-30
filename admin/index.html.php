@@ -61,7 +61,7 @@ PageStatLogic::updateUnprocessedBrowsers();
 
 
 #if (ConfigurationManager::get('SITE_ENVIRONMENT') == 'development') {
-#	$end = mktime();
+#	$end = time();
 #	$start = strtotime('-7 days', $end);
 #	
 #	$filter_start = date('Y-m-d', $start);
@@ -91,7 +91,7 @@ if ($admin_main_output = Page::getControlById('admin_main_output')) {
 		
 		FrameworkManager::loadLibrary('chart.datapointhelper');
 		
-		$end = mktime();
+		$end = time();
 		$start = strtotime('-6 days', $end);
 		
 		######### PAGE VIEW TREND #############
