@@ -102,6 +102,10 @@ class Collection implements ICollection, Iterator, ArrayAccess, Countable { // I
 		return $filtered;
 	}
 	
+	public function map(callable $mapper) {
+		return array_map($mapper, $this->getAll());
+	}
+	
 	/**
 	 * Implements Countable::count
 	 * @return int
