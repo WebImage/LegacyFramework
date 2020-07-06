@@ -22,13 +22,15 @@ class MembershipDAO extends DataAccessObject {
 	}
 	
 	function getMembershipByIds(array $membership_ids) {
+		array_walk($membership_ids, function(&$membership_id) {
+			$membership_id = DataAccessObject::safeString($membership_id);
+		});
 		
 		$select_sql = "
 			SELECT *
-			FROM " . $this->tableName . "
-			WHERE
-				id IN ('" . $this->safeString($membership_ids) . "')";
-				
+			FROM `" . $this->tableName . "`
+			WHERE id IN (" . implode(',', $membership_ids) . ")";
+		
 		return $this->selectQuery($select_sql, $this->modelName);
 	}
 	
@@ -161,5 +163,3 @@ class MembershipDAO extends DataAccessObject {
 	}
 	
 }
-
-?>
