@@ -35,7 +35,7 @@ class LiteralControl extends WebControl {
 	}
 	
 	function getStructKey() {
-		$key = $this->get('structKey');
+		$key = $this->getParam('structKey');
 		
 		if (empty($key)) return $this->getId();
 		
