@@ -2,14 +2,14 @@
 
 define('ESC_KEY', chr(27));
 class Screen {
-	function clear() {
+	public static function clear() {
 		echo ESC_KEY . '[2J';
 	}
-	function clearToEndOfScreen() { echo ESC_KEY . '[0J'; }
-	function clearLine() { echo ESC_KEY . '[2K'; }
-	function clearToEndOfLine() { echo ESC_KEY . '[K'; }
+	public static function clearToEndOfScreen() { echo ESC_KEY . '[0J'; }
+	public static function clearLine() { echo ESC_KEY . '[2K'; }
+	public static function clearToEndOfLine() { echo ESC_KEY . '[K'; }
 	
-	function moveDirection($direction, $num) {
+	public static function moveDirection($direction, $num) {
 		$direction = strtoupper($direction);
 		$direction_code = null;
 		switch ($direction) {
@@ -32,21 +32,21 @@ class Screen {
 		echo ESC_KEY . '[' . $num . $direction_code;
 	}
 	// Convenience method for moveDirection
-	function moveUp($num=1) { Screen::moveDirection('U', $num); }
+	public static function moveUp($num=1) { Screen::moveDirection('U', $num); }
 	// Convenience method for moveDirection
-	function moveDown($num=1) { Screen::moveDirection('D', $num); }
+	public static function moveDown($num=1) { Screen::moveDirection('D', $num); }
 	// Convenience method for moveDirection
-	function moveLeft($num=1) { Screen::moveDirection('L', $num); }
+	public static function moveLeft($num=1) { Screen::moveDirection('L', $num); }
 	// Convenience method for moveDirection
-	function moveRight($num=1) { Screen::moveDirection('R', $num); }
+	public static function moveRight($num=1) { Screen::moveDirection('R', $num); }
 	
-	function moveTo($x, $y) {
+	public static function moveTo($x, $y) {
 		echo ESC_KEY . '[' . $y . ';' . $x . 'H';
 	}
-	function savePosition() { echo ESC_KEY . '[s'; }
-	function restorePosition() { echo ESC_KEY . '[u'; }
+	public static function savePosition() { echo ESC_KEY . '[s'; }
+	public static function restorePosition() { echo ESC_KEY . '[u'; }
 	
-	function stringAt($string, $x, $y) {
+	public static function stringAt($string, $x, $y) {
 		self::moveTo($x, $y);
 		echo $string;
 	}
@@ -141,4 +141,3 @@ _ X X X     delete line         esc [ * M
 _ _ X _     insert char         esc [ * @
 _ _ X _     erase char          esc [ * X
 **/
-?>
