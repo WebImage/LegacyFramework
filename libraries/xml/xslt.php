@@ -13,7 +13,7 @@ class CWI_XML_XSLT_Template {
 	}
 }
 
-function __constructTemplateStackAdd(&$stack, $element) {
+function CWI_XML_XsltTemplateStackAdd(&$stack, $element) {
 	for ($i=count($stack)-1; $i >= 0; $i --) {
 		$calc = $element['priority'] - $stack[$i]['priority'];
 		if ($calc >= 0) {
