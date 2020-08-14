@@ -8,20 +8,7 @@ class ConfigValueLogic {
 		$dao = new ConfigValueDAO();
 		return $dao->getConfigValues();
 	}
-	/**
-	public static function getConfigValueDictionary() {
-		$rs_values = ConfigValueLogic::getConfigValues();
-		
-		$config = new Dictionary();
-		
-		while ($value = $rs_values->getNext()) {
-			
-		}
-		
-		return $config;
-	}
-	**/
-	
+
 	public static function getConfigValue($group_key, $field) {
 		
 		$dao = new ConfigValueDAO();
@@ -35,12 +22,10 @@ class ConfigValueLogic {
 			
 			// Only update values if the config is not locked
 			if ($struct->locked != 1) {
-				
 				$struct->value = $value;
-				$struct->locked = $locked;
-				
+				$struct->locked = is_bool($locked) ? ($locked === true ? 1 : 0) : $locked;
+
 				$struct = ConfigValueLogic::save($struct);
-				
 			}
 
 		} else {
