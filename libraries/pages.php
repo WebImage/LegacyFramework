@@ -695,7 +695,13 @@ class Page {
 	 */
 	protected $serviceManager;
 
-	public static function isSecure() { return ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ); }
+	public static function isSecure() {
+		return (
+			(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ||
+			(isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
+		);
+	}
+
 	public static function requireSecureConnection() {
 
 		if ( !Page::isSecure()) { //!isset($_SERVER['HTTPS']) || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'on') ) {
