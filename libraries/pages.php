@@ -11,6 +11,10 @@
  * 04/27/2012	(Robert Jones) Changed control management in PageResponse from a Dictionary object to a ControlManager object
  * 01/18/2013	(Robert Jones) Changed Page::get() to use the $this->requestedParams->isDefined($name) instead of $this->requestedParams->get($name) because when ->get($name) returned "0" the function returned $default(i.e. false)
  */
+
+use WebImage\Config\Config;
+use WebImage\String\Url;
+
 FrameworkManager::loadLibrary('controls');
 
 /**
@@ -228,8 +232,9 @@ class PageResponse {
 }
 class PageRequest {	
 	private $requestedParams;
-	/** @var \WebImage\String\Url */
+	/** @var Url */
 	private $internalUrl; // Translated URL
+	private $requestedMethod;
 	private $requestedScheme;
 	private $requestedDomain;
 	private $requestedPath;
@@ -242,10 +247,12 @@ class PageRequest {
 	private $remoteIp;
 	private $userAgent;
 
-	public function __construct(WebImage\ServiceManager\IServiceManager $serviceManager, $url, $request_type='GET') { // Request type is not actually used - not sure if we will
+	public function __construct(WebImage\ServiceManager\IServiceManager $serviceManager, $url, $request_method='GET') { // Request type is not actually used - not sure if we will
 		$this->serviceManager = $serviceManager;
 		$this->requestedParams = new Dictionary();
 		$this->pageResponse = new PageResponse($serviceManager);
+		$this->setRequestedMethod($request_method);
+
 		$this->initUrl($url);
 	}
 	
@@ -263,7 +270,7 @@ class PageRequest {
 		else return $default;
 	}
 
-	/** @return \WebImage\String\Url */
+	/** @return Url */
 	public function getInternalUrl() { return $this->internalUrl; }
 	public function getInternalPath() { return $this->getInternalUrl()->getPath(); }
 	public function getInternalQueryString() { return $this->getInternalUrl()->getQueryString(); }
@@ -282,6 +289,7 @@ class PageRequest {
 		return $url;
 	}
 	
+	public function getRequestedMethod() { return $this->requestedMethod; }
 	public function getRequestedScheme() { return $this->requestedScheme; }
 	public function getRequestedDomain() { return $this->requestedDomain; }
 	public function getRequestedPath() { return $this->requestedPath; }
@@ -303,12 +311,13 @@ class PageRequest {
 		$this->requestHandler = $handler;
 	}
 
+	private function setRequestedMethod($method) { $this->requestedMethod = $method; }
 	private function setRequestedScheme($scheme) { $this->requestedScheme = $scheme; }
 	private function setRequestedDomain($domain) { $this->requestedDomain = $domain; }
 	private function setRequestedPath($requested_path) { $this->requestedPath = $requested_path; }
 	private function setRequestedQueryString($query_string) { $this->requestedQueryString = $query_string; }
 	
-	public function setInternalUrl(\WebImage\String\Url $url) { $this->internalUrl = $url; }
+	public function setInternalUrl(Url $url) { $this->internalUrl = $url; }
 	
 	/**
 	 * Breaks out a URL into its various parts and sets up the internal URL structure
@@ -316,7 +325,7 @@ class PageRequest {
 	 */
 	private function initUrlParts($url) {
 		$url = str_replace('/index.php', '/index.html', $url);
-		
+
 		$url_scheme = '';
 		$url_domain = '';
 		$url_query = '';
@@ -365,14 +374,40 @@ class PageRequest {
 		$this->setRequestedPath($url_path);
 		$this->setRequestedQueryString($url_query);
 	}
-	
+
+	/**
+	 * Convert $config_path_mappings[]['children'] into flat mapping stack by merging parent and child parameters
+	 * @param array $config_path_mappings
+	 */
+	private static function flattenConfigPathMappings(array $mappings, array $base=[]) {
+		$flattened_mappings = [];
+
+		foreach($mappings as $mapping) {
+			$mapping = array_merge_recursive($base, $mapping);
+			$keys = array_keys($mapping);
+			$has_children = in_array('children', $keys);
+
+			if ($has_children) {
+				$child_base = $mapping;
+				$children = $child_base['children'];
+				unset($child_base['children']);
+				
+				$flattened_mappings = array_merge($flattened_mappings, self::flattenConfigPathMappings($children, $child_base));
+			} else {
+				$flattened_mappings[] = $mapping;
+			}
+		}
+
+		return $flattened_mappings;
+	}
+
 	/**
 	 * Make any modifications to the URL for internal purposes
 	 */
 	private function doUrlRemapping() {
 		$config = ConfigurationManager::getConfig();
 		
-		$url = new \WebImage\String\Url($this->getRequestedUrl());
+		$url = new Url($this->getRequestedUrl());
 		/**
 		 *
 		 * This section determines whether the request was for a file or directory.
@@ -381,13 +416,21 @@ class PageRequest {
 		 */
 		$config_path_mappings = (isset($config['pages']['pathMappings'])) ? $config['pages']['pathMappings'] : array();
 		$config_request_handlers = (isset($config['pages']['requestHandlers'])) ? $config['pages']['requestHandlers'] : array();
-		
+
+		if ($config_path_mappings instanceof Config) $config_path_mappings = $config_path_mappings->toArray();
+		$config_path_mappings = self::flattenConfigPathMappings($config_path_mappings);
+
 		foreach($config_path_mappings as $mapping) {
 			
 			$search = '#' . str_replace('#', '##', $mapping['path']) . '#';
-			
+
 			if (preg_match($search, $url->getPath(), $path_matches)) {
-				
+
+				if (isset($mapping['domain']) && $this->getRequestedDomain() != $mapping['domain']) continue;
+				if (isset($mapping['domains']) && !in_array($this->getRequestedDomain(), $mapping['domains'])) continue;
+				if (isset($mapping['scheme']) && $this->getRequestedScheme() != $mapping['scheme']) continue;
+				if (isset($mapping['schemes']) && !in_array($this->getRequestedScheme(), $mapping['scheme'])) continue;
+
 				// Add parameters
 				if (isset($mapping['params'])) {
 					foreach($mapping['params'] as $key => $val) {
@@ -438,7 +481,7 @@ class PageRequest {
 					}
 					
 					$handler_name = (isset($mapping['requestHandler'])) ? $mapping['requestHandler'] : null;
-					
+
 					if (null !== $handler_name) {
 						
 						$handler_config = (isset($config_request_handlers[$handler_name])) ? $config_request_handlers[$handler_name] : null;
@@ -461,7 +504,7 @@ class PageRequest {
 				}
 			}
 		}
-		
+
 		$this->setInternalUrl($url);
 	}
 	
@@ -548,27 +591,31 @@ class PageRequest {
 		}
 
 		if (!$this->getRequestHandler()) die("NO HANDLER");
-
 	}
 	
 	public function set($name, $value) {
 		$this->requestedParams->set($name, $value);
 	}
 }
+
 class PageHeader {
 	function __construct() {}
 	function renderHtml() {}
 }
+
 class PageHeaderStylesheet extends PageHeader {
 	var $src, $type, $media, $rel;
+
 	function __construct($src, $type='text/css', $media='all', $rel='stylesheet') {
 		$this->src = $src;
 		$this->type = $type;
 		$this->media = $media;
 		$this->rel = $rel;
 	}
+
 	public function getSrc() { return $this->src; }
-	function renderHtml() {
+
+	public function renderHtml() {
 		return '<link href="'.$this->src . '" type="' . $this->type . '" rel="' . $this->rel . '" media="' . $this->media . '" />';
 	}
 }
@@ -887,10 +934,11 @@ class Page {
 		return $_this->_pageRequests[$index];
 		
 	}
-	public static function createPageRequest($url) {
+	public static function createPageRequest($url, $request_method='GET') {
 		$_this = Page::getInstance();
-		$page_request = new PageRequest($_this->getServiceManager(), $url);
+		$page_request = new PageRequest($_this->getServiceManager(), $url, $request_method);
 		array_push($_this->_pageRequests, $page_request);
+
 		return $page_request;
 	}
 	
@@ -952,7 +1000,7 @@ class Page {
 		
 		$instance->_parameters = new Dictionary();
 
-		$page_request = $instance->createPageRequest( PathManager::getCurrentUrl() );
+		$page_request = $instance->createPageRequest(PathManager::getCurrentUrl(), $_SERVER['REQUEST_METHOD']);
 		$page_request->setRemoteIp(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '0.0.0.0');
 		$page_request->setUserAgent(isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '');
 		
@@ -965,7 +1013,6 @@ class Page {
 				$page_request->set($file_name, $file_value);
 			}
 		}
-		
 	}
 	
 	public static function getRequestedPath() {
