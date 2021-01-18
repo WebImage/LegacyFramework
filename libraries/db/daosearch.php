@@ -255,11 +255,17 @@ class DAOSearchField implements IDAOSearchWhere {
 }
 class DAOSearchFieldWithOperator extends DAOSearchField {
 	private $operator;
-	
+
+	function __construct($table_key, $field_key, $operator, $value=null) {
+		parent::__construct($table_key, $field_key, $value);
+		$this->operator = $operator;
+	}
+
 	protected function getQueryStringWithOperator($operator) {
 		return $this->getTableKey() . "." . $this->getFieldKey() . " " . $operator . " '" . $this->getValue() . "'";
 	}
 }
+
 class DAOSearchFieldNot extends DAOSearchFieldWithOperator { function getQueryString() { return $this->getQueryStringWithOperator('!=');} }
 class DAOSearchFieldGreaterThan extends DAOSearchFieldWithOperator { function getQueryString() { return $this->getQueryStringWithOperator('>');} }
 class DAOSearchFieldLessThan extends DAOSearchFieldWithOperator { function getQueryString() { return $this->getQueryStringWithOperator('<'); } }
@@ -363,5 +369,3 @@ class DAOSearchFieldRange extends DAOSearchField {
 	}
 	
 }
-
-?>

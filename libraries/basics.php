@@ -57,6 +57,34 @@ function handle_autoload_core_classes($class_name) {
 			$class_file = dirname(__FILE__) . '/db/' . $class_lower . '.php';
 			include($class_file);
 			return;
+
+		// DAOSearch related classes
+		case 'daojoin':
+		case 'daosearch':
+		case 'idaosearchwhere':
+		case 'daosearchgroup':
+		case 'daosearchorgroup':
+		case 'daosearchfield':
+		case 'daosearchfieldwithoperator':
+		case 'daosearchfieldnot':
+		case 'daosearchfieldgreaterthan':
+		case 'daosearchfieldlessthan':
+		case 'daosearchfieldgreaterthanorequal':
+		case 'daosearchfieldlessthanorequal':
+		case 'daosearchfieldnull':
+		case 'daosearchfieldnotnull':
+		case 'daosearchfieldlength':
+		case 'daosearchfieldlengthgreaterthan':
+		case 'daosearchfieldlengthlessthan':
+		case 'daosearchfieldlengthgreaterthanorequal':
+		case 'daosearchfieldlengthlessthanorequal':
+		case 'daosearchfieldwildcard':
+		case 'daosearchfieldvalues':
+		case 'daosearchfieldnotvalues':
+		case 'daosearchfieldrange':
+			$class_file = __DIR__ . '/db/daosearch.php';
+			include($class_file);
+			return;
 	}
 
 	// Check library paths
