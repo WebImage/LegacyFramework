@@ -256,7 +256,7 @@ class DAOSearchField implements IDAOSearchWhere {
 class DAOSearchFieldWithOperator extends DAOSearchField {
 	private $operator;
 
-	function __construct($table_key, $field_key, $operator, $value=null) {
+	function __construct($table_key, $field_key, $operator=null, $value=null) {
 		parent::__construct($table_key, $field_key, $value);
 		$this->operator = $operator;
 	}
