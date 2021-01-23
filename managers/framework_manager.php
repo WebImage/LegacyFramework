@@ -708,12 +708,13 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 
 		}
 
+		$debug[] = 'ConnectionManager::hasConnection: ' . (ConnectionManager::hasConnection() ? 'Yes':'No');
+
 		DatabaseManager::finalizeTableSettings();
 
 //		echo '<pre>';print_r($debug);exit;
 		
 		self::$isSiteInitialized = true;
-
 	}
 	/**
 	 * Logs a message to a framework temp log (possibly phasing out in favor of Custodian::log())
