@@ -261,24 +261,28 @@ class DAOSearchFieldWithOperator extends DAOSearchField {
 		$this->operator = $operator;
 	}
 
-	protected function getQueryStringWithOperator($operator) {
-		return $this->getTableKey() . "." . $this->getFieldKey() . " " . $operator . " '" . $this->getValue() . "'";
+	protected function getOperator() { return $this->operator; }
+
+	public function getQueryString() {
+		return $this->getTableKey() . "." . $this->getFieldKey() . " " . $this->getOperator(). " '" . $this->getValue() . "'";
 	}
 }
 
-class DAOSearchFieldNot extends DAOSearchFieldWithOperator { function getQueryString() { return $this->getQueryStringWithOperator('!=');} }
-class DAOSearchFieldGreaterThan extends DAOSearchFieldWithOperator { function getQueryString() { return $this->getQueryStringWithOperator('>');} }
-class DAOSearchFieldLessThan extends DAOSearchFieldWithOperator { function getQueryString() { return $this->getQueryStringWithOperator('<'); } }
-class DAOSearchFieldGreaterThanOrEqual extends DAOSearchFieldWithOperator { function getQueryString() { return $this->getQueryStringWithOperator('>='); } }
-class DAOSearchFieldLessThanOrEqual extends DAOSearchFieldWithOperator { function getQueryString() { return $this->getQueryStringWithOperator('<='); } }
-
-class DAOSearchFieldNull extends DAOSearchFieldWithOperator { function getQueryString() { return $this->getTableKey() . "." . $this->getFieldKey() . ' IS NULL'; } }
-class DAOSearchFieldNotNull extends DAOSearchFieldWithOperator { function getQueryString() { return $this->getTableKey() . "." . $this->getFieldKey() . ' IS NOT NULL'; } }
+abstract class AbstractDAOSearchFieldWithOperator extends DAOSearchFieldWithOperator {
+	public function __construct($table_key, $field_key, $value) {
+		parent::__construct($table_key, $field_key, null, $value);
+	}
+}
+class DAOSearchFieldNot extends AbstractDAOSearchFieldWithOperator { protected function getOperator() { return '!='; } }
+class DAOSearchFieldGreaterThan extends AbstractDAOSearchFieldWithOperator { protected function getOperator() { return '>'; } }
+class DAOSearchFieldLessThan extends AbstractDAOSearchFieldWithOperator { protected function getOperator() { return '<'; } }
+class DAOSearchFieldGreaterThanOrEqual extends AbstractDAOSearchFieldWithOperator { protected function getOperator() { return '>='; } }
+class DAOSearchFieldLessThanOrEqual extends AbstractDAOSearchFieldWithOperator { protected function getOperator() { return '<='; } }
+class DAOSearchFieldNull extends DAOSearchField { function getQueryString() { return $this->getTableKey() . "." . $this->getFieldKey() . ' IS NULL'; } }
+class DAOSearchFieldNotNull extends DAOSearchField { function getQueryString() { return $this->getTableKey() . "." . $this->getFieldKey() . ' IS NOT NULL'; } }
 
 // Strlen
 class DAOSearchFieldLength extends DAOSearchField {
-	private $operator;
-	
 	protected function getQueryStringWithOperator($operator='=') {
 		return "LENGTH(" . $this->getTableKey() . "." . $this->getFieldKey() . ") " . $operator . " '" . $this->getValue() . "'";
 	}
