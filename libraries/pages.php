@@ -382,8 +382,10 @@ class PageRequest {
 	private static function flattenConfigPathMappings(array $mappings, array $base=[]) {
 		$flattened_mappings = [];
 
+
 		foreach($mappings as $mapping) {
 			$mapping = array_merge_recursive($base, $mapping);
+
 			$keys = array_keys($mapping);
 			$has_children = in_array('children', $keys);
 
@@ -430,6 +432,8 @@ class PageRequest {
 				if (isset($mapping['domains']) && !in_array($this->getRequestedDomain(), $mapping['domains'])) continue;
 				if (isset($mapping['scheme']) && $this->getRequestedScheme() != $mapping['scheme']) continue;
 				if (isset($mapping['schemes']) && !in_array($this->getRequestedScheme(), $mapping['scheme'])) continue;
+				if (isset($mapping['method']) && $this->getRequestedMethod() != $mapping['method']) continue;
+				if (isset($mapping['methods']) && !in_array($this->getRequestedMethod(), $mapping['methods'])) continue;
 
 				// Add parameters
 				if (isset($mapping['params'])) {
@@ -485,7 +489,7 @@ class PageRequest {
 					if (null !== $handler_name) {
 						
 						$handler_config = (isset($config_request_handlers[$handler_name])) ? $config_request_handlers[$handler_name] : null;
-						
+
 						if (null !== $handler_config) {
 							
 							if ($handler_file = PathManager::translate($handler_config['classFile'])) include_once($handler_file);
