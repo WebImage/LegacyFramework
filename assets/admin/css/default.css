@@ -107,8 +107,12 @@ h1 { font-size:30px; }
 .panel-default .panel-heading {
 	border-radius:0;
 	background:none;
-	background-color:#fff;
+	background-color:#039be5;
 	border:none;
+	color: #fff;
+}
+.panel-heading .panel-title {
+	font-weight: bold;
 }
 .tag { 
 	background-color:#039be5;/* 069bde 1c3f89 ed487c*/
