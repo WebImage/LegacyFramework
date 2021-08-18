@@ -85,6 +85,7 @@ class Collection implements ICollection, Iterator, ArrayAccess, Countable { // I
 	
 	public function sort(callable $sorter) {
 		usort($this->lst, $sorter);
+		return $this;
 	}
 	
 	public function filter(callable $filterer) {
