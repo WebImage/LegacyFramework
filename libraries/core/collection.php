@@ -163,7 +163,12 @@ class Collection implements ICollection, Iterator, ArrayAccess, Countable { // I
 	}
 	
 	public function valid() {
-		return $this->getCurrentIndex() >= 0 && $this->getCurrentIndex() < $this->getCount();
+		$valid = $this->getCurrentIndex() >= 0 && $this->getCurrentIndex() < $this->getCount();
+
+		// Since this is no longer valid, rewind index to beginning
+		if (!$valid) $this->rewind();
+
+		return $valid;
 	}
 	
 	public function rewind()
