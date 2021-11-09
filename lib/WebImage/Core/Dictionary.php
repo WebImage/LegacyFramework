@@ -45,6 +45,29 @@ class Dictionary implements ArrayAccess, Iterator { // extends  IDictionary {
 			$this->set($key, $value);
 		}
 	}
+
+	/**
+	 * Return an associative array of the stored data.
+	 *
+	 * @return array
+	 */
+	public function toArray()
+	{
+		$array = array();
+		$data = $this->lst;
+
+		/** @var static $value */
+		foreach ($data as $key => $value) {
+			if ($value instanceof static) {
+				$array[$key] = $value->toArray();
+			} else {
+				$array[$key] = $value;
+			}
+		}
+
+		return $array;
+	}
+
 	/**
 	 * Implement methods from ArrayAccess
 	 **/
