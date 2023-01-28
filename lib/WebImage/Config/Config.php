@@ -16,7 +16,7 @@ class Config implements Countable, Iterator, ArrayAccess {
 	 */
 	protected $data = array();
 	protected $count = 0;
-	public function __construct(array $config) {
+	public function __construct(array $config=[]) {
 
 		foreach($config as $key => $value) {
 
