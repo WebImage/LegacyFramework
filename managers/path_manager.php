@@ -144,10 +144,11 @@ class PathManager {
 		} else if (isset($_SERVER['HTTP_HOST']) && !empty($_SERVER['HTTP_HOST'])) {
 			$domain = $_SERVER['HTTP_HOST'];
 		}
-		
+
 		$url = '';
 		if (!empty($domain)) {
-			$url = $_SERVER['REQUEST_SCHEME'] . '://' . $domain;
+			$scheme = array_key_exists('REQUEST_SCHEME', $_SERVER) ? $_SERVER['REQUEST_SCHEME'] : 'http';
+			$url = $scheme . '://' . $domain;
 		}
 		$url .= PathManager::getPath();
 		$query = PathManager::getQueryString();
@@ -179,6 +180,3 @@ class PathManager {
 	}
 	
 }
-
-
-?>
