@@ -6,9 +6,9 @@
 <cms:PageHeader />
 </head>
 <body>
-<div style="border:1px solid #ccc;background-color:#efefef;padding:10px;text-align:center;font-weight:bold;">HEADER</div>
-<cms:Error />
-<cms:EditableRegion id="ph_main" />
-<div style="border:1px solid #ccc;background-color:#efefef;padding:10px;text-align:center;font-weight:bold;">FOOTER</div>
+    <div style="max-width: 800px; margin: 0 auto;">
+        <cms:Error />
+        <cms:EditableRegion id="ph_main" />
+    </div>
 </body>
 </html>
