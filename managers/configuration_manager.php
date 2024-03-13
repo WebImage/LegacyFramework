@@ -1,6 +1,6 @@
 <?php
 
-use WebImage\Config\Config;
+use WebImage\Config\LegacyConfig;
 
 /**
  * 06/10/2009	(Robert Jones) Added configuration support for pages->location for authorization
@@ -34,7 +34,7 @@ class ConfigurationManager {
 		$_this->_pageSecureConnections = array();
 		$_this->_locationRoles = array();
 	}
-	
+
 	public static function getInstance() {
 		$_this = Singleton::getInstance('ConfigurationManager');
 		if (is_null($_this->settings)) {
@@ -47,7 +47,7 @@ class ConfigurationManager {
 	public static function getConfig() {
 		return ConfigurationManager::getInstance()->config;
 	}
-	public static function setConfig(Config $config) {
+	public static function setConfig(LegacyConfig $config) {
 		ConfigurationManager::getInstance()->config = $config;
 	}
 
@@ -84,17 +84,17 @@ class ConfigurationManager {
 		$_this = ConfigurationManager::getInstance();//Singleton::getInstance('ConfigurationManager');
 
 		if (!$group_settings = $_this->settings->get($group)) return false;
-		
+
 		if ($var_value_obj = $group_settings->get($name)) {
 
 			return $var_value_obj;
-			
+
 		} else {
 			return false;
 		}
 
 	}
-	
+
 	public static function get($name, $group='general') {
 		if (empty($group)) $group = 'general';
 		$_this = ConfigurationManager::getInstance();//Singleton::getInstance('ConfigurationManager');
@@ -106,9 +106,9 @@ class ConfigurationManager {
 			if (is_callable($var_value)) {
 				$var_value = call_user_func($var_value, sprintf('%s.%s', $group, $name));
 			}
-			
+
 			return ConfigurationManager::getValueFromString($var_value);
-			
+
 		} else return false;
 
 	}
@@ -120,7 +120,7 @@ class ConfigurationManager {
 		$_this = ConfigurationManager::getInstance();//Singleton::getInstance('ConfigurationManager');
 		if (empty($group)) $group = 'general';
 		if (!$_this->settings->get($group)) $_this->settings->set($group, new Dictionary());
-		
+
 		// Check if this value is actually writable
 		if ($existing = ConfigurationManager::getRaw($name, $group)) {
 			if ($existing->isLocked()) return false;
@@ -129,12 +129,12 @@ class ConfigurationManager {
 		$_this->settings->get($group)->set($name, $new_config_value);
 		return $new_config_value;
 	}
-	
+
 	public static function setAndPersist($name, $value, $group='general', $locked=false) {
-		
+
 		#$_this = ConfigurationManager::getInstance();//Singleton::getInstance('ConfigurationManager');
 		#if (empty($group)) $group = 'general';
-		
+
 		if (ConfigurationManager::set($name, $value, $group, $locked)) {
 			FrameworkManager::loadLogic('configvalue');
 			ConfigValueLogic::setGroupConfigValue($group, $name, $value, $locked);
@@ -156,7 +156,7 @@ class ConfigurationManager {
 			'store' => array(),
 			'search' => array()
 		);
-	
+
 		$_this = ConfigurationManager::getInstance();//Singleton::getInstance('ConfigurationManager');
 
 		if (is_object($xml_config_obj) && is_a($xml_config_obj, 'CWI_XML_Traversal')) {
@@ -164,23 +164,23 @@ class ConfigurationManager {
 			 * Add settings
 			*/
 			if ($config_settings = $xml_config_obj->getPathSingle('settings')) {
-	
+
 				if ($set_vars = $config_settings->getPath('var')) {
-	
+
 					foreach($set_vars as $set_var) {
-	
+
 						$var_name	= $set_var->getParam('name');
 						$var_value	= $set_var->getParam('value');
 						$var_group	= ($set_var->getParam('group')) ? $set_var->getParam('group') : 'general';
 						$var_locked	= ($set_var->getParam('locked') == 'true');
 ####################################$_this->set($var_name, $var_value, $var_group, $var_locked);
-	
+
 						if (!isset($config['settings'][$var_group])) $config['settings'][$var_group] = array();
 						$config['settings'][$var_group][$var_name] = $var_value;
 					}
-	
+
 				}
-	
+
 			}
 
 			if ($page_settings = $xml_config_obj->getPathSingle('pages')) {
@@ -194,13 +194,13 @@ class ConfigurationManager {
 				*/
 
 				if ($locations = $page_settings->getPath('location')) {
-						
+
 					$config['pages']['locations'] = array();
-						
+
 					foreach($locations as $location) {
-	
+
 						$location_path = $location->getParam('path');
-	
+
 						/**
 						 * 'location' => array(
 						 array(
@@ -212,49 +212,49 @@ class ConfigurationManager {
 						 'theme' => 'athenacms'
 						 )
 						 )
-	
+
 						*/
 						$authorization = array(
 							'allow' => array(
 								'roles' => array()
 							)
 						);
-	
+
 						if ($xml_authorization = $location->getPathSingle('authorization')) {
-	
+
 							if ($xml_allow_roles = $xml_authorization->getPath('allow')) {
-	
+
 								foreach($xml_allow_roles as $xml_allow_role) {
-	
+
 									if ($allowed_roles = $xml_allow_role->getParam('roles')) {
-	
+
 										$param_roles = explode(',', $allowed_roles);
-	
+
 										foreach($param_roles as $param_role) {
-												
+
 											$authorization['allow']['roles'][] = trim($param_role);
-												
+
 										}
-	
+
 									}
-	
+
 								}
-	
+
 							}
-	
+
 						}
-	
+
 						$config['pages']['locations'][] = array(
 							'path' => $location_path,
 							'authorization' => $authorization
 						);
-	
+
 					}
-						
+
 				}
 
 				if ($request_handlers = $page_settings->getPath('requestHandlers/add')) {
-	
+
 					$config['pages']['requestHandlers'] = array();
 
 					for ($i=0; $i < count($request_handlers); $i++) {
@@ -267,7 +267,7 @@ class ConfigurationManager {
 ###########################################$_this->addRequestHandler($request_handlers[$i]->getParam('name'), $request_handlers[$i]->getParam('className'), $path, $sortorder);
 
 					}
-						
+
 				}
 
 				if ($path_mappings = $page_settings->getPath('pathMappings/add')) {
@@ -291,22 +291,22 @@ class ConfigurationManager {
 				}
 
 				if ($xml_page_secure_connections = $page_settings->getPath('requireSecureConnection/add')) {
-	
+
 					$config['pages']['requireSecureConnection'] = array();
-						
+
 					foreach($xml_page_secure_connections as $xml_path_regex) {
-	
+
 						$config['pages']['requireSecureConnection'][] = array(
 							'pathRegex' => $xml_path_regex->getParam('path')
 						);
-	
+
 ####################################$_this->addPageSecureConnection($path->getParam('path'));
-	
+
 					}
 				}
 
 			}
-	
+
 			// Retrieve Database Settings
 			if ($config_database = $xml_config_obj->getPathSingle('database')) {
 
@@ -323,7 +323,7 @@ class ConfigurationManager {
 						$username	= $connection->getParam('username');
 						$password	= $connection->getParam('password');
 						$database	= $connection->getParam('database');
-			
+
 ####################################ConnectionManager::addConnection($key_name, new DatabaseSetting($server, $username, $password, $database));
 						$config['database']['connections'][$key_name] = array(
 							'host' => $server,
@@ -331,9 +331,9 @@ class ConfigurationManager {
 							'password' => $password,
 							'database' => $database
 							);
-		
+
 					}
-	
+
 				}
 
 				if ($xml_table_sections = $xml_config_obj->getPath('database/tables')) {
@@ -368,7 +368,7 @@ class ConfigurationManager {
 					}
 
 				}
-	
+
 			}
 
 			// Membership
@@ -381,14 +381,14 @@ class ConfigurationManager {
 				if ($default_provider = $config_membership->getParam('defaultProvider')) {
 					$config['membership']['defaultProvider'] = $default_provider;
 				}
-	
+
 				if ($xml_membership_providers = $config_membership->getPath('providers/add')) {
 
 					// Add Membership Providers to Application
 					foreach($xml_membership_providers as $xml_provider) {
 
 						if ($class_file_path = $xml_provider->getParam('classFile')) {
-								
+
 							#if ($class_file_path = PathManager::translate($class_file_param)) {
 
 							$provider_name = $xml_provider->getParam('name');
@@ -409,38 +409,38 @@ class ConfigurationManager {
 
 			// Role Manager
 			if ($xml_config_roles = $xml_config_obj->getPathSingle('roleManager')) {
-		
+
 				$config['roleManager'] = array(
 					'defaultProvider' => null,
 					'providers' => array()
 					);
-		
+
 				if ($xml_default_provider = $xml_config_roles->getParam('defaultProvider')) {
 					$config['roleManager']['defaultProvider'] = $xml_default_provider;
 				}
-		
+
 				if ($xml_role_providers = $xml_config_roles->getPath('providers/add')) {
-			
+
 				// 	Add Role Providers to Application
 					foreach($xml_role_providers as $xml_provider) {
-			
+
 						$provider_name = $xml_provider->getParam('name');
-				
+
 						$config['roleManager']['providers'][$provider_name] = array(
 							'classFile' => $xml_provider->getParam('classFile')
 						);
-			
+
 						foreach($xml_provider->getParams() as $param_key=>$param_value) {
 							if ($param_key != 'name') $config['roleManager']['providers'][$provider_name][$param_key] = $param_value;
 						}
-	
+
 ####################################include_once($provider->getParam('classFile'));
-	
+
 ####################################Roles::addProvider($provider_config);
 					}
 				}
 			}
-	
+
 			// Profiles
 			if ($xml_config_profiles = $xml_config_obj->getPathSingle('profile')) {
 
@@ -448,25 +448,25 @@ class ConfigurationManager {
 					'defaultProvider' => null,
 					'providers' => array()
 				);
-	
+
 				if ($default_provider = $xml_config_profiles->getParam('defaultProvider')) {
 					$config['profile']['defaultProvile'] = $default_provider;
 ##############################Profiles::setDefaultProvider($default_provider);
 				}
-	
+
 				if ($xml_profile_providers = $xml_config_profiles->getPath('providers/add')) {
-		
+
 					// Add Profile Profiles to Application
 					foreach($xml_profile_providers as $xml_provider) {
-		
+
 						$provider_name = $xml_provider->getParam('name');
-		
+
 						$config['profile']['providers'][$provider_name] = array(
 							'classFile' => $xml_provider->getParam('classFile')
 						);
-		
+
 						foreach($xml_provider->getParams() as $param_key=>$param_value) {
-									
+
 							if ($param_key != 'name') $config['profile']['providers'][$provider_name][$param_key] = $param_value;
 ##########################################$provider_config->set($param_key, $param_value);
 						}
@@ -516,7 +516,7 @@ class ConfigurationManager {
 			return $config;
 		} else {
 			return false;
-		}	
+		}
 	}
 
 	/**
@@ -728,7 +728,7 @@ class ConfigurationManager {
 
 	}
 	/**
-	 * Adds a configuration file to the site 
+	 * Adds a configuration file to the site
 	 * @param string $config_xml_filepath The full file to the configuration file - usually ending in config.xml
 	 * @param string $xml_file_tag A xml_file_tag is an abbreviated way to identify a config file (<config><configFile file="/path/to/global_config.xml" tag="global" /></config>.  Additionally, the tag is also used for caching
 	 * @return CWI_XML_Traversal|null
@@ -758,8 +758,8 @@ class ConfigurationManager {
 		}
 	}
 
-	
-	/** 
+
+	/**
 	 *
 	 *
 	 * ALL FUNCTIONS BELOW HERE NEED SOME OTHER SCHEMA TO GET THE DATA IN - THIS IS SLOPPY FOR NOW
@@ -806,7 +806,7 @@ class ConfigurationManager {
 		if ($handler_a['sortorder'] > $handler_b['sortorder']) return 1;
 		else return 0;
 	}
-	
+
 	public static function getRequestHandlers() {
 		$_this = ConfigurationManager::getInstance();//Singleton::getInstance('ConfigurationManager');
 		usort($_this->_requestHandlers, array($_this, 'sortHandlers'));
@@ -843,7 +843,7 @@ class ConfigurationManager {
 	/**
 	 * TODO: Finish transitioning to array based config
 	 */
-	public static function addConfigSettingsFromDb(Config $config) {
+	public static function addConfigSettingsFromDb(LegacyConfig $config) {
 
 		$_this = ConfigurationManager::getInstance();//Singleton::getInstance('ConfigurationManager');
 
@@ -853,7 +853,7 @@ class ConfigurationManager {
 		while ($value = $values->getNext()) {
 
 			$group = (empty($value->group_key)) ? 'general' : $value->group_key;
-			if (!isset($config['settings'][$group])) $config['settings'][$group] = new Config();
+			if (!isset($config['settings'][$group])) $config['settings'][$group] = new LegacyConfig();
 
 			$config['settings'][$group][$value->field] = $value->value;
 

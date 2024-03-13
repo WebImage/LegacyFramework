@@ -1,11 +1,11 @@
 <?php
 
-use WebImage\Core\Dictionary;
+use WebImage\Core\LegacyDictionary;
 
 class ProviderBase {
 	private $name; // String
 	private $config; // ProviderDictionary
-	
+
 	/**
 	 * Not needed for implementation:
 	 *
@@ -23,7 +23,7 @@ class ProviderBase {
 	 */
 	public function init($name, $config=null) {
 		$this->name = $name;
-		if (null === $config) $config = new Dictionary();
+		if (null === $config) $config = new LegacyDictionary();
 		$this->config = $config;
 		return true;
 	}

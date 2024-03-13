@@ -2,7 +2,7 @@
 
 namespace WebImage\Provider;
 
-use WebImage\Config\Config as BaseConfig;
+use WebImage\Config\LegacyConfig as BaseConfig;
 
 /**
  * Class Config
@@ -57,17 +57,17 @@ class Config {
 	 * @return mixed (probably string)
 	 */
 	public function getMetaValue($name, $default=null) { return $this->meta->get($name, $default); }
-	
+
 	public function isMetaValueTrue($name, $default = null) {
 		if (null !== $default && !is_bool($default)) {
 			throw new \RuntimeException(sprintf('%s requires bool value for $default', __METHOD__));
 		}
-		
+
 		$value = $this->getMetaValue($name, $default);
-		
+
 		return ($value === true || $value == 'true' || $value == 1);
 	}
-	
+
 	public function isMetaValueFalse($name, $default = null) {
 		return !$this->isMetaValueTrue($name, $default);
 	}

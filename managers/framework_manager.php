@@ -1,7 +1,8 @@
 <?php
 
-use WebImage\Config\Config;
-use WebImage\Application\Application;
+use WebImage\Application\ApplicationInterface;
+use WebImage\Config\LegacyConfig;
+use WebImage\Application\LegacyApplication;
 
 /**
  * 01/27/2010	(Robert Jones) Added new second parameter "tag" to all instances of ConfigurationManager::addConfigFile()
@@ -42,18 +43,18 @@ class FrameworkManagerMarkTime {
 class FrameworkManager {
 	#var $_siteId;
 	/**
-	 * @var Application $app (temporarily being stored here until we can do a full framework transition away from using FrameworkManager)
+	 * @var LegacyApplication $app (temporarily being stored here until we can do a full framework transition away from using FrameworkManager)
 	 */
 	private $app;
 	private static $isSiteInitialized = false;
-	
+
 	private static $startTime;
 	private static $markedTimes = array();
-	
+
 	/**
 	 * Get Singleton
 	 */
-	public static function getInstance() { 
+	public static function getInstance() {
 		static $instances;
 		if (!isset($instances[0])) {
 			$instances[0] = new FrameworkManager();
@@ -67,9 +68,9 @@ class FrameworkManager {
 		self::$markedTimes[] = new FrameworkManagerMarkTime($name, FrameworkManager::getTime(), memory_get_usage());
 	}
 	public static function renderTimes() {
-		
+
 		$output = '';
-		
+
 		/* Baseline, without loading any framework files, was about 332 KB */
 		$output .= '<table border="1">';
 		$output .= '<tr>';
@@ -78,19 +79,19 @@ class FrameworkManager {
 		$output .= '<th>Memory</th>';
 		$output .= '<th>Memory Increase</th>';
 		$output .= '</tr>';
-		
+
 		$total_time = 0;
-		
+
 		for($i=0; $i < count(self::$markedTimes); $i++) {
-			
+
 			$previous = ($i > 0) ? self::$markedTimes[$i-1] : null;
 			$current = self::$markedTimes[$i];
-			
+
 			$time_taken = is_null($previous) ? 'NA' : ($current->getTime() - $previous->getTime());
 			$memory_increase = is_null($previous) ? 'NA' : ($current->getMemory() - $previous->getMemory());
-			
+
 			if (is_numeric($time_taken)) $total_time += $time_taken;
-			
+
 			if ($time_taken > 0.01) {
 				$time_style = 'background-color:#c00;color:#fff;';
 			} else if ($time_taken > 0.001) {
@@ -98,10 +99,10 @@ class FrameworkManager {
 			} else {
 				$time_style = '';
 			}
-			
+
 			$byte = 1;
 			$kilobyte = 1024 * $byte;
-			
+
 			if ($memory_increase > 300*$kilobyte) {
 				$memory_style = 'background-color:#c00;color:#fff';
 			} else if ($memory_increase > 100*$kilobyte) {
@@ -109,26 +110,26 @@ class FrameworkManager {
 			} else {
 				$memory_style = '';
 			}
-			
+
 			$output .= '<tr>';
-			
+
 			$output .= '<td>' . $current->getName() . '</td>';
 			$output .= '<td align="right" style="' . $time_style . '">' . number_format(round($time_taken, 6), 6) . '</td>';
 			$output .= '<td align="right" style="' . $memory_style . '">' . number_format($current->getMemory()/1024) . ' kb</td>';
 			$output .= '<td align="right" style="' . $memory_style . '">' . number_format($memory_increase/1024) . ' kb</td>';
-			
+
 			$output .= '</tr>';
-			
+
 		}
-		
+
 		if (count(self::$markedTimes) > 1) {
 			$output .= '<tr><td colspan="4"><strong>Total Time: ' . number_format(round($total_time, 6), 6) . '</td></tr>';
 		}
-		
+
 		$output .= '</table>';
 		return $output;
 	}
-	
+
 	/**
 	 * Get a file path that can be used within this class to cache/store framework related files
 	 * @param $filename A simple string value that will be used to identify the tmp file
@@ -150,9 +151,9 @@ class FrameworkManager {
 	 * @param array $config_site An array with values to use for site configuration
 	 * @param string $mode How the framework is being run - typically FRAMEWORK_MODE_WEB or FRAMEWORK_MODE_CLI (command line interface)
 	 * @param string $domain The domain to use, by default this will be filled from the webs
+	 * @param LegacyApplication $app The application instance to use
 	 */
 	public static function init($param1=null, $param2=null, $param3=null) {
-
 		$mode = null;
 		$config_site = null;
 		$domain = '';
@@ -174,14 +175,14 @@ class FrameworkManager {
 		FrameworkManager::markTime(__class__ . '->init() begin usage');
 
 		$start_time = FrameworkManager::getTime();
-		
+
 		// Base for all files
 		$dir_fs_framework = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR;
-		
+
 		// Framework Base
 		$dir_fs_framework_base	= $dir_fs_framework . 'base' . DIRECTORY_SEPARATOR;
 		$dir_fs_framework_sites = $dir_fs_framework . 'sites' . DIRECTORY_SEPARATOR;
-		
+
 		// Domain name - framework app files
 		if (empty($domain)) {
 			if (isset($_SERVER['SERVER_NAME']) && !empty($_SERVER['SERVER_NAME'])) {
@@ -193,7 +194,7 @@ class FrameworkManager {
 
 		// Define framework directories
 		if (!defined('DIR_FS_FRAMEWORK_BASE')) define('DIR_FS_FRAMEWORK_BASE',	$dir_fs_framework_base);
-		
+
 		FrameworkManager::markTime(__class__ . '->init() before library usage');
 		// Load Path Manager
 		include_once(DIR_FS_FRAMEWORK_BASE . 'managers' . DIRECTORY_SEPARATOR . 'path_manager.php');
@@ -210,57 +211,58 @@ class FrameworkManager {
 		 * Load main configuration files
 		 */
 		FrameworkManager::loadBaseManager('configuration');
-		
+
 		// Reset all singleton instances
 		Singleton::reset();
-		
+
 		// Add bsae path
 		PathManager::add(DIR_FS_FRAMEWORK_BASE);
-		
+
 		FrameworkManager::markTime(__class__ . '->init() after basics usage');
 
 		FrameworkManager::loadBaseLibrary('controls');
-		
+
 		FrameworkManager::markTime(__class__ . '->init() after controls usage');
 
 		FrameworkManager::loadBaseManager('connection');
-		
-		FrameworkManager::markTime(__class__ . '->init() after connection');		
+
+		FrameworkManager::markTime(__class__ . '->init() after connection');
 
 		FrameworkManager::loadBaseLibrary('compilers');
-		
-		FrameworkManager::markTime(__class__ . '->init() after compilers');		
+
+		FrameworkManager::markTime(__class__ . '->init() after compilers');
 
 		FrameworkManager::loadBaseLibrary('database');
-		
-		FrameworkManager::markTime(__class__ . '->init() after database');		
+
+		FrameworkManager::markTime(__class__ . '->init() after database');
 
 		FrameworkManager::loadBaseLibrary('pages');
-		
+
 		FrameworkManager::markTime(__class__ . '->init() after library usage');
 
 		FrameworkManager::loadBaseLibrary('xml.xml');
 
-		$config = new Config(array(
-			'settings' => array(
-				'general' => array()
-			)
-		));
-		$config['settings']['general']['FRAMEWORK_MODE'] = $mode;
-		$config['settings']['general']['DOMAIN'] = $domain;
-		$config['settings']['general']['DIR_FS_FRAMEWORK'] = $dir_fs_framework;
-		$config['settings']['general']['DIR_FS_FRAMEWORK_BASE'] = DIR_FS_FRAMEWORK_BASE;
-		$config['settings']['general']['DIR_FS_FRAMEWORK_SITES'] = $dir_fs_framework_sites;
-		$config['settings']['general']['DIR_FS_HOME'] = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR;
+		$config = new LegacyConfig([
+			'settings' => [
+				'general' => [
+					'FRAMEWORK_MODE' => $mode,
+					'DOMAIN' => $domain,
+					'DIR_FS_FRAMEWORK' => $dir_fs_framework,
+					'DIR_FS_FRAMEWORK_BASE' => DIR_FS_FRAMEWORK_BASE,
+					'DIR_FS_FRAMEWORK_SITES' => $dir_fs_framework_sites,
+					'DIR_FS_HOME' => $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR,
+				]
+			]
+		]);
 
 		$cache_config_base = self::getTmpFile('config_base.xml.cache');
 		$cache_config_global = self::getTmpFile('config_global.xml.cache');
-		
+
 		$is_framework_caching_enabled = true;
 		if (isset($_GET['nocache'])) $is_framework_caching_enabled = false; // Disable cache if "nocache" is in the query string
-		
+
 		$active_cached_configs = false;
-		
+
 FrameworkManager::markTime(__class__ . '->init() before is_framework_caching_enabled');
 
 		$config_cache_explanation = array();
@@ -274,54 +276,53 @@ FrameworkManager::markTime(__class__ . '->init() before is_framework_caching_ena
 				$active_cached_configs = true;
 
 				array_push($config_cache_explanation, 'Checking global');
-				
+
 				if ($active_cached_configs && file_exists($cache_config_global)) {
 
 					array_push($config_cache_explanation, 'File exists: ' . $cache_config_global);
 
 					if (file_exists($file_config_global_alt) && filemtime($cache_config_global) < filemtime($file_config_global_alt)) {
-						
+
 						array_push($config_cache_explanation, 'Global config cache needs refreshing');
-						
+
 						$active_cached_configs = false;
-						
+
 					} else {
-						
+
 						#array_push($config_cache_explanation, 'Last Update LT Max Cache Age');
 						array_push($config_cache_explanation, 'Global config cache current');
-						
+
 						$config_global = unserialize(@file_get_contents($cache_config_global));
-						
+
 						if (is_object($config_global) && is_a($config_global, 'CWI_XML_Traversal')) { // Make sure object is valid
 							// Valid
 							array_push($config_cache_explanation, 'Valid config');
-							
+
 						} else {
-							
+
 							array_push($config_cache_explanation, 'Invalid config');
 							$active_cached_configs = false;
 						}
 					}
-					
+
 				} else {
-					
+
 					array_push($config_cache_explanation, 'Global cache file does not exist: ' . $cache_config_global);
 					$active_cached_configs = false;
-					
+
 				}
-				
+
 			} catch (Exception $e) {
 				// Error
 				$active_cached_configs = false;
-				
+
 			}
-			
 		}
 
 FrameworkManager::markTime(__class__ . '->init() before configs (active_cache_configs=' . ($active_cached_configs ? 'Yes':'No') . ')');
 
 		// Merge base config
-		$config->merge(new Config(require $file_config_base));
+		$config->merge(new LegacyConfig(require $file_config_base));
 
 		$config_global = null;
 
@@ -329,13 +330,13 @@ FrameworkManager::markTime(__class__ . '->init() before configs (active_cache_co
 			/**
 			 * A cached copy of config_global would indicate that the global config file is in the old XML format, convert it to the array format here
 			 */
-			$config_global = new Config( ConfigurationManager::convertConfigXmlToArray($config_global) );
+			$config_global = new LegacyConfig(ConfigurationManager::convertConfigXmlToArray($config_global) );
 
 		} else {
 
 			if (file_exists($file_config_global)) {
 
-				$config_global = new Config( require($file_config_global) );
+				$config_global = new LegacyConfig( require($file_config_global) );
 
 			} else if (file_exists($file_config_global_alt)) {
 
@@ -343,7 +344,7 @@ FrameworkManager::markTime(__class__ . '->init() before configs (active_cache_co
 
 				if (null !== $xml_global_config) {
 
-					$config_global = new Config( ConfigurationManager::convertConfigXmlToArray($xml_global_config) );
+					$config_global = new LegacyConfig(ConfigurationManager::convertConfigXmlToArray($xml_global_config) );
 
 				}
 
@@ -364,7 +365,7 @@ FrameworkManager::markTime(__class__ . '->init() after configs');
 		}
 		// Make SessionManager available by default
 		FrameworkManager::loadBaseManager('session');
-		
+
 		// Initialize Message Manager
 		FrameworkManager::loadBaseManager('message');
 		MessageManager::init();
@@ -380,7 +381,7 @@ FrameworkManager::markTime(__class__ . '->init() before initializeSite usage');
 
 			// Convert site config into an array
 			if (null !== $config_site) {
-				$config_site = new Config($config_site);
+				$config_site = new LegacyConfig($config_site);
 				$config->merge($config_site);
 			}
 			#$config_site =
@@ -392,7 +393,7 @@ FrameworkManager::markTime(__class__ . '->init() before initializeSite usage');
 
 FrameworkManager::markTime(__class__ . '->init() end usage');
 
-		/** 
+		/**
 		 * Initialize event manager and start attaching events
 		 */
 		FrameworkManager::loadLibrary('event.manager'); // Note: this could potentially be moved above initialize
@@ -401,8 +402,7 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 		ConfigurationManager::legacyInitConfig();
 
 		$end_time = FrameworkManager::getTime();
-
-		FrameworkManager::getInstance()->app = Application::create($config);
+		FrameworkManager::getInstance()->app = LegacyApplication::create($config);
 
 		FrameworkManager::autoload();
 	}
@@ -449,14 +449,14 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 		if (count($paths) > 0) {
 			$current_base .= implode('/', $paths) . '/';
 		}
-		
+
 		return $current_base;
 	}
-	
+
 	public static function checkForAdditionalPaths($current_base, &$key) {
 
 	}
-	
+
 	/**
 	 * Loads a plugin - not yet implemented
 	 */
@@ -479,13 +479,13 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 				// Do something;
 			}
 		}
-		
+
 		return true;
 	}
 	public static function loadLibrary($library_name) { // Static function
 		$file_base = FrameworkManager::checkKeyForPaths('/libraries/', $library_name);
 		$file_name = '~' . $file_base . $library_name . '.php';
-		
+
 		if ($real_path = PathManager::translate($file_name)) {
 			return include_once($real_path);
 		} else {
@@ -511,7 +511,7 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 		$path = DIR_FS_FRAMEWORK_BASE . 'managers' . DIRECTORY_SEPARATOR . str_replace('.', DIRECTORY_SEPARATOR, $manager_name) . '_manager.php';
 		include_once($path);
 	}
-	
+
 	public static function loadLogic($logic_name) {
 		$file_base = FrameworkManager::checkKeyForPaths('/logic/', $logic_name);
 		$file_name = '~' . $file_base . $logic_name . '/' . $logic_name . '.php';
@@ -522,7 +522,7 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 			return false;
 		}
 	}
-	public static function loadBaseLogic($logic_name) { 
+	public static function loadBaseLogic($logic_name) {
 		$file_base = FrameworkManager::checkKeyForPaths('/logic/', $logic_name);
 		$path = substr(DIR_FS_FRAMEWORK_BASE, 0, -1) . $file_base . $logic_name . DIRECTORY_SEPARATOR . $logic_name . '.php';
 		include_once($path);
@@ -546,7 +546,7 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 			FrameworkManager::log(LOGLEVEL_WARNING, 'FrameworkManager::loadDAO() failed to load: ' . $file_name);
 			return false;
 		}
-	
+
 	}
 	public static function loadControl($control_name) {
 		$file_base = FrameworkManager::checkKeyForPaths('/controls/', $control_name);
@@ -558,25 +558,25 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 			return false;
 		}
 	}
-	
+
 	public static function getTime() {
 		$time = microtime();
 		$time = explode(" ", $time);
 		$time = $time[1] + $time[0];
 		return $time;
 	}
-	
+
 	public static function isSiteInitialized() { return self::$isSiteInitialized;	}
 
 	/**
 	 * Initialize a site
-	 * @param Config $config
-	 * @return Config $config
+	 * @param LegacyConfig $config
+	 * @return LegacyConfig $config
 	 */
-	private static function initializeSite(Config $config) {
+	private static function initializeSite(LegacyConfig $config) {
 
 		FrameworkManager::markTime(__class__ . '->initializeSite() before loadSiteLogic');
-		
+
 		FrameworkManager::loadBaseLogic('site');
 
 		$debug = array();
@@ -590,7 +590,7 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 		FrameworkManager::markTime(__class__ . '->initializeSite() before DB domain check');
 
 		$debug[] = '$dir_app: ' . $dir_app . '; Exists: ' . (file_exists($dir_app) ? 'Yes' : 'No') . PHP_EOL;
-		
+
 		if (file_exists($dir_app)) {
 
 			$config['settings']['general']['SITE_ID'] = 0; // Legacy
@@ -604,11 +604,11 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 		} else {
 
 			$debug[] = 'ConnectionManager::hasConnection: ' . (ConnectionManager::hasConnection() ? 'Yes' : 'No');
-			
+
 			if (ConnectionManager::hasConnection() && $site = SiteLogic::getSiteByDomain($domain)) {
 
 				$valid_site = true;
-				
+
 				// Site Values
 				$config['settings']['general']['SITE_ID'] = $site->id;
 				$config['settings']['general']['SITE_KEY'] = strtolower($site->key);
@@ -645,12 +645,12 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 		} else {
 			ini_set('display_errors', 0);
 		}
-		
+
 		//if (!ConfigurationManager::addConfigFile(ConfigurationManager::get('DIR_FS_FRAMEWORK_APP') . 'config/config.xml', 'app')) die("We'll be right back!\n<!-- // Error: Unable to Load Site Configuration // -->");
 		$dir_fs_framework_app = (isset($config['settings']['general']['DIR_FS_FRAMEWORK_APP'])) ? $config['settings']['general']['DIR_FS_FRAMEWORK_APP'] : null;
 
 		$debug[] = '$dir_fs_framework_app: ' . $dir_fs_framework_app . '; Exists: ' . (file_exists($dir_fs_framework_app) ? 'Yes' : 'No');
-		
+
 		if (file_exists($dir_fs_framework_app)) {
 
 			 PathManager::addFirst($config['settings']['general']['DIR_FS_FRAMEWORK_APP']);
@@ -676,7 +676,7 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 			 */
 			if (file_exists($file_config_site)) {
 
-				$config->merge( new Config(include $file_config_site) );
+				$config->merge( new LegacyConfig(include $file_config_site) );
 
 				/**
 				 * Check whether old configuration format exists for legacy sites
@@ -685,7 +685,7 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 
 				$xml_config_site = ConfigurationManager::getConfigFileXml($file_config_site_alt);
 
-				$config->merge( new Config(   ConfigurationManager::convertConfigXmlToArray($xml_config_site)   ));
+				$config->merge( new LegacyConfig(ConfigurationManager::convertConfigXmlToArray($xml_config_site)   ));
 
 			}
 
@@ -713,7 +713,7 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 		DatabaseManager::finalizeTableSettings();
 
 //		echo '<pre>';print_r($debug);exit;
-		
+
 		self::$isSiteInitialized = true;
 	}
 	/**
@@ -726,9 +726,9 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 	public static function log($log_level, $message=null) {
 		$system_log_level = ConfigurationManager::get('LOG_LEVEL');
 		if (empty($system_log_level)) $system_log_level = LOGLEVEL_EMERGENCY;
-		
+
 		$track_log_levels = array();
-		
+
 		switch ($system_log_level) {
 			case LOGLEVEL_EMERGENCY:
 				$track_log_levels = array(LOGLEVEL_EMERGENCY);
@@ -753,29 +753,29 @@ FrameworkManager::markTime(__class__ . '->init() end usage');
 				break;
 			case LOGLEVEL_DEBUG:
 				$track_log_levels = array(LOGLEVEL_EMERGENCY, LOGLEVEL_ALERT, LOGLEVEL_CRITICAL, LOGLEVEL_ERROR, LOGLEVEL_WARNING, LOGLEVEL_NOTICE, LOGLEVEL_INFO, LOGLEVEL_DEBUG);
-				break;			
+				break;
 		}
-		
+
 		if (in_array($log_level, $track_log_levels)) {
 			#$log_file = ConfigurationManager::get('DIR_FS_TMP') . 'dump.log';
 			$log_file = self::getTmpFile('framework-dump.log');
 
 			if ($fp = @fopen($log_file, 'a+')) {
-				
+
 				$log_message = date('Y-m-d H:i:s') . ' [log_level=' . $log_level . '] ';
 				if ($user = Membership::getUser()) {
 					$log_message .= '[membership_id=' .$user->getId() . '] ';
 				}
 				$log_message .= $message;
 				$log_message .= "\n";
-				
+
 				fwrite($fp, $log_message, strlen($log_message));
 				fclose($fp);
 				return true;
 			}
-			
+
 		}
-		
+
 		return false;
 	}
 	/**

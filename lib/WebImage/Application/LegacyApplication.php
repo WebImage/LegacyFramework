@@ -2,20 +2,20 @@
 
 namespace WebImage\Application;
 
-use WebImage\Config\Config;
+use WebImage\Config\LegacyConfig;
 use WebImage\ServiceManager\IServiceManagerAware;
-use WebImage\ServiceManager\ServiceManager;
+use WebImage\ServiceManager\LegacyServiceManager;
 use WebImage\ServiceManager\IServiceManager;
-use WebImage\ServiceManager\ServiceManagerConfig;
+use WebImage\ServiceManager\LegacyServiceManagerConfig;
 
-class Application implements IServiceManagerAware {
+class LegacyApplication implements IServiceManagerAware {
 
 	private $serviceManager;
 
 	/**
-	 * @param Config $config
+	 * @param LegacyConfig $config
 	 */
-	function __construct(Config $config, ServiceManager $service_manager) {
+	function __construct(LegacyConfig $config, LegacyServiceManager $service_manager) {
 		$this->config = $config;
 		$this->serviceManager = $service_manager;
 	}
@@ -29,16 +29,16 @@ class Application implements IServiceManagerAware {
 	}
 
 	/**
-	 * @param Config $config
-	 * @return Application
+	 * @param LegacyConfig $config
+	 * @return LegacyApplication
 	 */
-	public static function create(Config $config) {
+	public static function create(LegacyConfig $config) {
 
 		$service_manager_config = isset($config['serviceManager']) ? $config['serviceManager'] : array();
-		$service_manager = new ServiceManager( new ServiceManagerConfig($service_manager_config) );
+		$service_manager = new LegacyServiceManager( new LegacyServiceManagerConfig($service_manager_config) );
 		$service_manager->setService('ApplicationConfig', $config);
 
-		$application = new Application($config, $service_manager);
+		$application = new LegacyApplication($config, $service_manager);
 		#$service_manager->set('Application', $application);
 		#$serviceManager->get('PluginManager')->loadPlugins();
 
@@ -49,6 +49,5 @@ class Application implements IServiceManagerAware {
 
 		#return $service_manager->get('Application');
 		return $application;
-
 	}
 }

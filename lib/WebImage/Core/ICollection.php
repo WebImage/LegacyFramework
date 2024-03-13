@@ -22,7 +22,7 @@ interface ICollection {
 	public function insert($list_item);
 	/**
 	 * Resets the collection to empty
-	 * @access public 
+	 * @access public
 	 * @return void
 	 */
 	public function clear();
@@ -64,7 +64,7 @@ interface ICollection {
 	 * @access public
 	 * @return mixed the object at the specified index
 	 */
-	public function getAt($index);	
+	public function getAt($index);
 	/**
 	 * Sets the object at the specified index
 	 * @param int $index the index at which the new item will be set (overwrites an object if it is exists)
@@ -86,14 +86,14 @@ interface ICollection {
 	 */
 	public function getNext();
 	/**
-	 * Tests whether an object exists at the next index 
+	 * Tests whether an object exists at the next index
 	 * @access public
 	 * @return boolean true if another object exists at the next index, or false if the current object is the last object, or false if there are not any objects in the collection
 	 */
 	public function hasNext();
 	/**
 	 * Merge another collection into this collection
-	 * @param Collection another collection to be merged
+	 * @param LegacyCollection another collection to be merged
 	 * @access public
 	 * @return mixed (same as if getAll() was called after the merge is complete
 	 */

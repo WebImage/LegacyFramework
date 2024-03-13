@@ -9,7 +9,7 @@ use Countable;
 use Iterator;
 use ArrayAccess;
 
-class Config implements Countable, Iterator, ArrayAccess {
+class LegacyConfig implements Countable, Iterator, ArrayAccess {
 
 	/**
 	 * @var array Config data
@@ -30,7 +30,7 @@ class Config implements Countable, Iterator, ArrayAccess {
 		}
 	}
 
-	public function merge(Config $merge) {
+	public function merge(LegacyConfig $merge) {
 
 		foreach($merge as $key => $value) {
 

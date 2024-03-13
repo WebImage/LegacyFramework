@@ -2,20 +2,22 @@
 
 namespace WebImage\Core;
 
+use Exception;
+
 /**
  * 02/05/2010	(Robert Jones) Changed $lst, and $current_index properties to be private (instead of var)
  * 08/04/2010	(Robert Jones) Added $cacheCount to Collection to keep track of how many entries are in the collection/array.  When used in hasNext() execution decreased by 100 times
  */
-class Collection implements ICollection { // Implements ICollection
+class LegacyCollection implements ICollection { // Implements ICollection
 	private $lst = array();
 	private $current_index = -1;
 	private $cacheCount;
-	
+
 	function __construct() {}
-	
+
 	// Allows overriding classes to verify that the object is allowed to be added
 	protected function isItemValid($list_item) { return true; }
-	
+
 	public function add($list_item) {
 		if ($this->isItemValid($list_item)) {
 			$this->lst[] = $list_item;
@@ -42,15 +44,15 @@ class Collection implements ICollection { // Implements ICollection
 	}
 	public function resetIndex() { $this->current_index = -1; }
 	public function getAt($index) {
-		if (isset($this->lst[$index])) { 
+		if (isset($this->lst[$index])) {
 			return $this->lst[$index];
 		} else return false;
 	}
-	
+
 	public function setAt($index, $list_item_value) {
 		$this->lst[$index] = $list_item_value;
 	}
-	
+
 	public function &getAll() { return $this->lst; }
 	public function getNext() {
 		$next_index = $this->getCurrentIndex() + 1;
@@ -70,21 +72,21 @@ class Collection implements ICollection { // Implements ICollection
 			return ($next_index < $this->cacheCount);
 		}
 	}
-	
+
 	/**
 	 * Merge another collection into this collection
-	 * @param Collection $collection
+	 * @param LegacyCollection $collection
 	 * @return array|mixed
 	 */
 	public function merge($collection) {
 		if (is_array($collection)) $this->lst = array_merge($this->lst, $collection);
-		else if (is_a($collection, 'Collection')) $this->lst = array_merge($this->lst, $collection->lst);
-		else throw new Exception('Invalid type passed to Collection::merge($collection).');
+		else if ($collection instanceof LegacyCollection) $this->lst = array_merge($this->lst, $collection->getAll());
+		else throw new Exception('Invalid type passed to LegacyCollection::merge($collection).');
 		$this->cacheCount = count($this->lst);
-		
+
 		return $this->getAll();
 	}
-	
+
 	/**
 	 * Sort the internal storage mechanism
 	 * @param callable $sorter
@@ -92,7 +94,7 @@ class Collection implements ICollection { // Implements ICollection
 	public function sort(callable $sorter) {
 		usort($this->lst, $sorter);
 	}
-	
+
 	/**
 	 * Return a filtered copy of the internal storage mechanism
 	 * @param callable $filterer
@@ -100,16 +102,16 @@ class Collection implements ICollection { // Implements ICollection
 	 */
 	public function filter(callable $filterer) {
 		$filtered = new static;
-		
+
 		foreach($this as $key => $val) {
 			$result = call_user_func($filterer, $val, $key) === true;
 			if (!is_bool($result)) throw new \RuntimeException('Filter must return boolean');
-			
+
 			if ($result === true) {
 				$filtered->add($val);
 			}
 		}
-		
+
 		return $filtered;
 	}
 }

@@ -1,6 +1,8 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
+## [1.6]
+### Renamed legacy framework classes with prefix "Legacy" to avoid conflicts with the new application framework
 
 ## [1.5.8]
 ### Changed

@@ -1,3 +1,5 @@
 <?php
 
-class ProviderDictionary extends Dictionary {}
+use WebImage\Core\LegacyDictionary;
+
+class ProviderDictionary extends LegacyDictionary {}

@@ -2,8 +2,6 @@
 
 namespace WebImage\Provider;
 
-use WebImage\Core\Dictionary;
-
 abstract class AbstractProvider implements IProvider {
 	private $name; // String
 	private $config; // ProviderDictionary
@@ -14,13 +12,13 @@ abstract class AbstractProvider implements IProvider {
 	 * @return bool
 	 */
 	public function init($name, Config $config=null) {
-		
+
 		$this->name = $name;
-		
+
 		if (null === $config) {
 			$config = new Config($name, __CLASS__);
 		}
-		
+
 		$this->config = $config;
 		return true;
 	}

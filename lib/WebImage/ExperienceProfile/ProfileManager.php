@@ -5,9 +5,9 @@ namespace WebImage\ExperienceProfile;
 use ConfigurationManager;
 use SessionManager;
 use Page;
-use WebImage\Core\Collection;
+use WebImage\Core\LegacyCollection;
 use WebImage\Provider\Config as ProviderConfig;
-use WebImage\Core\Dictionary;
+use WebImage\Core\LegacyDictionary;
 
 class ProfileManager {
 
@@ -16,12 +16,12 @@ class ProfileManager {
 	private $initedProviders = array();
 	private $defaultProviderName;
 	/**
-	 * @var \WebImage\Core\Dictionary
+	 * @var \WebImage\Core\LegacyDictionary
 	 */
 	private $domainMapping;
 
 	public function __construct() {
-		$this->domainMapping = new Dictionary();
+		$this->domainMapping = new LegacyDictionary();
 	}
 	public function addProviderConfig(ProviderConfig $config) {
 		$this->providerConfigs[$config->getName()] = $config;
@@ -70,7 +70,7 @@ class ProfileManager {
 	 * @return mixed|null|IProfile
 	 */
 	public function getProfileByDomain($domain) {
-		
+
 		$profile_name = $this->getProfileNameByDomain($domain);
 		$profile = null;
 
@@ -89,16 +89,13 @@ class ProfileManager {
 	 * @return array
 	 */
 	public function getDomainsForProfile($profile_name) {
-		$all = $this->domainMapping->getAll();
 		/** @var \WebImage\Core\DictionaryField $field */
-		$domains = array();
+		$domains = [];
 
-		while($field = $all->getNext()) {
-			$domain = $field->getKey();
-			$p_name = $field->getDefinition();
-			if ($p_name == $profile_name) $domains[] = $domain;
-
+		foreach($this->domainMapping as $domain => $mapping) {
+			if ($mapping == $profile_name) $domains[] = $domain;
 		}
+
 		return $domains;
 	}
 	/**
@@ -119,12 +116,12 @@ class ProfileManager {
 			 */
 			$profile = $this->getCurrentProfile();
 			if (null !== $profile) return $profile;
-			
+
 			// Check session for profile
 			if (null === $profile) $profile = $this->getSessionProfile();
 			// Is domain mapped to profile?
 			if (null === $profile) $profile = $this->getProfileByDomain( ConfigurationManager::get('DOMAIN') );
-			
+
 			// Otherwise check for supported profiles
 			if (null === $profile) $profile = $this->getFirstSupportedProfile();
 
@@ -200,7 +197,7 @@ class ProfileManager {
 		$profile->init($provider_name, $config);
 		$profile->setProfileManager($this);
 		$profile->addSupportedProfiles($provider_name);
-		
+
 		// Add provider name to $circular_check
 		$circular_check[] = $provider_name;
 
@@ -231,11 +228,11 @@ class ProfileManager {
 
 		return $profile;
 	}
-	
+
 	private function getCurrentProfile() {
 		return $this->currentProfile;
 	}
-	
+
 	private function setCurrentProfile($profile) {
 		$this->currentProfile = $profile;
 	}
@@ -243,7 +240,7 @@ class ProfileManager {
 	public function getProviderConfigs() {
 		return $this->providerConfigs;
 	}
-	
+
 	// Profiles specific methods
 	public function getCurrentProfileName() {
 		if ($provider = $this->getProvider()) {
@@ -295,7 +292,7 @@ class ProfileManager {
 	private function getFirstSupportedProfile() {
 		// Otherwise search for possible matches
 		$provider_configs = $this->getProviderConfigs();
-		
+
 		$domain = ConfigurationManager::get('DOMAIN');
 
 		$profile = null;
@@ -307,9 +304,9 @@ class ProfileManager {
 
 			// Skip inclusion of default, since if nothing else matches we will fall back to default anyway
 			if ($provider_name == $this->getDefaultProviderName()) continue;
-			
+
 			$provider = $this->getProvider($provider_name);
-			
+
 			if (null !== $provider) {
 				if ($provider->isSupported()) {
 					$profile = $provider;
@@ -333,7 +330,7 @@ class ProfileManager {
 	public function getProviders() {
 
 		$configs = $this->getProviderConfigs();
-		$providers = new Collection();
+		$providers = new LegacyCollection();
 		foreach($configs as $provider_name => $config) {
 			$provider = $this->getProvider($provider_name);
 			if (null !== $provider) {

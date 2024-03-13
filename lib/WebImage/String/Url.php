@@ -2,7 +2,7 @@
 
 namespace WebImage\String;
 
-use WebImage\Core\Dictionary;
+use WebImage\Core\LegacyDictionary;
 
 /**
  * Utility class for handling URL manipulation.  Not using PHP's parse_url() because it is too strict and does not always work with malformed URLs
@@ -37,42 +37,42 @@ class Url {
 	 */
 	private $fragment;
 	/**
-	 * @var Dictionary
+	 * @var LegacyDictionary
 	 */
 	private $query;
-	
+
 	/**
 	 * TODO: Add support for allowMultiQueryParams
 	 * Whether to allow multiple query parameter names WITHOUT the special "[]" PHP designation, e.g. if false then ?key=Value1&key=Value2 will result in ?key=Value2 (since Value2 would override the earlier Value1
 	 * @var bool
 	 */
 	private $allowMultiQueryParams = false;
-	
+
 	function __construct($url) {
-		
+
 		$this->setUrl($url);
-		
+
 	}
-	
+
 	public function setUrl($url) {
-		
+
 		// Fragment
 		$parts = explode('#', $url, 2);
 		list($url, $fragment) = (count($parts) == 2) ? $parts : array($parts[0], '');
-		
+
 		// Scheme
 		$parts = explode('://', $url, 2);
 		list($scheme, $url) = (count($parts) == 2) ? $parts : array('', $parts[0]);
-		
+
 		// Path & Query
 		$parts = explode('?', $url, 2);
 		list($url, $query) = (count($parts) == 2) ? $parts : array($parts[0], '');
-		
+
 		// Host
 		$host = '';
 		$parts = explode('/', $url, 2);
 		$n_parts = count($parts);
-		
+
 		if (!empty($scheme)) { // Prevents relative URLs from being treated as a host
 			if ($n_parts == 2) {
 				$host = $parts[0];
@@ -82,7 +82,7 @@ class Url {
 				$url = '';
 			}
 		}
-		
+
 		// Username/Password
 		$parts = explode('@', $host, 2);
 		list($user_pass, $host) = (count($parts) == 2) ? $parts : array('', $parts[0]);
@@ -91,14 +91,14 @@ class Url {
 		if (strlen($user_pass) > 0) {
 			list($user, $pass) = explode(':', $user_pass);
 		}
-		
+
 		// Port
 		$parts = explode(':', $host, 2);
 		list($host, $port) = (count($parts) == 2) ? $parts : array($host, '');
-		
+
 		// Path & Query
 		$path = $url;
-		
+
 		$this->setScheme($scheme);
 		$this->setUser($user);
 		$this->setPass($pass);
@@ -109,7 +109,7 @@ class Url {
 		$this->setFragment($fragment);
 	}
 	function __toString() {
-		
+
 		$scheme = $this->getScheme();
 		$user = $this->getUser();
 		$pass = $this->getPass();
@@ -118,33 +118,33 @@ class Url {
 		$path = $this->getPath();
 		$query = $this->getQueryString();
 		$fragment = $this->getFragment();
-		
+
 		$url = '';
 		if (strlen($host) > 0) {
-			
+
 			if (strlen($scheme) > 0) $url = $scheme. '://' . $url;
-			
+
 			if (strlen($user) > 0 || strlen($pass) > 0) {
 				$url .= sprintf('%s:%s@', $user, $pass);
 			}
-			
+
 			$url .= $host;
 			if (strlen($port) > 0) $url .= ':' . $port;
 		}
-		
+
 		if (!empty($url) && empty($path) && !empty($query)) $path .= '/';
 		$url .= $path;
-		
+
 		if (!empty($query)) $url .= '?' . $query;
-		
+
 		if (strlen($fragment) > 0) $url .= '#' . $fragment;
-		
+
 		return $url;
 	}
-	
+
 	public function getQueryString() {
 		$query = array();
-		
+
 		foreach($this->getQuery() as $name => $value) {
 			// If value is an array then create the notation to reflect that
 			if (is_array($value)) {
@@ -176,7 +176,7 @@ class Url {
 	 */
 	public function getPath() { return $this->path; }
 	/**
-	 * @return Dictionary
+	 * @return LegacyDictionary
 	 */
 	public function getQuery() { return $this->query; }
 	/**
@@ -244,40 +244,40 @@ class Url {
 	 * @return CWI_STRING_Url
 	 */
 	public function setQueryString($query) {
-		
-		$this->query = new Dictionary();
-		
+
+		$this->query = new LegacyDictionary();
+
 		// Build query
 		if (strlen($query) > 0) {
-			
+
 			$url_parts = explode('&', $query);
 			foreach($url_parts as $url_part) {
-				
+
 				@list($name, $value) = explode('=', $url_part, 2);
 				$value = urldecode($value);
-				
+
 				$is_array = false;
 				if (substr($name, -2) == '[]') {
 					$name = substr($name, 0, -2);
 					$is_array = true;
 					$value = array($value);
 				}
-				
+
 				if (($is_array || $this->allowMultiQueryParams) && $this->getQuery()->isDefined($name)) {
-					
+
 					$existing = $this->getQuery()->get($name);
 					if (!is_array($existing)) $existing = array($existing);
 					if (!is_array($value)) $value = array($value);
 					$value = array_merge($existing, $value);
 				}
-				
+
 				$this->setQueryValue($name, $value);
 			}
 		}
-		
+
 		return $this;
 	}
-	
+
 	public function getQueryValue($name) {
 		return $this->getQuery()->get($name);
 	}
@@ -292,7 +292,7 @@ class Url {
 		return $this;
 	}
 	public function addQueryValue($name, $value) {
-		
+
 		$values = array();
 		if ($this->getQuery()->isDefined($name)) {
 			$values = $this->getQuery()->get($name);
@@ -300,10 +300,10 @@ class Url {
 		}
 		if (is_array($value)) $values = array_merge($values, $value);
 		else $values[] = $value;
-		
+
 		$this->setQueryValue($name, $values);
 		return $this;
-		
+
 	}
 	/**
 	 * @param sring $fragment
@@ -313,5 +313,5 @@ class Url {
 		$this->fragment = $fragment;
 		return $this;
 	}
-	
+
 }

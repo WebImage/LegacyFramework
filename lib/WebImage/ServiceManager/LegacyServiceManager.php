@@ -6,10 +6,10 @@ use Exception;
 use InvalidArgumentException;
 
 /**
- * Class ServiceManager
+ * Class LegacyServiceManager
  * Borrowed heavily from ZF2
  */
-class ServiceManager implements IServiceManager {
+class LegacyServiceManager implements IServiceManager {
 	private $aliases = array();
 	private $instances = array();
 	#private $allowOverride = false;
@@ -121,7 +121,7 @@ class ServiceManager implements IServiceManager {
 	 * @param string $name
 	 * @param mixed $factory
 	 * @param bool $shared Whether the factory is shared
-	 * @return ServiceManager
+	 * @return LegacyServiceManager
 	 * @throws InvalidArgumentException
 	 */
 	public function setFactory($name, $factory, $shared = null) {
@@ -159,7 +159,7 @@ class ServiceManager implements IServiceManager {
 	 *
 	 * @param string $name
 	 * @param mixed $service
-	 * @return ServiceManager
+	 * @return LegacyServiceManager
 	 */
 	public function setService($name, $service) {
 		$this->instances[$name] = $service;

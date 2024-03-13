@@ -2,16 +2,16 @@
 
 namespace WebImage\ServiceManager;
 
-use WebImage\Config\Config;
+use WebImage\Config\LegacyConfig;
 
-class ServiceManagerConfig implements IServiceManagerConfig {
+class LegacyServiceManagerConfig implements IServiceManagerConfig {
 	/**
-	 * @var Config
+	 * @var LegacyConfig
 	 */
 	protected $config;
 
-	public function __construct(Config $config = null) {
-		if (null === $config) $config = new Config(array());
+	public function __construct(LegacyConfig $config = null) {
+		if (null === $config) $config = new LegacyConfig(array());
 		$this->config = $config;
 	}
 
@@ -63,7 +63,7 @@ class ServiceManagerConfig implements IServiceManagerConfig {
 	}
 	*/
 
-	public function configureServiceManager(ServiceManager $service_manager) {
+	public function configureServiceManager(LegacyServiceManager $service_manager) {
 
 		/*if (null !== ($allowOverride = $this->getAllowOverride())) {
 			$service_manager->setAllowOverride($allowOverride);
