@@ -1,6 +1,6 @@
 <?php
 
-namespace WebImage\ExperienceProfile;
+namespace WebImage\LegacyExperienceProfile;
 
 /**
  * General idea borrowed from http://detectmobilebrowsers.mobi/

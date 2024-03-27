@@ -1,13 +1,12 @@
 <?php
 
-namespace WebImage\ExperienceProfile;
+namespace WebImage\LegacyExperienceProfile;
 
 use ConfigurationManager;
 use SessionManager;
-use Page;
 use WebImage\Core\LegacyCollection;
-use WebImage\Provider\Config as ProviderConfig;
 use WebImage\Core\LegacyDictionary;
+use WebImage\Provider\Config as ProviderConfig;
 
 class ProfileManager {
 

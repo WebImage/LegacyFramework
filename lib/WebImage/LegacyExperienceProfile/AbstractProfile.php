@@ -1,6 +1,6 @@
 <?php
 
-namespace WebImage\ExperienceProfile;
+namespace WebImage\LegacyExperienceProfile;
 
 use WebImage\Provider\AbstractProvider;
 
@@ -99,9 +99,9 @@ if ($debug) echo '-- Is NOT mapped to domain<br />';
 
 			$this->isSupported = $is_supported;
 		}
-		
+
 if ($debug) echo get_class($this) . ' -- Supported: ' . ($this->isSupported?'Yes':'No') . '<br />';
-		
+
 		return $this->isSupported;
 
 	}

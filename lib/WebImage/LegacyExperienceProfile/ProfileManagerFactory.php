@@ -1,11 +1,11 @@
 <?php
 
-namespace WebImage\ExperienceProfile;
+namespace WebImage\LegacyExperienceProfile;
 
 use WebImage\Config\LegacyConfig;
+use WebImage\Provider\Config as ProviderConfig;
 use WebImage\ServiceManager\IFactory;
 use WebImage\ServiceManager\IServiceManager;
-use WebImage\Provider\Config as ProviderConfig;
 
 class ProfileManagerFactory implements IFactory {
 

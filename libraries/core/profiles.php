@@ -8,7 +8,7 @@ class Profiles {
 
 	// Common methods
 	/**
-	 * @return WebImage\ExperienceProfile\ProfileManager
+	 * @return \WebImage\LegacyExperienceProfile\ProfileManager
 	 * @throws Exception
 	 */
 	public static function getInstance() {
@@ -21,11 +21,11 @@ class Profiles {
 	public static function addProvider($config) {
 		return static::getInstance()->addProviderConfig($config);
 	}
-	
+
 	public static function setDefaultProvider($provider) {
 		return static::getInstance()->setDefaultProvider($provider);
 	}
-	
+
 	public static function getDefaultProvider() {
 		return static::getInstance()->getDefaultProvider();
 	}
@@ -35,7 +35,7 @@ class Profiles {
 
 	/**
 	 * @param null $provider_name
-	 * @return mixed|\WebImage\ExperienceProfile\IProfile
+	 * @return mixed|\IProfile
 	 */
 	public static function getProvider($provider_name=null) {
 		return static::getInstance()->getProvider($provider_name);
@@ -47,7 +47,7 @@ class Profiles {
 	private static function setCurrentProfile($profile_name) {
 		return static::getInstance()->setCurrentProfileByName($profile_name);
 	}
-	
+
 	public static function getProviders() {
 		return static::getInstance()->getProviders();
 	}
@@ -55,11 +55,11 @@ class Profiles {
 	public static function getCurrentProfileName() {
 		return static::getInstance()->getCurrentProfileName();
 	}
-	
+
 	public static function setCurrentProfileByName($profile_name) {
 		return static::getInstance()->setCurrentProfileByName($profile_name);
 	}
-	
+
 	public static function resetCurrentProfile() {
 		return static::getInstance()->resetCurrentProfile();
 	}

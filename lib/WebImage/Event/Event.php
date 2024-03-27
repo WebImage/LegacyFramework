@@ -7,7 +7,7 @@ class Event {
 	private $type;
 	/** @var mixed Any data that should be provided as part of the event */
 	private $data;
-	/** @var mixed The sender that initiated the event */
+	/** @var ?object The sender that initiated the event */
 	private $sender;
 	/** @var bool */
 	private $isCancelled = false;
@@ -15,9 +15,10 @@ class Event {
 	 * Event constructor.
 	 *
 	 * @param string $type
-	 * @param mixed $sender
+	 * @param mixed $data
+	 * @param ?object $sender
 	 */
-	public function __construct($type, $data, $sender)
+	public function __construct(string $type, $data, ?object $sender = null)
 	{
 		$this->type = $type;
 		$this->data = $data;
@@ -27,7 +28,7 @@ class Event {
 	/**
 	 * @return string
 	 */
-	public function getType()
+	public function getType(): string
 	{
 		return $this->type;
 	}
@@ -43,7 +44,7 @@ class Event {
 	/**
 	 * @return mixed
 	 */
-	public function getSender()
+	public function getSender(): ?object
 	{
 		return $this->sender;
 	}

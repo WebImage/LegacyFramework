@@ -99,7 +99,7 @@ return array(
 			),
 			/*
 			 * Error: Primarily used by 404 Page Not Found
-			 * This page request handler will handle any requests that get this far.  
+			 * This page request handler will handle any requests that get this far.
 			 */
 			'Error' => array(
 				'classFile' => '~base/libraries/providers/requesthandlers/error/error.php',
@@ -141,7 +141,7 @@ return array(
 			),
 			array(
 				'path' => '^/shop/(.+\.html)',
-				'translate' => '/shop/categoryview.html?catkey=$1', 
+				'translate' => '/shop/categoryview.html?catkey=$1',
 				'exampleFile' => '~/shop/categoryview.html?catkey=$1',
 				'requesthandler' => 'Store'
 			),
@@ -226,15 +226,15 @@ return array(
 		'defaultProvider' => 'Default',
 		'providers' => array(
 			'Default' => array(
-				'className' => '\WebImage\ExperienceProfile\DefaultProfile',
+				'className' => '\WebImage\LegacyExperienceProfile\DefaultProfile',
 				'priority' => -100
 			),
 			'Mobile' => array(
-				'className' => '\WebImage\ExperienceProfile\MobileProfile',
+				'className' => '\WebImage\LegacyExperienceProfile\\MobileProfile',
 				'priority' => -10
 				),
 			'iPhone' => array(
-				'className' => '\WebImage\ExperienceProfile\IPhoneProfile',
+				'className' => '\WebImage\LegacyExperienceProfile\\IPhoneProfile',
 				'supportedProfiles' => array('Mobile'),
 				'priority' => -9
 				/* limit the domains that this profile supports */
@@ -303,7 +303,7 @@ return array(
 		'factories' => array(
 			'ControlManager' => 'ControlManagerFactory',
 			'Events' => 'WebImage\Event\ManagerFactory',
-			'WebImage\ExperienceProfile\ProfileManager' => 'WebImage\ExperienceProfile\ProfileManagerFactory'
+			'WebImage\ExperienceProfile\ProfileManager' => 'WebImage\LegacyExperienceProfile\ProfileManagerFactory'
 		),
 		'aliases' => array(
 			'ExperienceProfileManager' => 'WebImage\ExperienceProfile\ProfileManager'

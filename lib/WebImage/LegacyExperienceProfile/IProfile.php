@@ -1,6 +1,6 @@
 <?php
 
-namespace WebImage\ExperienceProfile;
+namespace WebImage\LegacyExperienceProfile;
 
 use WebImage\Provider\IProvider;
 
