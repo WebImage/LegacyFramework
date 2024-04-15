@@ -1,6 +1,6 @@
 /* CSS Document */
 
-body { 
+body {
 	color:#333;
 	padding:0;
 	}
@@ -41,12 +41,12 @@ h1 { font-size:30px; }
 .col-fs-hpanel-l { left:0; }
 .col-fs-hpanel-r { right:0; }
 .col-fs-hpanel-full { position:absolute; top:0; right:0; bottom:0; left:0; }
-.col-fs.col-fs-loffset-1 { left:100px; } /* hpanel-1 on left */ 
+.col-fs.col-fs-loffset-1 { left:100px; } /* hpanel-1 on left */
 .col-fs.col-fs-loffset-2 { left:200px; } /* hpanel-2 on left */
 .col-fs.col-fs-loffset-3 { left:300px; } /* hpanel-3 on left */
 .col-fs.col-fs-loffset-4 { left:400px; } /* hpanel-4 on left */
 .col-fs.col-fs-rpanel { left:auto; } /* hpanel-1 on right */
-.col-fs.col-fs-roffset-1 { right:100px; } /* hpanel-1 on right */ 
+.col-fs.col-fs-roffset-1 { right:100px; } /* hpanel-1 on right */
 .col-fs.col-fs-roffset-2 { right:200px; } /* hpanel-2 on right */
 .col-fs.col-fs-roffset-3 { right:300px; } /* hpanel-3 on right */
 .col-fs.col-fs-roffset-4 { right:400px; } /* hpanel-4 on right */
@@ -56,7 +56,7 @@ h1 { font-size:30px; }
 .wrap { padding-left:15px; padding-right:15px; }
 
 .navbar-admin { background:#0277bd; box-shadow:none; border:none; border-radius:0; text-shadow:none; margin-bottom:0; }
-.navbar-admin .navbar-brand, .navbar-admin .navbar-nav>li>a { color:#bce; text-shadow:none; }
+.navbar-admin .navbar-brand, .navbar-admin .navbar-nav>li>a { color:#eee; text-shadow:none; }
 .navbar-admin .navbar-nav>li>a:hover, .navbar-admin .navbar-nav>li>a:focus { color:#fff; }
 .navbar-admin .navbar-brand:hover { color:#fff; }
 .navbar-admin .dropdown-menu { background:#1c3f89; border:none; box-shadow:none; padding:0; font-size:14px; }
@@ -69,7 +69,7 @@ h1 { font-size:30px; }
 .nav-tabs>li>a:hover { background:none; }
 .m-b { margin-bottom:20px; }
 .m-t { margin-top:20px; }
-.page-header { border-bottom-width:4px; background-color:#039be5;/* 069bde 1c3f89 ed487c*/; margin:0 0 20px; padding:30px; border:none; color:#adf; }
+.page-header { border-bottom-width:4px; background-color:#0277bd;/* 069bde 1c3f89 ed487c*/; margin:0 0 40px; padding:30px; border:none; color:#adf; }
 .page-header .text-muted { color:#adf; }
 .wrap .page-header { margin-left:-15px; margin-right:-15px; }
 .page-header h1, .page-header h2, .page-header h3, .page-header h4, .page-header h5, .page-header h6 { margin:0; color:#fff; }
@@ -114,7 +114,7 @@ h1 { font-size:30px; }
 .panel-heading .panel-title {
 	font-weight: bold;
 }
-.tag { 
+.tag {
 	background-color:#039be5;/* 069bde 1c3f89 ed487c*/
 	border-radius:18px;
 	color:#fff;
