@@ -24,6 +24,10 @@ class LegacyDictionary implements ArrayAccess, Iterator { // extends  IDictionar
 	function del($key) {
 		unset($this->lst[$key]);
 	}
+	public function has($name): bool
+	{
+		return (array_key_exists($name, $this->lst));
+	}
 	function getAll() {
 		$dictionary_fields = new DictionaryFieldCollection();
 		foreach($this->lst as $key=>$definition) {

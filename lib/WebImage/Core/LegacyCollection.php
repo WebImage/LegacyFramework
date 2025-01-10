@@ -8,7 +8,7 @@ use Exception;
  * 02/05/2010	(Robert Jones) Changed $lst, and $current_index properties to be private (instead of var)
  * 08/04/2010	(Robert Jones) Added $cacheCount to Collection to keep track of how many entries are in the collection/array.  When used in hasNext() execution decreased by 100 times
  */
-class LegacyCollection implements ICollection { // Implements ICollection
+class LegacyCollection implements ICollection, \Countable, \Iterator, \ArrayAccess { // Implements ICollection
 	private $lst = array();
 	private $current_index = -1;
 	private $cacheCount;
@@ -113,5 +113,129 @@ class LegacyCollection implements ICollection { // Implements ICollection
 		}
 
 		return $filtered;
+	}
+
+	public function createLookup(callable $keyGenerator, callable $valueMapper=null): LegacyDictionary
+	{
+		$d = new LegacyDictionary();
+
+		$this->each(function($value, $ix) use ($d, $keyGenerator, $valueMapper) {
+			$key = call_user_func($keyGenerator, $value, $ix);
+			$value = $valueMapper === null ? $value : call_user_func($valueMapper, $value, $ix);
+			$d->set($key, $value);
+		});
+
+		return $d;
+	}
+
+	public function createMultiValueLookup(callable $keyGenerator): LegacyDictionary
+	{
+		$d = new LegacyDictionary();
+
+		$this->each(function($value) use ($d, $keyGenerator) {
+			$key = call_user_func($keyGenerator, $value);
+			if (!$d->has($key)) {
+				$d->set($key, new static());
+			}
+			$d->get($key)->add($value);
+		});
+
+		return $d;
+	}
+
+	public function each(callable $each): void
+	{
+		$objs = clone $this;
+		foreach($objs as $ix => $obj) {
+			call_user_func($each, $obj, $ix);
+		}
+	}
+	public function offsetExists($offset)
+	{
+		return $this->isItemValid($offset);
+	}
+
+	public function offsetGet($offset)
+	{
+		return $this->getAt($offset);
+	}
+
+	public function offsetSet($offset, $value)
+	{
+		if ($offset === null) {
+			$this->add($value);
+			return;
+		}
+		$this->setAt($offset, $value);
+	}
+
+	public function offsetUnset($offset)
+	{
+		$this->removeAt($offset);
+	}
+
+	public function current()
+	{
+		return current($this->lst);
+	}
+
+	public function next()
+	{
+		next($this->lst);
+	}
+
+	public function key()
+	{
+		return key($this->lst);
+	}
+
+	public function valid(): bool
+	{
+		return ($this->key() !== null);
+	}
+
+	public function rewind()
+	{
+		return ($this->key() !== null);
+	}
+
+	public function count()
+	{
+		return $this->getCount();
+	}
+
+	public function has(int $index): bool
+	{
+		return (array_key_exists($index, $this->lst));
+	}
+
+	public function __unset($name)
+	{
+		if ($this->has($name)) {
+			unset($this->lst[$name]);
+		}
+	}
+
+	/**
+	 * @param $name
+	 * @return T
+	 */
+	public function __get($name)
+	{
+		return $this->get($name);
+	}
+
+	public function __set($index, $value)
+	{
+		if ($index !== null && !is_numeric($index)) throw new \InvalidArgumentException('Cannot set non-numeric index on ' . __CLASS__);
+//		$this->assertValidItem($value);
+
+		if ($index === null) $this->lst[] = $value;
+		else $this->lst[$index] = $value;
+	}
+
+	public function __isset($name)
+	{
+		return $this->has($name);
 	}
 }
